@@ -13,32 +13,45 @@ from joblib import Parallel, delayed
 import pandas as pd
 import os
 
+AggregateResolution = 0.01
 
 #os.chdir("/Users/kek25/Dropbox/BSU/Python/Data/")
 CDL_GCAM_keyfile = '~/Dropbox/BSU/Python/Data/CDL2GCAM_SRP.csv'
 
-#os.chdir("D:/Dropbox/BSU/Python/Data/CDL")
-os.chdir("/Users/kek25/Dropbox/BSU/Python/Data/CDL")
-files = glob.glob('*.txt')
+# CDL_ReadDir =  'D:/Dropbox/BSU/Python/Data/CDL'
+CDL_ReadDir = '/Users/kek25/Dropbox/BSU/Python/Data/CDL/'
+
+GCAM_WriteDir = ''
+
+files = glob.glob([CDL_ReadDir+'*.txt'])
 
 #=============================================================================#
 # CLASS DEFINITIONS    
 class CDL_DataStruct:
     def __init__(self,filename): # We initialize the class only with a filename
         self.filename = filename
+    def AddCDL_GDALstruct(self,gdal_obj): # A placeholder to add the actual GDAL object
+        self.gdal_obj = gdal_obj
     def AddCDLData(self,cdl_grid): # Original CDL grid
         self.cdl_grid = cdl_grid
     def AddCDLStats(self,cdl_stats): # Add CDL stats
         self.cdl_stats = cdl_stats
+
+    def AddGCAMFileName(self,gcam_outfile):
+        self.gcam_outfile = gcam_outfile
     def AddGCAMStats(self,gcam_stats): # Add GCAM stats
         self.gcam_stats = gcam_stats
     def AddGCAMGrid(self,gcam_grid): # Add reclassified GCAM grid
         self.gcam_grid = gcam_grid
+    def AddAggregatedGrid(self,ag_grid):
+        self.ag_grid = ag_grid
         
 #=============================================================================#
 # FUNCTION DEFINITIONS    
 def ReadArcGrid(CDL_struct):
     gdfid = gdal.Open(CDL_struct.filename)
+    CDL_struct.AddCDL_GDALstruct(gdfid)
+
     cdl_grid = np.float64(gdfid.ReadAsArray())
     cdl_grid[cdl_grid==-9999] = np.nan
     
@@ -66,6 +79,48 @@ def CDL2GCAM(CDL_struct,CDL_cat,GCAM_cat):
     CDL_struct.AddGCAMGrid(gcam_grid)
     
     return
+
+def saveGrid(CDL_struct):
+    filename = CDL_struct.filename
+    gdfid = gdal.Open(filename)
+    indata = CDL_struct.cdl_grid
+
+    nrows,ncols = np.shape(indata) 
+
+    # Create new file name
+    newfn = filename.split('/')[-1]
+    newfn = newfn.split(".",-1)[0] + ".tiff"
+    CDL_struct.AddGCAMFileName(GCAM_WriteDir+newfn)
+    
+    driver  = gdal.GetDriverByName('Gtiff')
+    outdata = driver.Create(newfn, ncols, nrows, 1, gdal.GDT_Float32)
+    
+    outdata.SetGeoTransform(gdfid.GetGeoTransform())
+    outdata.SetProjection(gdfid.GetProjection())
+    outdata.GetRasterBand(1).WriteArray(CDL_struct.gcam_grid)
+
+    outdata.FlushCache()
+    outdata = None
+
+def warpGrid(CDL_struct,GCAM_WriteDir,gdal_res):
+    
+    gdal_obj      = CDL_struct.gdal_obj
+    gcam_grid     = CDL_struct.gcam_grid
+    
+    gcam_proj     = gdal_obj.GetProjection()
+    gcam_geotrans = gdal_obj.GetGeoTransform()
+    
+    pixelSizeX    = gdal_obj.GetGeoTransform()[1] #original pixel size
+    
+    gcam_filename = CDL_struct.filename
+    gcam_filename = gcam_filename.replace('cdl','gcam')
+    gcam_filename = gcam_filename.replace('txt','tiff')
+    
+    warpDir = GCAM_WriteDir+'1km/'
+    newFile = warpDir+gcam_filename
+    warping = gdal.WarpOptions(format='Gtiff', xRes=gdal_res, yRes=gdal_res, srcSRS=gcam_proj, resampleAlg='mode')
+    
+    gdal.Warp(newFile, gdal_obj, warpOptions=warping)
 
 #=============================================================================#
 # 0. Read in category data and create vectors                                 #
@@ -131,30 +186,11 @@ np.savetxt("base_yield.csv",  base_yeild, delimiter=",")
 #=============================================================================#
 # 6. Save new grids with GCAM categories
 #=============================================================================#
-os.chdir("D:/Dropbox/BSU/Python/Data/CDL")
-
-def saveGrid(CDL_struct):
-    filename = CDL_struct.filename
-    gdfid = gdal.Open(filename)
-    indata = CDL_struct.cdl_grid
-
-    nrows,ncols = np.shape(indata) 
-
-    os.chdir("D:/Dropbox/BSU/Python/Data/CDL_GCAM_SRP")
-    newfn =filename.split(".",-1)[0] + ".tiff"
-    driver = gdal.GetDriverByName('Gtiff')
-    outdata= driver.Create(newfn, ncols, nrows, 1, gdal.GDT_Float32)
-    outdata.SetGeoTransform(gdfid.GetGeoTransform())
-    outdata.SetProjection(gdfid.GetProjection())
-    outdata.GetRasterBand(1).WriteArray(CDL_Data[i].gcam_grid)
-
-    outdata.FlushCache()
-    outdata = None
 
 #im not sure about the class structure - so I don't think this is correct ...
 for i in np.arange(len(CDL_data)):
     saveGrid(CDL_DataStruct[i])
-    
+    warpGrid(CDL_DataStruct[i],GCAM_WriteDir,AggregateResolution)
 
 #tst =gdal.Open("D:/Dropbox/BSU/Python/Data/CDL_GCAM_SRP/cdl_2010_srb.tiff")
 #tst_grid = np.float64(tst.ReadAsArray())
@@ -164,21 +200,6 @@ for i in np.arange(len(CDL_data)):
 #=============================================================================#
 # 7. Create new grids at lower resolution (1km)
 #=============================================================================#
-os.chdir("D:/Dropbox/BSU/Python/Data/CDL_GCAM_SRP")
-#os.chdir("/Users/kek25/Dropbox/BSU/Python/Data/CDL_GCAM_SRP")
-
-src = gdal.Open("cdl_2010_srb.tiff")
-cdl_grid = np.float64(src.ReadAsArray())
-
-src_proj = src.GetProjection()
-src_geotrans = src.GetGeoTransform()
-
-pixelSizeX=src.GetGeoTransform()[1] #original pixel size
-
-warpDir="D:/Dropbox/BSU/Python/Data/CDL_GCAM_SRP/1km/"
-newFile= warpDir+"cdl_2010_srb.tiff"
-warping = gdal.WarpOptions(format='Gtiff', xRes= 0.01, yRes=0.01, srcSRS=src_proj, resampleAlg='mode')
-gdal.Warp(newFile, src, warpOptions=warping)
 
 os.chdir="D:/Dropbox/BSU/Python/Data/CDL_GCAM_SRP/1km/"
 src = gdal.Open("cdl_2010_srb.tiff")
@@ -199,7 +220,7 @@ print(m)
 
 
 #=============================================================================#
-# 7. Clip out a few counties - Twin, Jerome, Minidoka and Ada/Canyon
+# 8. Clip out a few counties - Twin, Jerome, Minidoka and Ada/Canyon
 #=============================================================================#
 
 from osgeo import ogr
