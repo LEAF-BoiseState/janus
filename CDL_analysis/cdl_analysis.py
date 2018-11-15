@@ -18,9 +18,9 @@ CDL_GCAM_keyfile = 'D:/Dropbox/BSU/Python/Data/CDL2GCAM_SRP.csv'
 
 CDL_ReadDir =  'D:/Dropbox/BSU/Python/Data/CDL/'
 #CDL_ReadDir = '/Users/kek25/Dropbox/BSU/Python/Data/CDL/'
-GCAM_WriteDir = 'D:/Dropbox/BSU/Python/Data/CDL/GCAM_SRP/'
-Agg_WriteDir = 'D:/Dropbox/BSU/Python/Data/CDL/GCAM_SRP/1km/'
-Agg_WriteDir3 = 'D:/Dropbox/BSU/Python/Data/CDL/GCAM_SRP/3km/'
+GCAM_WriteDir = 'D:/Dropbox/BSU/Python/Data/GCAM_SRP/'
+Agg_WriteDir = 'D:/Dropbox/BSU/Python/Data/GCAM_SRP/1km/'
+Agg_WriteDir3 = 'D:/Dropbox/BSU/Python/Data/GCAM_SRP/3km/'
 
 files = glob.glob(CDL_ReadDir+'*.txt')
 
@@ -82,11 +82,13 @@ def CDL2GCAM(CDL_struct,CDL_cat,GCAM_cat):
 
 def saveGrid(CDL_struct):
     filename = CDL_struct.filename
+    print(filename)
     gdfid = gdal.Open(filename)
     indata = CDL_struct.cdl_grid
     nrows,ncols = np.shape(indata) 
 
     # Create new file name
+    newfn = filename.split('\\')[-1]
     newfn = filename.replace('txt','tiff')
     newfn = filename.replace('cdl','gcam')
     CDL_struct.AddGCAMFileName(GCAM_WriteDir+newfn)
