@@ -37,17 +37,21 @@ files = glob.glob(CDL_ReadDir+'cdl*.txt')
 #=============================================================================#
 # CLASS DEFINITIONS    
 class CDL_DataStruct:
-    def __init__(self,cdl_path,cdl_infile): # We initialize the class only with a filename
+    # Constructor requires the path and file name of the input CDL data
+    def __init__(self,cdl_path,cdl_infile): 
         self.cdl_path   = cdl_path
         self.cdl_infile = cdl_infile
         
-    def AddCDL_GDALstruct(self,gdal_obj): # A placeholder to add the actual GDAL object
-        self.gdal_obj = gdal_obj
+    # Add CDL geographic transformation adn projection information
+    def SetCDL_ProjInfo(self,GeoTransform,Projection,PixelSize):
+        self.cdl_geotransform = GeoTransform
+        self.cdl_projection   = Projection
+        self.cdl_pixelsize    = PixelSize
 
-    def AddCDLData(self,cdl_grid): # Original CDL grid
+    def SetCDLGrid(self,cdl_grid): # Original CDL grid
         self.cdl_grid = cdl_grid
 
-    def AddCDLStats(self,cdl_stats): # Add CDL stats
+    def SetCDLStats(self,cdl_stats): # Add CDL stats
         self.cdl_stats = cdl_stats
                 
 class GCAM_DataStruct:
@@ -55,12 +59,18 @@ class GCAM_DataStruct:
         self.gcam_path    = gcam_path
         self.gcam_outfile = gcam_outfile
 
-    def AddGCAMStats(self,gcam_stats): # Add GCAM stats
+    def SetGCAM_ProjInfo(self,GeoTransform,Projection,PixelSize):
+        self.gcam_geotransform = GeoTransform
+        self.gcam_projection   = Projection
+        self.gcam_pixelsize    = PixelSize
+        
+    def SetGCAMStats(self,gcam_stats): # Add GCAM stats
         self.gcam_stats = gcam_stats
 
-    def AddGCAMGrid(self,gcam_grid): # Add reclassified GCAM grid
+    def SetGCAMGrid(self,gcam_grid): # Add reclassified GCAM grid
         self.gcam_grid = gcam_grid
 
+    # These should probably go in a separate class ~>
     def AddAggregatedGrid(self,agg_grid):
         self.agg_grid = agg_grid
 
@@ -74,16 +84,22 @@ class GCAM_DataStruct:
 # FUNCTION DEFINITIONS    
 def ReadArcGrid(CDL_struct):
     
+    # Construct the full name of the CDL input ArcGrid file
     cdl_file = CDL_struct.cdl_path+'/'+CDL_struct.cdl_infile
     
-    gdfid = gdal.Open(cdl_file)
+    # Open the CDL input file using GDAL
+    CDL_gdal = gdal.Open(cdl_file)
 
-    CDL_struct.AddCDL_GDALstruct(gdfid)
+    CDL_struct.SetCDL_ProjInfo(CDL_gdal.GetGeoTransform(),CDL_gdal.GetProjection(),CDL_gdal.GetGeoTransform()[1])
 
-    cdl_grid = np.float64(gdfid.ReadAsArray())
+    cdl_grid = np.float64(CDL_gdal.ReadAsArray())
     cdl_grid[cdl_grid==-9999] = np.nan
     
-    CDL_struct.AddCDLData(cdl_grid)
+    CDL_struct.SetCDLGrid(cdl_grid)
+
+    # Close GDAL CDL dataset to save memory
+    CDL_gdal = None
+    
     return
 
 def CDL2GCAM(CDL_struct,CDL_cat,GCAM_struct,GCAM_cat):
@@ -99,53 +115,49 @@ def CDL2GCAM(CDL_struct,CDL_cat,GCAM_struct,GCAM_cat):
        
     for i in np.arange(28): # #count of each gcam category
         indx,indy = np.where(gcam_grid == i+1)
-        gcam_stats[i] = indx.size
+        gcam_stats[i] = indx.size  
     
+    CDL_struct.SetCDLStats(cdl_stats)
     
-    CDL_struct.AddCDLStats(cdl_stats)
-    
-    
-    CDL_struct.AddGCAMStats(gcam_stats)
-    CDL_struct.AddGCAMGrid(gcam_grid)
+    GCAM_struct.SetGCAM_ProjInfo(CDL_struct.cdl_geotransform,CDL_struct.cdl_projection,CDL_struct.cdl_pixelsize)
+    GCAM_struct.SetGCAMStats(gcam_stats)
+    GCAM_struct.SetGCAMGrid(gcam_grid)
     
     return
 
-def saveGrid(CDL_struct):
+def saveGCAMGrid(GCAM_struct):
 
-    indata = CDL_struct.cdl_grid
-    nrows,ncols = np.shape(indata) 
-
-    # Create new file name
-    newfn = filename.split('\\')[-1]
-    newfn = filename.replace('txt','tiff')
-    newfn = filename.replace('cdl','gcam')
-    CDL_struct.AddGCAMFileName(GCAM_WriteDir+newfn)
+    gcam_grid = GCAM_struct.gcam_grid
+    nrows,ncols = np.shape(gcam_grid) 
     
-    driver  = gdal.GetDriverByName('Gtiff')
-    outdata = driver.Create(newfn, ncols, nrows, 1, gdal.GDT_Float32)
-    outdata.SetGeoTransform(gdfid.GetGeoTransform())
-    outdata.SetProjection(gdfid.GetProjection())
-    outdata.GetRasterBand(1).WriteArray(CDL_struct.gcam_grid)
-    outdata.FlushCache()
-    outdata = None
-
-def warpGrid(CDL_struct,Agg_WriteDir,gdal_res):
+    gcam_outfile = GCAM_struct.gcam_path + GCAM_struct.gcam_outfile
     
-    gdal_obj      = CDL_struct.gdal_obj
-    gcam_grid     = CDL_struct.gcam_grid
+    gcam_driver = gdal.GetDriverByName('Gtiff')
+    gcam_gdal   = gcam_driver.Create(gcam_outfile, ncols, nrows, 1, gdal.GDT_Float32)
+
+    gcam_gdal.SetGeoTransform(GCAM_struct.gcam_geotransform)
+    gcam_gdal.SetProjection(GCAM_struct.gcam_projection)
+    gcam_gdal.GetRasterBand(1).WriteArray(GCAM_struct.gcam_grid)
+    gcam_gdal.FlushCache()
+    gcam_gdal = None
+
+    return
+
+def warpGrid(GCAM_struct,Agg_WriteDir,Agg_WriteFile,gdal_res):
+    
+    gcam_geotransform = GCAM_struct.gcam_geotransform
+    gcam_projection   = GCAM_struct.gcam_projection
+    gcam_pixelsize    = GCAM_struct.gcam_pixelsize
+    gcam_grid         = GCAM_struct.gcam_grid
     
     gcam_proj     = gdal_obj.GetProjection()
     gcam_geotrans = gdal_obj.GetGeoTransform()
     pixelSizeX    = gdal_obj.GetGeoTransform()[1] #original pixel size
     
-    gcamAgg_filename = CDL_struct.filename
-    gcamAgg_filename = gcamAgg_filename.replace('cdl','gcam')
-    gcamAgg_filename = gcamAgg_filename.replace('txt','tiff')
-    warpDir = Agg_WriteDir
-    newFile = warpDir+gcamAgg_filename
+    AggFileFull = Agg_WriteDir+Agg_WriteFile
     
-    warping = gdal.WarpOptions(format='Gtiff', xRes=gdal_res, yRes=gdal_res, srcSRS=gcam_proj, resampleAlg='mode')
-    gdal.Warp(newFile, gdal_obj, warpOptions=warping)
+    warping = gdal.WarpOptions(format='Gtiff', xRes=gdal_res, yRes=gdal_res, srcSRS=gcam_projection, resampleAlg='mode')
+    gdal.Warp(AggFileFull, gdal_obj, warpOptions=warping)
 
 #=============================================================================#
 # 0. Read in category data and create vectors                                 #
@@ -213,6 +225,8 @@ for i in np.arange(28):
     yeild=CDL2GCAM_key['Yeild'][GCAM_cat == i+1]
     
     base_price[i]=np.average(np.multiply(perc[pd.notnull(price)], price[pd.notnull(price)]))
+
+    ## I BEFORE E EXCEPT AFTER C, YO!!!!!! =====> 
     base_yeild[i]=np.average(np.multiply(perc[pd.notnull(price)], yeild[pd.notnull(price)]))
 
 np.savetxt("base_price.csv", base_price, delimiter=",")
@@ -226,9 +240,9 @@ AggregateResolution = 0.01
 AggregateResolution3 = 0.03
 
 for i in np.arange(len(CDL_Data)):
-    saveGrid(CDL_Data[i])
-    warpGrid(CDL_Data[i],Agg_WriteDir,AggregateResolution)
-    warpGrid(CDL_Data[i],Agg_WriteDir3,AggregateResolution3)
+    saveGCAMGrid(GCAM_Data[i])
+    #warpGrid(CDL_Data[i],Agg_WriteDir,AggregateResolution)
+    #warpGrid(CDL_Data[i],Agg_WriteDir3,AggregateResolution3)
 
 #tst =gdal.Open("D:/Dropbox/BSU/Python/Data/CDL_GCAM_SRP/cdl_2010_srb.tiff")
 #tst_grid = np.float64(tst.ReadAsArray())
