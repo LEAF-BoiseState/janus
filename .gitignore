@@ -2,4 +2,6 @@
 *.txt
 *.asc
 *.tiff
+/GCAM_SRP/*.*
+/GCAM_SRP/**/*.*
 

@@ -13,13 +13,19 @@ from joblib import Parallel, delayed
 import pandas as pd
 import os
 
+LejoDataPath  = '/Users/lejoflores/Dropbox/CDL/'
+LejoWritePath = '/Users/lejoflores/IM3-BoiseState'
+
 #CDL_GCAM_keyfile = '~/Dropbox/BSU/Python/Data/CDL2GCAM_SRP.csv'
 CDL_GCAM_keyfile = 'D:/Dropbox/BSU/Python/Data/CDL2GCAM_SRP.csv'
 
-CDL_ReadDir =  'D:/Dropbox/BSU/Python/Data/CDL/'
-#CDL_ReadDir = '/Users/kek25/Dropbox/BSU/Python/Data/CDL/'
+
+CDL_ReadDir   =  LejoDataPath #'D:/Dropbox/BSU/Python/Data/CDL/'
+#CDL_ReadDir  = '/Users/kek25/Dropbox/BSU/Python/Data/CDL/'
+
+
 GCAM_WriteDir = 'D:/Dropbox/BSU/Python/Data/GCAM_SRP/'
-Agg_WriteDir = 'D:/Dropbox/BSU/Python/Data/GCAM_SRP/1km/'
+Agg_WriteDir  = 'D:/Dropbox/BSU/Python/Data/GCAM_SRP/1km/'
 Agg_WriteDir3 = 'D:/Dropbox/BSU/Python/Data/GCAM_SRP/3km/'
 
 files = glob.glob(CDL_ReadDir+'*.txt')
