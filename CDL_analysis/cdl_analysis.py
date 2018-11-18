@@ -150,8 +150,6 @@ def warpGrid(GCAM_struct,Agg_WriteDir,Agg_WriteFile,gdal_res):
     gcam_pixelsize    = GCAM_struct.gcam_pixelsize
     gcam_grid         = GCAM_struct.gcam_grid
     
-    gcam_proj     = gdal_obj.GetProjection()
-    gcam_geotrans = gdal_obj.GetGeoTransform()
     pixelSizeX    = gdal_obj.GetGeoTransform()[1] #original pixel size
     
     AggFileFull = Agg_WriteDir+Agg_WriteFile
@@ -159,6 +157,7 @@ def warpGrid(GCAM_struct,Agg_WriteDir,Agg_WriteFile,gdal_res):
     warping = gdal.WarpOptions(format='Gtiff', xRes=gdal_res, yRes=gdal_res, srcSRS=gcam_projection, resampleAlg='mode')
     gdal.Warp(AggFileFull, gdal_obj, warpOptions=warping)
 
+    return
 #=============================================================================#
 # 0. Read in category data and create vectors                                 #
 #=============================================================================#
@@ -184,16 +183,24 @@ for file in files:
     GCAM_Data.append(GCAM_DataStruct(gcam_path,gram_outfile)) 
     
 #=============================================================================#
-# 2. Read in all the CDL files and store data in CDL_DataStruct               #
+# 2a. Read in all the CDL files and store data in CDL_DataStruct              #
 #=============================================================================#
 Parallel(n_jobs=6, verbose=60, backend='threading')(delayed(ReadArcGrid)(CDL_Data[i]) \
          for i in np.arange(len(CDL_Data)))
 
 #=============================================================================#
-# 3. Perform the CDL-GCAM category conversion                                     #
+# 2b. Perform the CDL-GCAM category conversion                                #
 #=============================================================================#
 Parallel(n_jobs=6, verbose=10, backend='threading')(delayed(CDL2GCAM)(CDL_Data[i],CDL_cat,GCAM_Data[i],GCAM_cat) \
          for i in np.arange(len(CDL_Data)))
+
+#=============================================================================#
+# 2c. Save recategorized GCAM grids to files                                  #
+#=============================================================================#
+Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(saveGCAMGrid)(GCAM_Data[i]) \
+         for i in np.arange(len(CDL_Data)))
+
+
 
 #=============================================================================#
 # 4. Create Arrays of Results
@@ -239,8 +246,6 @@ np.savetxt("base_yield.csv",  base_yeild, delimiter=",")
 AggregateResolution = 0.01
 AggregateResolution3 = 0.03
 
-for i in np.arange(len(CDL_Data)):
-    saveGCAMGrid(GCAM_Data[i])
     #warpGrid(CDL_Data[i],Agg_WriteDir,AggregateResolution)
     #warpGrid(CDL_Data[i],Agg_WriteDir3,AggregateResolution3)
 
