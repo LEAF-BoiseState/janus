@@ -5,6 +5,7 @@ Created on Fri Oct 26 21:47:36 2018
 
 @author: lejoflores and Kendra Kaiser
 """
+
 import gdal
 import glob 
 import numpy as np
@@ -13,50 +14,70 @@ from joblib import Parallel, delayed
 import pandas as pd
 import os
 
+#=============================================================================#
+# PREAMBLE AND PATH DEFINITIONS
+#=============================================================================#
+
 LejoDataPath  = '/Users/lejoflores/Dropbox/CDL/'
-LejoWritePath = '/Users/lejoflores/IM3-BoiseState'
+LejoWritePath = '/Users/lejoflores/IM3-BoiseState/CDL_analysis/'
 
 #CDL_GCAM_keyfile = '~/Dropbox/BSU/Python/Data/CDL2GCAM_SRP.csv'
-CDL_GCAM_keyfile = 'D:/Dropbox/BSU/Python/Data/CDL2GCAM_SRP.csv'
-
+CDL_GCAM_keyfile = LejoWritePath+'CDL2GCAM_SRP.csv'
 
 CDL_ReadDir   =  LejoDataPath #'D:/Dropbox/BSU/Python/Data/CDL/'
 #CDL_ReadDir  = '/Users/kek25/Dropbox/BSU/Python/Data/CDL/'
 
+GCAM_WriteDir = LejoWritePath+'GCAM_SRP/'
+Agg_WriteDir  = LejoWritePath+'GCAM_SRP/1km/'
+Agg_WriteDir3 = LejoWritePath+'GCAM_SRP/3km/'
 
-GCAM_WriteDir = 'D:/Dropbox/BSU/Python/Data/GCAM_SRP/'
-Agg_WriteDir  = 'D:/Dropbox/BSU/Python/Data/GCAM_SRP/1km/'
-Agg_WriteDir3 = 'D:/Dropbox/BSU/Python/Data/GCAM_SRP/3km/'
+files = glob.glob(CDL_ReadDir+'cdl*.txt')
 
-files = glob.glob(CDL_ReadDir+'*.txt')
 
 #=============================================================================#
 # CLASS DEFINITIONS    
 class CDL_DataStruct:
-    def __init__(self,filename): # We initialize the class only with a filename
-        self.filename = filename
+    def __init__(self,cdl_path,cdl_infile): # We initialize the class only with a filename
+        self.cdl_path   = cdl_path
+        self.cdl_infile = cdl_infile
+        
     def AddCDL_GDALstruct(self,gdal_obj): # A placeholder to add the actual GDAL object
         self.gdal_obj = gdal_obj
+
     def AddCDLData(self,cdl_grid): # Original CDL grid
         self.cdl_grid = cdl_grid
+
     def AddCDLStats(self,cdl_stats): # Add CDL stats
         self.cdl_stats = cdl_stats
-        
-    def AddGCAMFileName(self,gcam_outfile):
+                
+class GCAM_DataStruct:
+    def __init__(self,gcam_path,gcam_outfile):
+        self.gcam_path    = gcam_path
         self.gcam_outfile = gcam_outfile
+
     def AddGCAMStats(self,gcam_stats): # Add GCAM stats
         self.gcam_stats = gcam_stats
+
     def AddGCAMGrid(self,gcam_grid): # Add reclassified GCAM grid
         self.gcam_grid = gcam_grid
+
     def AddAggregatedGrid(self,agg_grid):
         self.agg_grid = agg_grid
+
     def AddAggregateStats(self, agg_stats):
         self.agg_stats=agg_stats
+
+#class AggGrid:
+#    def __init__(self):
         
 #=============================================================================#
 # FUNCTION DEFINITIONS    
 def ReadArcGrid(CDL_struct):
-    gdfid = gdal.Open(CDL_struct.filename)
+    
+    cdl_file = CDL_struct.cdl_path+'/'+CDL_struct.cdl_infile
+    
+    gdfid = gdal.Open(cdl_file)
+
     CDL_struct.AddCDL_GDALstruct(gdfid)
 
     cdl_grid = np.float64(gdfid.ReadAsArray())
@@ -65,7 +86,7 @@ def ReadArcGrid(CDL_struct):
     CDL_struct.AddCDLData(cdl_grid)
     return
 
-def CDL2GCAM(CDL_struct,CDL_cat,GCAM_cat):
+def CDL2GCAM(CDL_struct,CDL_cat,GCAM_struct,GCAM_cat):
 
     cdl_stats  = np.zeros(132)
     gcam_stats = np.zeros(28)
@@ -80,16 +101,17 @@ def CDL2GCAM(CDL_struct,CDL_cat,GCAM_cat):
         indx,indy = np.where(gcam_grid == i+1)
         gcam_stats[i] = indx.size
     
+    
     CDL_struct.AddCDLStats(cdl_stats)
+    
+    
     CDL_struct.AddGCAMStats(gcam_stats)
     CDL_struct.AddGCAMGrid(gcam_grid)
     
     return
 
 def saveGrid(CDL_struct):
-    filename = CDL_struct.filename
-    print(filename)
-    gdfid = gdal.Open(filename)
+
     indata = CDL_struct.cdl_grid
     nrows,ncols = np.shape(indata) 
 
@@ -124,20 +146,6 @@ def warpGrid(CDL_struct,Agg_WriteDir,gdal_res):
     
     warping = gdal.WarpOptions(format='Gtiff', xRes=gdal_res, yRes=gdal_res, srcSRS=gcam_proj, resampleAlg='mode')
     gdal.Warp(newFile, gdal_obj, warpOptions=warping)
-    
-    #CDL_struct.AddAggregatedGrid() <- to do this I think we need to read the new grid back in ... might be a seperate function
-    
-    #arr=np.array(agg_grid).flatten()
-    #arr=arr[pd.notnull(tst)]
-    
-    #agg_stats = dict()
-    #for x in arr:
-     #   try:
-      #      agg_stats[x] += 1
-       # except:
-        #    agg_stats[x] = 1
-            
-    #CDL_struct.AddAggregateStats(agg_stats)
 
 #=============================================================================#
 # 0. Read in category data and create vectors                                 #
@@ -149,10 +157,20 @@ GCAM_cat     = CDL2GCAM_key['SRP_GCAM_id'].values
 #=============================================================================#
 # 1. Initialize a list of CDL structures for analysis                         #
 #=============================================================================#
-CDL_Data = []
+CDL_Data  = []
+GCAM_Data = []
 for file in files:
-   CDL_Data.append(CDL_DataStruct(file))
+    # Initialize CDL data structures with paths adn file names
+    cdl_path   = os.path.dirname(file)
+    cdl_infile = os.path.basename(file)
+    CDL_Data.append(CDL_DataStruct(cdl_path,cdl_infile))
 
+    # Initialize GCAM data structures with paths and file names
+    gcam_path    = GCAM_WriteDir
+    gcam_outfile = cdl_infile.replace('cdl','gcam')
+    gram_outfile = gcam_outfile.replace('txt','tiff')
+    GCAM_Data.append(GCAM_DataStruct(gcam_path,gram_outfile)) 
+    
 #=============================================================================#
 # 2. Read in all the CDL files and store data in CDL_DataStruct               #
 #=============================================================================#
@@ -162,7 +180,7 @@ Parallel(n_jobs=6, verbose=60, backend='threading')(delayed(ReadArcGrid)(CDL_Dat
 #=============================================================================#
 # 3. Perform the CDL-GCAM category conversion                                     #
 #=============================================================================#
-Parallel(n_jobs=6, verbose=10, backend='threading')(delayed(CDL2GCAM)(CDL_Data[i],CDL_cat,GCAM_cat) \
+Parallel(n_jobs=6, verbose=10, backend='threading')(delayed(CDL2GCAM)(CDL_Data[i],CDL_cat,GCAM_Data[i],GCAM_cat) \
          for i in np.arange(len(CDL_Data)))
 
 #=============================================================================#
@@ -220,13 +238,13 @@ for i in np.arange(len(CDL_Data)):
 #=============================================================================#
 # 7. Clip out a few counties - Twin, Jerome, Minidoka and Ada/Canyon
 #=============================================================================#
-
-from osgeo import ogr
-import shapefile
-
-sf = shapefile.Reader("SRB_counties")
-
-layer = reader.GetLayer()
-feature = layer.GetFeature(0)
-geoms =json.loads(feature.ExportToJson())['geometry']
-print (geoms)
+#
+#from osgeo import ogr
+#import shapefile
+#
+#sf = shapefile.Reader("SRB_counties")
+#
+#layer = reader.GetLayer()
+#feature = layer.GetFeature(0)
+#geoms =json.loads(feature.ExportToJson())['geometry']
+#print (geoms)
