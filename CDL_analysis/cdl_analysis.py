@@ -143,7 +143,7 @@ def saveGCAMGrid(GCAM_struct):
 
     return
 
-def warpGrid(GCAM_struct,Agg_WriteDir,Agg_WriteFile,gdal_res):
+def AggregateGCAMGrid(GCAM_struct,Agg_WriteDir,Agg_WriteFile,gdal_res):
     
     gcam_geotransform = GCAM_struct.gcam_geotransform
     gcam_projection   = GCAM_struct.gcam_projection
@@ -200,7 +200,18 @@ Parallel(n_jobs=6, verbose=10, backend='threading')(delayed(CDL2GCAM)(CDL_Data[i
 Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(saveGCAMGrid)(GCAM_Data[i]) \
          for i in np.arange(len(CDL_Data)))
 
+#=============================================================================#
+# 2d. Aggregate GCAM files to coarser resolution and save                     #
+#=============================================================================#
+AggRes = 0.01
 
+Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(AggregateGCAMGrid)(GCAM_Data[i],Agg_WriteDir,Agg_WriteFile,AggRes) \
+        for i in np.arange(len(GCAM_Data)))
+
+AggRes = 0.03
+
+Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(AggregateGCAMGrid)(GCAM_Data[i],Agg_WriteDir,Agg_WriteFile,AggRes) \
+        for i in np.arange(len(GCAM_Data)))
 
 #=============================================================================#
 # 4. Create Arrays of Results
@@ -243,11 +254,6 @@ np.savetxt("base_yield.csv",  base_yeild, delimiter=",")
 # 6. Save new grids with GCAM categories, aggregate, and save counts
 #=============================================================================#
 
-AggregateResolution = 0.01
-AggregateResolution3 = 0.03
-
-    #warpGrid(CDL_Data[i],Agg_WriteDir,AggregateResolution)
-    #warpGrid(CDL_Data[i],Agg_WriteDir3,AggregateResolution3)
 
 #tst =gdal.Open("D:/Dropbox/BSU/Python/Data/CDL_GCAM_SRP/cdl_2010_srb.tiff")
 #tst_grid = np.float64(tst.ReadAsArray())
