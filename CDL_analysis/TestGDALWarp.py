@@ -14,7 +14,9 @@ import os
 
 GDAL_res = 0.05
 
-GCAM_GridDir  = '/Users/lejoflores/IM3-BoiseState/CDL_analysis/GCAM_SRP/'
+#user = '/Users/lejoflores/'
+user = '/Users/kek25/Documents/GitRepos/'
+GCAM_GridDir  = user + 'IM3-BoiseState/CDL_analysis/GCAM_SRP/'
 GCAM_GridFile = 'gcam_2010_srb.tiff'
 
 GCAM_AggWriteDir  = GCAM_GridDir+'3km/'
