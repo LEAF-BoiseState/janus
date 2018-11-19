@@ -49,6 +49,7 @@ warping = gdal.WarpOptions(format='Gtiff', xRes=GDAL_res, yRes=GDAL_res, srcSRS=
 #gdal.Warp(GCAM_AggWriteDir+GCAM_AggWriteFile, src_ds, warpOptions=warping)
 gdal.ReprojectImage(src_ds, dst_ds, src_proj, dst_proj, gdal.GRA_Mode)
 
+dst_ds = None
 
 src_ds = None
 #
@@ -56,5 +57,6 @@ src_ds = None
 ds   = gdal.Open(GCAM_AggWriteDir+GCAM_AggWriteFile)
 grid = ds.ReadAsArray()
 
-plt.figure(dpi=100)
+plt.figure(dpi=150)
 plt.imshow(grid)
+plt.title('BOOM Shakalaka Mothafucka!')
