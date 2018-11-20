@@ -21,26 +21,24 @@ AggRes = 3000.0 # In units of m
 # Set master working  directories                                             #
 #=============================================================================#
 # Base user directories
-lejo_test = '/Users/lejoflores/IM3-BoiseState/CDL_analysis/'
-#kendra_test = '/Users/kek25/Documents/GitRepos/IM3-BoiseState/CDL_analysis/'
-
-user = lejo_test
-#user = kendra_test
+#lejo_test = '/Users/lejoflores/IM3-BoiseState/CDL_analysis/'
+#user = lejo_test
 
 # Specific directories of where to find the data
-# GCAM_GridDir = 'D:\Dropbox\BSU\Python\Data\GCAM_SRP'
-GCAM_ReadDir   = user + 'GCAM_SRP/'
-GCAM_ReadFiles = glob.glob(GCAM_ReadDir+'gcam*srb.tiff')
+GCAM_ReadDir = 'D:\Dropbox\BSU\Python\Data-IM3\GCAM_SRP\GCAM_UTM'
+#GCAM_ReadDir   = user + 'GCAM_UTM\'
 
-# Location and name of output file
-GCAM_ReprojWriteDir  = GCAM_ReadDir + '3km/'
+GCAM_ReadFiles = glob.glob(GCAM_ReadDir +'\gcam*srb_utm11N.tiff')
+
+# Location and name of output file ## \\ == Windows sucks 
+GCAM_ReprojWriteDir  = GCAM_ReadDir + '\\'+ '3km\\'
 
 #=============================================================================#
 # FUNCTION DEFINITIONS    
 def AggregateGCAMGrid(GCAM_ReadDir,GCAM_ReadFile,GCAM_WriteDir,AggRes):
     
     # Open the GeoTiff based on the input path and file
-    src_ds = gdal.Open(GCAM_ReadDir+GCAM_ReadFile)
+    src_ds = gdal.Open(GCAM_ReadDir+'\\'+ GCAM_ReadFile)
 
     # Create the name of the output file by modifying the input file
     GCAM_WriteFile = GCAM_ReadFile.replace('srb','srb_utm11N'+'_'+str(int(AggRes)))
@@ -57,17 +55,16 @@ def AggregateGCAMGrid(GCAM_ReadDir,GCAM_ReadFile,GCAM_WriteDir,AggRes):
 
     dst_ncols = (int)(src_ncols/agg_factor)
     dst_nrows = (int)(src_nrows/agg_factor)
-    
-    dst_driver = gdal.GetDriverByName('Gtiff')
-    
-    dst_geot = (src_geot[0], src_geot[1]*agg_factor, src_geot[2], src_geot[3], src_geot[4], src_geot[5]*agg_factor)
-    dst_proj = src_proj
-    
-    dst_ds = dst_driver.Create(GCAM_WriteDir+GCAM_WriteFile, dst_ncols, dst_nrows, 1, gdal.GDT_Float32)
-    dst_ds.SetGeoTransform(dst_geot)
-    dst_ds.SetProjection(dst_proj)
 
-    gdal.ReprojectImage(src_ds, dst_ds, src_proj, dst_proj, gdal.GRA_Mode)
+    dst_driver = gdal.GetDriverByName('Gtiff')
+    dst_ds = dst_driver.Create(GCAM_WriteDir+'\\'+GCAM_WriteFile, dst_ncols, dst_nrows, 1, gdal.GDT_Float32)
+
+    dst_geot = (src_geot[0], src_geot[1]*agg_factor, src_geot[2], src_geot[3], src_geot[4], src_geot[5]*agg_factor)
+
+    dst_ds.SetGeoTransform(dst_geot) ##dst_ds is not correct
+    dst_ds.SetProjection(src_proj)
+
+    gdal.ReprojectImage(src_ds, dst_ds, src_proj, src_proj, gdal.GRA_Mode)
 
     src_ds = None
     dst_ds = None
