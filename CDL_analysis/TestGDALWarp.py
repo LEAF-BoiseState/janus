@@ -81,4 +81,3 @@ grid = ds.ReadAsArray()
 
 plt.figure(dpi=150)
 plt.imshow(grid)
-plt.title('BOOM Shakalaka Mothafucka!')
