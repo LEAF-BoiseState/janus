@@ -11,11 +11,16 @@ import gdal
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+from pyproj import Proj
 
 GDAL_res = 0.05
 
-GCAM_GridDir  = '/Users/lejoflores/IM3-BoiseState/CDL_analysis/GCAM_SRP/'
-GCAM_GridFile = 'gcam_2010_srb.tiff'
+#user = '/Users/lejoflores/'
+#user = '/Users/kek25/Documents/GitRepos/'
+
+GCAM_GridDir = 'D:\Dropbox\BSU\Python\Data\GCAM_SRP'
+#GCAM_GridDir  = user + 'IM3-BoiseState/CDL_analysis/GCAM_SRP/'
+GCAM_GridFile = '\gcam_2010_srb.tiff'
 
 GCAM_AggWriteDir  = GCAM_GridDir+'3km/'
 GCAM_AggWriteFile = 'test_3km.tiff'
@@ -26,6 +31,15 @@ src_geot = src_ds.GetGeoTransform()
 src_proj = src_ds.GetProjection()
 src_res  = src_ds.GetGeoTransform()[1]
 
+
+#outProj = Proj(init='epsg:32611') #WGS 84 Zone 11N
+
+#Trying to just set projection w gdal
+gdal.Warp(GCAM_AggWriteDir+GCAM_AggWriteFile, src_ds, dstSRS='EPSG:32611')
+
+
+
+
 agg_factor = GDAL_res / src_res
 
 src_ncols = src_ds.RasterXSize
@@ -33,7 +47,6 @@ src_nrows = src_ds.RasterYSize
 
 dst_ncols = (int)(src_ncols/agg_factor)
 dst_nrows = (int)(src_nrows/agg_factor)
-
 
 dst_driver = gdal.GetDriverByName('Gtiff')
 
