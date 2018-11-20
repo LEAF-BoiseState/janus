@@ -15,7 +15,7 @@ from joblib import Parallel, delayed
 
 #=============================================================================#
 
-AggRes = 3.0
+AggRes = 3000.0 # In units of m 
 
 #=============================================================================#
 # Set master working  directories                                             #
@@ -34,7 +34,6 @@ GCAM_ReadFiles = glob.glob(GCAM_ReadDir+'gcam*srb.tiff')
 
 # Location and name of output file
 GCAM_ReprojWriteDir  = GCAM_ReadDir + '3km/'
-
 
 #=============================================================================#
 # FUNCTION DEFINITIONS    
@@ -64,9 +63,17 @@ def AggregateGCAMGrid(GCAM_ReadDir,GCAM_ReadFile,GCAM_WriteDir,AggRes):
     dst_geot = (src_geot[0], src_geot[1]*agg_factor, src_geot[2], src_geot[3], src_geot[4], src_geot[5]*agg_factor)
     dst_proj = src_proj
     
-    dst_ds = dst_driver.Create(GCAM_AggWriteDir+GCAM_AggWriteFile, dst_ncols, dst_nrows, 1, gdal.GDT_Float32)
+    dst_ds = dst_driver.Create(GCAM_WriteDir+GCAM_WriteFile, dst_ncols, dst_nrows, 1, gdal.GDT_Float32)
     dst_ds.SetGeoTransform(dst_geot)
     dst_ds.SetProjection(dst_proj)
 
+    gdal.ReprojectImage(src_ds, dst_ds, src_proj, dst_proj, gdal.GRA_Mode)
 
+    src_ds = None
+    dst_ds = None
 
+    return
+#                                                                             #
+#=============================================================================#
+Parallel(n_jobs=6, verbose=60, backend='threading')(delayed(AggregateGCAMGrid)(GCAM_ReadDir,os.path.basename(file),GCAM_ReprojWriteDir,AggRes) \
+         for file in GCAM_ReadFiles)
