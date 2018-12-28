@@ -15,7 +15,7 @@ from joblib import Parallel, delayed
 
 #=============================================================================#
 
-AggRes = 3000.0 # In units of m 
+AggRes = 1000.0 # In units of m 
 
 #=============================================================================#
 # Set master working  directories                                             #
@@ -25,13 +25,11 @@ AggRes = 3000.0 # In units of m
 #user = lejo_test
 
 # Specific directories of where to find the data
-GCAM_ReadDir = 'D:\Dropbox\BSU\Python\Data-IM3\GCAM_SRP\GCAM_UTM'
-#GCAM_ReadDir   = user + 'GCAM_UTM\'
+GCAM_ReadDir = '~/Dropbox/BSU/Python/Data-IM3/GCAM_SRP/GCAM_UTM'
+#not working right now for some reason
+GCAM_ReadFiles = glob.glob(GCAM_ReadDir +'/gcam*srb_utm11N.tiff')
 
-GCAM_ReadFiles = glob.glob(GCAM_ReadDir +'\gcam*srb_utm11N.tiff')
-
-# Location and name of output file ## \\ == Windows sucks 
-GCAM_ReprojWriteDir  = GCAM_ReadDir + '\\'+ '3km\\'
+GCAM_ReprojWriteDir  = GCAM_ReadDir + '/1km/'
 
 #=============================================================================#
 # FUNCTION DEFINITIONS    
