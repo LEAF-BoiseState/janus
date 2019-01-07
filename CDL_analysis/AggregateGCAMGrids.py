@@ -6,7 +6,6 @@ Created on Mon Nov 19 21:33:10 2018
 @author: lejoflores and kendrakaiser
 """
 
-
 import gdal
 import glob
 import os
