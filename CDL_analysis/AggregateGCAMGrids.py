@@ -25,8 +25,8 @@ AggRes = 1000.0 # In units of m
 #user = lejo_test
 
 # Specific directories of where to find the data
-GCAM_ReadDir = '~/Dropbox/BSU/Python/Data-IM3/GCAM_SRP/GCAM_UTM'
-#not working right now for some reason
+GCAM_ReadDir = '~/Documents/Data/GCAM_SRP/GCAM_UTM'
+
 GCAM_ReadFiles = glob.glob(GCAM_ReadDir +'/gcam*srb_utm11N.tiff')
 
 GCAM_ReprojWriteDir  = GCAM_ReadDir + '/1km/'
@@ -39,7 +39,7 @@ def AggregateGCAMGrid(GCAM_ReadDir,GCAM_ReadFile,GCAM_WriteDir,AggRes):
     src_ds = gdal.Open(GCAM_ReadDir+'\\'+ GCAM_ReadFile)
 
     # Create the name of the output file by modifying the input file
-    GCAM_WriteFile = GCAM_ReadFile.replace('srb','srb_utm11N'+'_'+str(int(AggRes)))
+    GCAM_WriteFile = GCAM_ReadFile.replace('srb','srb'+'_'+str(int(AggRes)))
 
     # Get key info on the source dataset    
     src_ncols = src_ds.RasterXSize
@@ -70,5 +70,5 @@ def AggregateGCAMGrid(GCAM_ReadDir,GCAM_ReadFile,GCAM_WriteDir,AggRes):
     return
 #                                                                             #
 #=============================================================================#
-Parallel(n_jobs=6, verbose=60, backend='threading')(delayed(AggregateGCAMGrid)(GCAM_ReadDir,os.path.basename(file),GCAM_ReprojWriteDir,AggRes) \
+Parallel(n_jobs=4, verbose=60, backend='threading')(delayed(AggregateGCAMGrid)(GCAM_ReadDir,os.path.basename(file),GCAM_ReprojWriteDir,AggRes) \
          for file in GCAM_ReadFiles)
