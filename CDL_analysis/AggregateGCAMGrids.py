@@ -3,7 +3,7 @@
 """
 Created on Mon Nov 19 21:33:10 2018
 
-@author: lejoflores
+@author: lejoflores and kendrakaiser
 """
 
 
@@ -21,11 +21,11 @@ AggRes = 1000.0 # In units of m
 # Set master working  directories                                             #
 #=============================================================================#
 # Base user directories
-#lejo_test = '/Users/lejoflores/IM3-BoiseState/CDL_analysis/'
-#user = lejo_test
+#lejo = '/Users/lejoflores/IM3-BoiseState/CDL_analysis/'
+#user = lejo
 
 # Specific directories of where to find the data
-GCAM_ReadDir = '~/Documents/Data/GCAM_SRP/GCAM_UTM'
+GCAM_ReadDir = '/Users/kendrakaiser/Documents/Data/GCAM_UTM'
 
 GCAM_ReadFiles = glob.glob(GCAM_ReadDir +'/gcam*srb_utm11N.tiff')
 
@@ -36,7 +36,7 @@ GCAM_ReprojWriteDir  = GCAM_ReadDir + '/1km/'
 def AggregateGCAMGrid(GCAM_ReadDir,GCAM_ReadFile,GCAM_WriteDir,AggRes):
     
     # Open the GeoTiff based on the input path and file
-    src_ds = gdal.Open(GCAM_ReadDir+'\\'+ GCAM_ReadFile)
+    src_ds = gdal.Open(GCAM_ReadDir+'/'+GCAM_ReadFile)
 
     # Create the name of the output file by modifying the input file
     GCAM_WriteFile = GCAM_ReadFile.replace('srb','srb'+'_'+str(int(AggRes)))
@@ -55,7 +55,7 @@ def AggregateGCAMGrid(GCAM_ReadDir,GCAM_ReadFile,GCAM_WriteDir,AggRes):
     dst_nrows = (int)(src_nrows/agg_factor)
 
     dst_driver = gdal.GetDriverByName('Gtiff')
-    dst_ds = dst_driver.Create(GCAM_WriteDir+'\\'+GCAM_WriteFile, dst_ncols, dst_nrows, 1, gdal.GDT_Float32)
+    dst_ds = dst_driver.Create(GCAM_WriteDir+GCAM_WriteFile, dst_ncols, dst_nrows, 1, gdal.GDT_Float32)
 
     dst_geot = (src_geot[0], src_geot[1]*agg_factor, src_geot[2], src_geot[3], src_geot[4], src_geot[5]*agg_factor)
 
