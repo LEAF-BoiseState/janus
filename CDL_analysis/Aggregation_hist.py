@@ -46,8 +46,8 @@ srcband = src_ds1km.GetRasterBand(1)
 
 #alternative method
 import geopandas as gpd
-from shapely.geometry import Polygon, MultiPolygon, asShape
-from shapely.ops import unary_union, cascading_union
+from shapely.geometry import Polygon, MultiPolygon, asShape, cascaded_union
+from shapely.ops import unary_union, cascaded_union
 
 a=srcband.ReadAsArray().astype(np.float)
 x_index =np.arange(763) 
@@ -59,29 +59,40 @@ xc, yc = np.meshgrid(x_coords, y_coords)
 
 #create a list of all the polygons in the grid
 vert = list()
-for i in np.arange(762):  
-    for j in np.arange(483):  
+for i in np.arange(4): #762  
+    for j in np.arange(3):  #483
             vert.append([[xc[j, i] , yc[j,i]], [xc[j+1, i], yc[j+1, i]], [xc[j+1, i+1], yc[j+1, i+1]],[xc[j, i+1], yc[j, i+1]]])
  
-#create each the polygons and put in a multipolygon
+#create each of the polygons and put in a multipolygon
 polygons=[Polygon(vert[i]) for i in np.arange(len(vert))]
-polys  = MultiPolygon(polygons)
 
-# get the union of the polygons --- this resulted in  "an error occured while starting the kernel"
-joined = unary_union(polys)
-joined = cascading_union(polys)
-         
-vertpoly=Polygon(vert)
+[p.is_valid for p in polygons] 
+
+polys12  = MultiPolygon(polygons)
+polys12 =cascaded_union(polygons)
+
+polys = gpd.GeoSeries(polygons)
 crs = {'init': 'EPSG:32611'}
-poly1km = gpd.GeoDataFrame(index=[0], crs=crs, geometry=[vertpoly]) 
-poly1km.plot(edgecolor='black')
-
-
+poly1km=gpd.GeoDataFrame(geometry=polys, crs=crs)
 poly1km.to_file(filename='SRB_poly_1km.shp', driver="ESRI Shapefile")
 
+poly1km.plot(edgecolor='black')
 
+from descartes import PolygonPatch
+BLUE = '#6699cc'
+poly= polys['geometry'][2]
+fig = plt.figure() 
+ax = fig.gca() 
+ax.add_patch(PolygonPatch(poly, fc=BLUE, ec=BLUE, alpha=0.5, zorder=2 ))
+ax.axis('scaled')
+plt.show()
 
-
+from descartes.patch import PolygonPatch
+for polygon in polys12:
+    plot_coords(ax, polygon.exterior)
+    patch = PolygonPatch(polygon, facecolor=color_isvalid(multi1), edgecolor=color_isvalid(multi1, valid=BLUE), alpha=0.5, zorder=2)
+    ax.add_patch(patch)
+    
 
 #=============================================================================#
 #Calculate Raster Stats                                                       #
