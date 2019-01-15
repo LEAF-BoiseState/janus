@@ -7,7 +7,7 @@ Created on Mon Jan  7 13:50:50 2019
 """
 import gdal
 import ogr
-import matplotlib.pyplot as plt
+import matplotlib as plt
 import shapefile
 import numpy as np
 import rasterio
@@ -50,11 +50,36 @@ drv = ogr.GetDriverByName("ESRI Shapefile")
 dst_ds = drv.CreateDataSource( dst_layername + ".shp" )
 dst_layer = dst_ds.CreateLayer(dst_layername, srs = 'EPSG:32611' )
 
-#creates vector polygons for all connected regions of pixels in the raster sharing a common pixel value- not quite what we need
-tst= gdal.Polygonize(srcband, None, dst_layer, -1, [], callback=None )
+#alternative method
 
-tst= np.float64(srcband.ReadAsArray())
-#sf = shapefile.Reader("SRB_counties")
-plt.imshow(tst)
-plt.grid(True)
+a=srcband.ReadAsArray().astype(np.float)
+x_index =np.arange(763) 
+y_index = np.arange(484)
+(upper_left_x, x_size, x_rotation, upper_left_y, y_rotation, y_size) = src_ds1km.GetGeoTransform()
+x_coords = x_index * x_size + upper_left_x + (x_size / 2) #add half the cell size
+y_coords = y_index * y_size + upper_left_y + (y_size / 2) #to centre the point
 
+import geopandas as gpd
+from shapely import geometry
+from shapely.geometry import Polygon
+
+polygon_geom = Polygon(zip(x_coords, y_coords))
+crs = {'init': 'EPSG:32611'}
+poly1km = gpd.GeoDataFrame(index=[0], crs=crs, geometry=[polygon_geom])       
+print(poly1km.geometry)
+
+poly1km.plot(edgecolor='black')
+poly1km.to_file(filename='polygon.shp', driver="ESRI Shapefile")
+
+
+
+polynp=zip(x_coords, y_coords)
+polylist=list(polynp)
+poly1km= geometry.Polygon([p] for p in polylist)
+
+
+#=============================================================================#
+#Calculate Raster Stats                                                       #
+#=============================================================================#
+
+zonal_satats(shp, tif, categorical=TRUE)
