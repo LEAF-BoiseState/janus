@@ -8,7 +8,6 @@ Created on Mon Jan  7 13:50:50 2019
 import gdal
 import ogr
 from matplotlib import pyplot as plt
-import shapefile
 import numpy as np
 import rasterio
 from rasterstats import zonal_stats #zonal stats http://www.perrygeo.com/index2.html, https://pythonhosted.org/rasterstats/manual.html
@@ -40,16 +39,15 @@ srcband = src_ds1km.GetRasterBand(1)
 #Create Polygon from grid                                                     #
 #=============================================================================#
 
-dst_layername = "SRB_polygon_1km"
-drv = ogr.GetDriverByName("ESRI Shapefile")
-dst_ds = drv.CreateDataSource( dst_layername + ".shp" )
-dst_layer = dst_ds.CreateLayer(dst_layername, srs = 'EPSG:32611' )
+#dst_layername = "SRB_polygon_1km"
+#drv = ogr.GetDriverByName("ESRI Shapefile")
+#dst_ds = drv.CreateDataSource( dst_layername + ".shp" )
+#dst_layer = dst_ds.CreateLayer(dst_layername, srs = 'EPSG:32611' )
 
 #alternative method
 import geopandas as gpd
-from shapely import geometry
 from shapely.geometry import Polygon, MultiPolygon, asShape
-from shapely.ops import unary_union, cascaded_union
+from shapely.ops import unary_union, cascading_union
 
 a=srcband.ReadAsArray().astype(np.float)
 x_index =np.arange(763) 
@@ -65,17 +63,15 @@ for i in np.arange(762):
     for j in np.arange(483):  
             vert.append([[xc[j, i] , yc[j,i]], [xc[j+1, i], yc[j+1, i]], [xc[j+1, i+1], yc[j+1, i+1]],[xc[j, i+1], yc[j, i+1]]])
  
-for i in np.arange(6):
-    polygons[i] = Polygon(vert[i])
-    
- 5+5   
+#create each the polygons and put in a multipolygon
 polygons=[Polygon(vert[i]) for i in np.arange(len(vert))]
 polys  = MultiPolygon(polygons)
 
-# get the union of the polygons
-joined = unary_union(polygons)
+# get the union of the polygons --- this resulted in  "an error occured while starting the kernel"
+joined = unary_union(polys)
+joined = cascading_union(polys)
          
-vertpoly=geometry.Polygon(vert)
+vertpoly=Polygon(vert)
 crs = {'init': 'EPSG:32611'}
 poly1km = gpd.GeoDataFrame(index=[0], crs=crs, geometry=[vertpoly]) 
 poly1km.plot(edgecolor='black')
