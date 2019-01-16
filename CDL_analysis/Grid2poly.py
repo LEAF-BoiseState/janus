@@ -31,10 +31,12 @@ srcband_3km = src_ds3km.GetRasterBand(1)
 #=============================================================================#
 #Create Polygon from grid                                                     #
 #=============================================================================#
+band= srcband_3km
 
-a=srcband.ReadAsArray().astype(np.float)
-x_index =np.arange(763) 
-y_index = np.arange(484)
+a=band.ReadAsArray().astype(np.float)
+
+x_index =np.arange(a.shape[1]) 
+y_index = np.arange(a.shape[0])
 (upper_left_x, x_size, x_rotation, upper_left_y, y_rotation, y_size) = src_ds1km.GetGeoTransform()
 x_coords = x_index * x_size + upper_left_x + (x_size / 2) #add half the cell size
 y_coords = y_index * y_size + upper_left_y + (y_size / 2) #to centre the point
@@ -42,8 +44,8 @@ xc, yc = np.meshgrid(x_coords, y_coords)
 
 #create a list of all the polygons in the grid
 vert = list()
-for i in np.arange(762): #762  
-    for j in np.arange(483):  #483
+for i in np.arange(a.shape[1]-1):  
+    for j in np.arange(a.shape[0]-1):  
             vert.append([[xc[j, i] , yc[j,i]], [xc[j+1, i], yc[j+1, i]], [xc[j+1, i+1], yc[j+1, i+1]],[xc[j, i+1], yc[j, i+1]]])
  
 #create list of polygons
@@ -57,9 +59,10 @@ poly1km.crs= from_epsg(32611)
 #=============================================================================#
 #Save Output                                                                  #
 #=============================================================================#
-FileName='SRB_poly_1km.shp'
+FileName='SRB_poly_3km.shp'
+
 WriteDir='~/Documents/GitRepos/IM3-BoiseState/CDL_analysis'
-poly1km.to_file(filename='SRB_poly_1km.shp', driver="ESRI Shapefile")
+poly1km.to_file(filename=FileName, driver="ESRI Shapefile")
 
 
 
