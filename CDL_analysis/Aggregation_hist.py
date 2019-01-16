@@ -46,8 +46,8 @@ srcband = src_ds1km.GetRasterBand(1)
 
 #alternative method
 import geopandas as gpd
-from shapely.geometry import Polygon, MultiPolygon, asShape, cascaded_union
-from shapely.ops import unary_union, cascaded_union
+from shapely.geometry import Polygon, MultiPolygon 
+from fiona.crs import from_epsg
 
 a=srcband.ReadAsArray().astype(np.float)
 x_index =np.arange(763) 
@@ -59,40 +59,26 @@ xc, yc = np.meshgrid(x_coords, y_coords)
 
 #create a list of all the polygons in the grid
 vert = list()
-for i in np.arange(4): #762  
-    for j in np.arange(3):  #483
+for i in np.arange(762): #762  
+    for j in np.arange(483):  #483
             vert.append([[xc[j, i] , yc[j,i]], [xc[j+1, i], yc[j+1, i]], [xc[j+1, i+1], yc[j+1, i+1]],[xc[j, i+1], yc[j, i+1]]])
  
-#create each of the polygons and put in a multipolygon
+#create list of polygons
 polygons=[Polygon(vert[i]) for i in np.arange(len(vert))]
+#test to confirm that worked
+#[p.is_valid for p in polygons] 
 
-[p.is_valid for p in polygons] 
+polys1  = MultiPolygon(polygons)
+polys = gpd.GeoSeries(polys1)
+poly1km=gpd.GeoDataFrame(geometry=polys)
+poly1km.crs= from_epsg(32611)
 
-polys12  = MultiPolygon(polygons)
-polys12 =cascaded_union(polygons)
-
-polys = gpd.GeoSeries(polygons)
-crs = {'init': 'EPSG:32611'}
-poly1km=gpd.GeoDataFrame(geometry=polys, crs=crs)
+FileName='SRB_poly_1km.shp'
+WriteDir='~/Desktop/'
 poly1km.to_file(filename='SRB_poly_1km.shp', driver="ESRI Shapefile")
 
 poly1km.plot(edgecolor='black')
 
-from descartes import PolygonPatch
-BLUE = '#6699cc'
-poly= polys['geometry'][2]
-fig = plt.figure() 
-ax = fig.gca() 
-ax.add_patch(PolygonPatch(poly, fc=BLUE, ec=BLUE, alpha=0.5, zorder=2 ))
-ax.axis('scaled')
-plt.show()
-
-from descartes.patch import PolygonPatch
-for polygon in polys12:
-    plot_coords(ax, polygon.exterior)
-    patch = PolygonPatch(polygon, facecolor=color_isvalid(multi1), edgecolor=color_isvalid(multi1, valid=BLUE), alpha=0.5, zorder=2)
-    ax.add_patch(patch)
-    
 
 #=============================================================================#
 #Calculate Raster Stats                                                       #
