@@ -13,6 +13,9 @@ from rasterstats import zonal_stats #zonal stats http://www.perrygeo.com/index2.
 
 #sample code http://pcjericks.github.io/py-gdalogr-cookbook/raster_layers.html#polygonize-a-raster-band
 
+
+ReadDir='~/Documents/GitRepos/IM3-BoiseState/CDL_analysis/'
+shpFile='SRB_poly_3km.shp'
 #=============================================================================#
 #Calculate Raster Stats                                                       #
 #=============================================================================#
