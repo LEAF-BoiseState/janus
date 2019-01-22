@@ -33,3 +33,7 @@
 #       > Add new urban types for next year
 #       > Add new exurban types for next year
 
+# 3. Save output
+#   - Aggregate statistics through time (csv or NetCDF)
+#   - Spatial land use patterns through time (NetCDF)
+
