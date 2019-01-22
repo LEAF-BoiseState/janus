@@ -15,20 +15,19 @@ from joblib import Parallel, delayed
 # Set master working  directories                                             #
 #=============================================================================#
 # Base user directories
-lejo_test = '/Users/lejoflores/IM3-BoiseState/CDL_analysis/'
-#kendra_test = '/Users/kek25/Documents/GitRepos/IM3-BoiseState/CDL_analysis/'
+#lejo_test = '/Users/lejoflores/IM3-BoiseState/CDL_analysis/'
+kendra_test = '/Users/kek25/Documents/GitRepos/IM3-BoiseState/CDL_analysis/'
 
-user = lejo_test
-#user = kendra_test
+#user = lejo_test
+user = kendra_test
 
 # Specific directories of where to find the data
-# GCAM_GridDir = 'D:\Dropbox\BSU\Python\Data\GCAM_SRP'
-GCAM_ReadDir   = user + 'GCAM_SRP/'
+#GCAM_ReadDir   = user + 'GCAM_SRP/'
+GCAM_ReadDir   = '/Users/kek25/Dropbox/BSU/Python/Data-IM3/GCAM_SRP/'
 GCAM_ReadFiles = glob.glob(GCAM_ReadDir+'gcam*srb.tiff')
 
 # Location and name of output file
-GCAM_ReprojWriteDir  = GCAM_ReadDir + 'test_out/'
-GCAM_ReprojWriteFile = 'test_utm11N.tiff'
+GCAM_ReprojWriteDir  = GCAM_ReadDir + 'GCAM_UTM/'
 
 dst_epsg_str = 'EPSG:32611'
 
