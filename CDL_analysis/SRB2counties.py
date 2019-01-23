@@ -29,10 +29,16 @@ with rio.open(files[0]) as src:
                             crop=True)
     # metadata for writing or exporting the data
     Ada_meta = src.meta.copy()
+    Ada_meta.update({"driver": "GTiff",
+                     "height": Ada_cdl.shape[1],
+                     "width": Ada_cdl.shape[2],
+                     "transform": affine,
+                     "crs":32611})
 
     show(Ada_cdl)
     
 # Write data
-writeFile = "data/colorado-flood/spatial/outputs/lidar_chm_cropped.tif"
-with rio.open(writeFile, 'w', **Ada_meta) as ff:
-    ff.write(Ada_cdl[0], 1)
+writeDir='/Users/kendrakaiser/Documents/Data/GCAM_UTM/1km/Ada/'
+writeFile = files[0].replace('srb','Ada')
+with rio.open(writeDir+writeFile, 'w', **Ada_meta) as out:
+    out.write(Ada_cdl)
