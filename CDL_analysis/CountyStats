@@ -12,17 +12,31 @@ import glob
 #import gdal
 import rasterio as rio
 #from rasterio.plot import show
+from rasterio.plot import show_hist
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import os
+import matplotlib
+from matplotlib import cm
+from matplotlib.patches import Patch
+from matplotlib.colors import ListedColormap
+import matplotlib.colors as colors
 
 os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/CDL_analysis')
 crop_key = pd.read_csv("GCAM_SRP_names.csv", sep=',')
+crop_key = crop_key.values
 
 ReadDir = '/Users/kendrakaiser/Documents/Data/GCAM_UTM/Ada_2010/' #need a way to index into multiple folders...
 files = glob.glob(ReadDir+'*.tiff')
 
+viridis = cm.get_cmap('viridis', 27)
+
+cmap=colors.LinearSegmentedColormap.from_list('viridis', viridis.colors, N=27)
+for i in np.arange(26):    
+    legend_labels[i] = {viridis(i): crop_key[i,1]}
+ 
+ 
 for i in np.arange(3):
 
     with rio.open(files[i]) as src:
@@ -32,10 +46,19 @@ for i in np.arange(3):
 
     
     fig, (ax, ax2) = plt.subplots(1,2, figsize=(10,5))
-    ax.imshow(r)
+    ax.imshow(r, cmap = cmap)
     ax.set_axis_off()
-
-    ax2.hist(cdl, color='purple')
+    
+    ax2.hist(cdl)
     ax2.set(xlabel = 'Crop', 
             ylabel = 'Frequency')
     fig.suptitle("Distribution of crop categories in Ada County 2010")
+    
+   
+
+    patches = [Patch(color=color, label=label) for color, label in legend_labels.items()]
+    #ax.legend(handles=patches, 
+     #         bbox_to_anchor=(1.35,1), 
+      #        facecolor="white")
+    
+show_hist(cdl, lw=0.0)
