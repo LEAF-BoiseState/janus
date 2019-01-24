@@ -30,11 +30,13 @@ crop_key = crop_key.values
 ReadDir = '/Users/kendrakaiser/Documents/Data/GCAM_UTM/Ada_2010/' #need a way to index into multiple folders...
 files = glob.glob(ReadDir+'*.tiff')
 
+#Set up color map and legend
 viridis = cm.get_cmap('viridis', 27)
-
-cmap=colors.LinearSegmentedColormap.from_list('viridis', viridis.colors, N=27)
-for i in np.arange(26):    
-    legend_labels[i] = {viridis(i): crop_key[i,1]}
+legend_labels={}
+legend_labels = {viridis(0) : crop_key[1,1], viridis(1) : crop_key[2,1], viridis(2) : crop_key[3,1], viridis(3) : crop_key[4,1], viridis(4) : crop_key[5,1], viridis(5) : crop_key[6,1], viridis(6) : crop_key[7,1], viridis(7) : crop_key[8,1],
+                 viridis(8) : crop_key[9,1], viridis(9) : crop_key[10,1], viridis(10) : crop_key[11,1], viridis(11) : crop_key[12,1], viridis(12) : crop_key[13,1], viridis(13) : crop_key[14,1], viridis(14) : crop_key[15,1],
+                 viridis(15) : crop_key[16,1], viridis(16) : crop_key[17,1], viridis(17) : crop_key[18,1], viridis(18) : crop_key[19,1], viridis(19) : crop_key[20,1], viridis(20) : crop_key[21,1], viridis(21) : crop_key[22,1],
+                 viridis(22) : crop_key[23,1], viridis(23) : crop_key[24,1], viridis(24) : crop_key[25,1], viridis(25) : crop_key[26,1], viridis(26) : crop_key[27,1]}
  
  
 for i in np.arange(3):
