@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Jan 24 08:46:08 2019
+
+@author: kendrakaiser
+
+Initial CDL analysis across scales
+"""
+
+import glob
+#import gdal
+import rasterio as rio
+#from rasterio.plot import show
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import os
+
+os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/CDL_analysis')
+crop_key = pd.read_csv("GCAM_SRP_names.csv", sep=',')
+
+ReadDir = '/Users/kendrakaiser/Documents/Data/GCAM_UTM/Ada_2010/' #need a way to index into multiple folders...
+files = glob.glob(ReadDir+'*.tiff')
+
+for i in np.arange(3):
+
+    with rio.open(files[i]) as src:
+        r =src.read(1)
+        cdl=r[r>0] #flattens the data
+        r[r==0]=np.nan
+
+    
+    fig, (ax, ax2) = plt.subplots(1,2, figsize=(10,5))
+    ax.imshow(r)
+    ax.set_axis_off()
+
+    ax2.hist(cdl, color='purple')
+    ax2.set(xlabel = 'Crop', 
+            ylabel = 'Frequency')
+    fig.suptitle("Distribution of crop categories in Ada County 2010")
