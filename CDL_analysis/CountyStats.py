@@ -26,9 +26,10 @@ import matplotlib.colors as colors
 os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/CDL_analysis')
 
 crop_key = pd.read_csv("GCAM_SRP_names.csv", sep=',')
+key=np.asarray(crop_key['crop'])
 crop_key = crop_key.values
 
-#ReadDir = '/Users/kendrakaiser/Documents/Data/GCAM_UTM/Ada_2010/' #need a way to index into multiple folders...
+#ReadDir = '/Users/kendrakaiser/Documents/Data/GCAM_UTM/Jerome_2010/' #need a way to index into multiple folders...
 ReadDir = '/Users/kek25/Dropbox/BSU/IM3/Data/GCAM_UTM/Jerome/'
 files = glob.glob(ReadDir +'*.tiff')
 files.sort()
@@ -55,10 +56,8 @@ for i in np.arange(24):
        counts[years[yrs[i]]][j+1][scale[i]]=np.count_nonzero(cdl == j+1) 
 
 
-
-#calculate Shannon diversity index on each year and scale
+#calculate Shannon diversity index for each year at each scale
 import skbio.diversity as sci
-
 
 l=np.zeros((28,3))
 sh=np.zeros((8,3))
@@ -84,13 +83,59 @@ plt.gca().legend(('1km','3km', '30m'))
 plt.xticks(np.arange(8),labels=years)
 plt.show
 
+###30 meter resolution
+m30= np.zeros((28,8))
+for y in np.arange(8):
+    x= counts[years[y]]
+    temp = []
+    dictlist = []
+    for key, value in x.items():
+        temp = value[2]
+        dictlist.append(temp)
+        
+    l=np.asarray(dictlist)
+    m30[:,y]=l
+    
+np.savetxt('Jerome30m', m30, delimiter=",")
 
+pix=sum(m30[:,0])
+perc=m30/pix
 
+m30t=np.ndarray.transpose(perc)
 
+plt.plot(m30t)
+plt.title('Jerome County land cover (30m)')
+plt.ylabel('Percent')
+plt.xlabel('Year')
+plt.xticks(np.arange(8),labels=years)
+plt.ylim((0,0.08))
 
+### 3km res - basically captures all large crops, small crops like mint/hops are gone
+m3k= np.zeros((28,8))
+for y in np.arange(8):
+    x= counts[years[y]]
+    temp = []
+    dictlist = []
+    for key, value in x.items():
+        temp = value[1]
+        dictlist.append(temp)
+        
+    l=np.asarray(dictlist)
+    m3k[:,y]=l
+    
+np.savetxt('Jerome3km.csv', m3k, delimiter=",")
 
+pix=sum(m3k[:,0])
+perc=m3k/pix
 
+m3kt=np.ndarray.transpose(perc)
 
+plt.plot(m3kt)
+plt.title('Jerome County land cover (3km)')
+plt.ylabel('Percent')
+plt.xlabel('Year')
+plt.xticks(np.arange(8),labels=years)
+plt.ylim((0,0.04))
 
 
 
@@ -130,7 +175,7 @@ for i in np.arange(3):
     ax2.hist(cdl, density=True)
     ax2.set(xlabel = 'Crop', 
             ylabel = 'Frequency')
-    fig.suptitle("Distribution of crop categories in Ada County 2010")
+    fig.suptitle("Distribution of crop categories in Jerome County 2010")
     
    
 
