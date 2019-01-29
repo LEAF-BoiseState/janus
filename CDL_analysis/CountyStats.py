@@ -29,7 +29,7 @@ crop_key = pd.read_csv("GCAM_SRP_names.csv", sep=',')
 crop_key = crop_key.values
 
 #ReadDir = '/Users/kendrakaiser/Documents/Data/GCAM_UTM/Ada_2010/' #need a way to index into multiple folders...
-ReadDir = '/Users/kek25/Dropbox/BSU/IM3/Data/GCAM_UTM/Ada/'
+ReadDir = '/Users/kek25/Dropbox/BSU/IM3/Data/GCAM_UTM/Jerome/'
 files = glob.glob(ReadDir +'*.tiff')
 files.sort()
 
@@ -61,23 +61,28 @@ import skbio.diversity as sci
 
 
 l=np.zeros((28,3))
-s=np.zeros((8,3))
+sh=np.zeros((8,3))
 
 for y in np.arange(8):
     x= counts[years[y]]
-    for i in np.arange(3):
+    for s in np.arange(3):
         temp = []
         dictlist = []
         for key, value in x.items():
-            temp = value[i]
+            temp = value[s]
             dictlist.append(temp)
         
-        l[:,i]=np.asarray(dictlist)
+        l[:,s]=np.asarray(dictlist)
 
-    s[y,s]=sci.alpha.shannon(l[:,i])
+        sh[y,s]=sci.alpha.shannon(l[:,s])
 
-
-
+plt.plot(sh)
+plt.title('Jerome County Crop Diversity')
+plt.ylabel('Shannons Diversity Index')
+plt.xlabel('Year')
+plt.gca().legend(('1km','3km', '30m'))
+plt.xticks(np.arange(8),labels=years)
+plt.show
 
 
 
