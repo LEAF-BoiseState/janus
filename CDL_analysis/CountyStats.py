@@ -29,12 +29,13 @@ crop_key = pd.read_csv("GCAM_SRP_names.csv", sep=',')
 crop_key = crop_key.values
 
 #ReadDir = '/Users/kendrakaiser/Documents/Data/GCAM_UTM/Ada_2010/' #need a way to index into multiple folders...
-ReadDir = '/Users/kek25/Dropbox/BSU/IM3/Data/GCAM_UTM/Ada_2010/'
+ReadDir = '/Users/kek25/Dropbox/BSU/IM3/Data/GCAM_UTM/Ada/'
 files = glob.glob(ReadDir +'*.tiff')
 
 
 years=['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017']
-
+yrs=[0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,7,7,7]
+scale=[0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2]
 #create a dictionary to hold counts of each cover type over all years for each resoultion
 counts={}
 for y in np.arange(7):
@@ -44,18 +45,21 @@ for y in np.arange(7):
         counts[years[y]][crop_key[j,0]]=[0,0,0]
     
 #open each file and count number of pixels of each landcover 
-for i in np.arange(3):
+for i in np.arange(24):
 
     with rio.open(files[i]) as src:
         r =src.read(1)
         cdl=r[r>0] #flattens the data
-        r[r==0]=np.nan
         
     l=list(cdl)
-       
+  
     for j in np.arange(28): 
-       counts[years[0]][j+1][i]=l.count(j)    
-
+       counts[years[yrs[i]]][j+1][scale[i]]=l.count(j)  
+       
+# Save
+np.save('AdaCountyStats.npy', counts) 
+# Load
+AdaStats = np.load('AdaCountyStats.npy').item()
 
 
 
@@ -72,6 +76,12 @@ legend_labels = {viridis(0) : crop_key[1,1], viridis(1) : crop_key[2,1], viridis
  
 
 #### TRYING TO PLOT ####  
+for i in np.arange(3):
+
+    with rio.open(files[i]) as src:
+        r =src.read(1)
+        r[r==0]=np.nan
+        
     fig, (leg, ax, ax2) = plt.subplots(1,3, figsize=(15,5))
     ax.imshow(r, cmap = cmap)
     ax.set_axis_off()
