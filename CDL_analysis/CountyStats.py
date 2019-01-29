@@ -38,9 +38,9 @@ yrs=[0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,7,7,7]
 scale=[0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2]
 #create a dictionary to hold counts of each cover type over all years for each resoultion
 counts={}
-for y in np.arange(7):
+for y in np.arange(8):
     counts[years[y]]={}   
-for y in np.arange(7):
+for y in np.arange(8):
     for j in np.arange(28):
         counts[years[y]][crop_key[j,0]]=[0,0,0]
     
@@ -53,11 +53,28 @@ for i in np.arange(24):
   
     for j in np.arange(28): 
        counts[years[yrs[i]]][j+1][scale[i]]=np.count_nonzero(cdl == j+1) 
-       
-# Save
-np.save('AdaCountyStats.npy', counts) 
-# Load
-AdaStats = np.load('AdaCountyStats.npy').item()
+
+
+
+#calculate Shannon diversity index on each year and scale
+import skbio.diversity as sci
+
+
+l=np.zeros((28,3))
+s=np.zeros((8,3))
+
+for y in np.arange(8):
+    x= counts[years[y]]
+    for i in np.arange(3):
+        temp = []
+        dictlist = []
+        for key, value in x.items():
+            temp = value[i]
+            dictlist.append(temp)
+        
+        l[:,i]=np.asarray(dictlist)
+
+    s[y,s]=sci.alpha.shannon(l[:,i])
 
 
 
