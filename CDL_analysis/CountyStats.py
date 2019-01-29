@@ -31,7 +31,7 @@ crop_key = crop_key.values
 #ReadDir = '/Users/kendrakaiser/Documents/Data/GCAM_UTM/Ada_2010/' #need a way to index into multiple folders...
 ReadDir = '/Users/kek25/Dropbox/BSU/IM3/Data/GCAM_UTM/Ada/'
 files = glob.glob(ReadDir +'*.tiff')
-
+files.sort()
 
 years=['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017']
 yrs=[0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,7,7,7]
@@ -50,16 +50,35 @@ for i in np.arange(24):
     with rio.open(files[i]) as src:
         r =src.read(1)
         cdl=r[r>0] #flattens the data
-        
-    l=list(cdl)
   
     for j in np.arange(28): 
-       counts[years[yrs[i]]][j+1][scale[i]]=l.count(j)  
+       counts[years[yrs[i]]][j+1][scale[i]]=np.count_nonzero(cdl == j+1) 
        
 # Save
 np.save('AdaCountyStats.npy', counts) 
 # Load
 AdaStats = np.load('AdaCountyStats.npy').item()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
