@@ -23,8 +23,8 @@
 #                      This is an integer index value that represents crop    #
 #                      type.                                                  #
 #                    The following attributes are potentially important, but  #
-#                    not yet implemented:
-#                    - Farm area [km^2]: area cultivated [to be implemented]  #
+#                    not yet implemented:                                     #
+#                    - Farm area [km^2]: area cultivated                      #
 #                    - Irrigated: 0 - no; 1 - surface water, 2 - groundwater, #
 #                      3 - surface and groundwater                            # 
 #                    - Fraction irrigated [0-1]: fraction of farm irrigated   #
@@ -61,12 +61,15 @@
 
 
 class Farmer:
-    def __init__(self, Age, DistFromCity, OnFarmIncome, OffFarmIncome, CropID):
+    def __init__(self, Age, CropID, CropYield, CropPrice, AreaCultivated, DistFromCity, OffFarmIncome):
         self.Age = Age
-        self.DistFromCity = DistFromCity
-        self.OnFarmIncome = OnFarmIncome
-        self.OffFarmIncome = OffFarmIncome
         self.CropID = CropID
+        self.CropYield = CropYield
+        self.CropPrice = CropPrice
+        self.AreaCultivated = AreaCultivated
+        self.DistFromCity = DistFromCity
+        self.OnFarmIncome = self.AreaCultivated * self.CropYield * self.CropPrice
+        self.OffFarmIncome = OffFarmIncome
 
     def UpdateAge(self):
         self.Age += 1
@@ -74,11 +77,17 @@ class Farmer:
     def UpdateDistFromCity(self,dx):
         self.DistFromCity += dx
     
-    def UpdateOnFarmIncome(self,loc=0.0,scale=1.0):
-        self.OnFarmIncome *= scale
-        self.OnFarmIncome += loc
+    def UpdateOnFarmIncome(self, NewAreaCultivated=None, NewCropYield=None, NewCropPrice=None):
+        NewAreaCult  = NewAreaCult if NewAreaCult is not None else self.AreaCultivated
+        NewCropYield = NewCropYield if NewCropYield is not None else self.CropYield
+        NewCropPrice = NewCropPrice if NewCropPrice is not None else self.CropPrice
+        self.OnFarmIncome = NewAreaCult * NewCropYield * NewCropPrice
 
     def UpdateOffFarmIncome(self,loc=0.0,scale=1.0):
         self.OffFarmIncome *= scale
         self.OffFarmIncome += loc
+        
+    def EvaluateAlternativeCrop(self, AltCropID, AltAreaCult=None, AltCropYield, AltCropPrice):
+        AltAreaCult = AltAreaCult if AltAreaCult is not None else self.AreaCultivated
+        AltOnFarmIncome = AltAreaCult * AltCropYield * AltCropPrice
         
