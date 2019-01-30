@@ -109,6 +109,8 @@ for t in np.arange(Nt,dtype=int):
     IncomeDiff12[t] = myF1.OnFarmIncome - myF2.OnFarmIncome
     IncomeDiff21[t] = myF2.OnFarmIncome - myF1.OnFarmIncome
     
+    
+    
     # Determine where this falls on the logit 
     x = alpha_F1*(IncomeDiff12[t] - 20000)/myF1.OnFarmIncome
     p = special.expit(x)
@@ -127,9 +129,9 @@ for t in np.arange(Nt,dtype=int):
     
 plt.figure(figsize=(10,12))
 plt.subplot(3,1,1)
-plt.plot(np.arange(Nt),FarmerOnFarmInc[:,1],label='On Farm Income')
-plt.plot(np.arange(Nt),FarmerOffFarmInc[:,1],label='Off Farm Income')
-plt.plot(np.arange(Nt),FarmerOnFarmInc[:,1]+FarmerOffFarmInc[:,1],label='Total Income')
+plt.plot(np.arange(Nt),FarmerOnFarmInc[:,0],label='On Farm Income')
+plt.plot(np.arange(Nt),FarmerOffFarmInc[:,0],label='Off Farm Income')
+plt.plot(np.arange(Nt),FarmerOnFarmInc[:,0]+FarmerOffFarmInc[:,0],label='Total Income')
 plt.ylim([0,120000])
 plt.title('Farmer 1 Income [$]')
 plt.legend()
