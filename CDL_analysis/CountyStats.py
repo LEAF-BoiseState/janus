@@ -6,6 +6,8 @@ Created on Thu Jan 24 08:46:08 2019
 @author: kendrakaiser
 
 Initial CDL analysis across scales
+
+This includes shannons diversity across each county and plots things over time.
 """
 
 import glob
