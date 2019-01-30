@@ -19,6 +19,7 @@ from fiona.crs import from_epsg
 #=============================================================================#
 
 GCAM_ReadDir = '/Users/kendrakaiser/Documents/Data/GCAM_UTM'
+GCAM_ReadDir = '/Users/kek25/Dropbox/BSU/IM3/Data/GCAM_UTM'
 
 GCAM_ReadFile_1km = '/1km/gcam_2010_srb_1000_utm11N.tiff'
 src_ds1km = gdal.Open(GCAM_ReadDir+GCAM_ReadFile_1km)
@@ -37,7 +38,7 @@ a=band.ReadAsArray().astype(np.float)
 
 x_index =np.arange(a.shape[1]) 
 y_index = np.arange(a.shape[0])
-(upper_left_x, x_size, x_rotation, upper_left_y, y_rotation, y_size) = src_ds1km.GetGeoTransform()
+(upper_left_x, x_size, x_rotation, upper_left_y, y_rotation, y_size) = src_ds3km.GetGeoTransform()
 x_coords = x_index * x_size + upper_left_x + (x_size / 2) #add half the cell size
 y_coords = y_index * y_size + upper_left_y + (y_size / 2) #to centre the point
 xc, yc = np.meshgrid(x_coords, y_coords)
@@ -53,8 +54,8 @@ polygons=[Polygon(vert[i]) for i in np.arange(len(vert))]
 
 #convert them to formats for exporting 
 polys  = gpd.GeoSeries(MultiPolygon(polygons))
-poly1km=gpd.GeoDataFrame(geometry=polys)
-poly1km.crs= from_epsg(32611)
+poly3km=gpd.GeoDataFrame(geometry=polys)
+poly3km.crs= from_epsg(32611)
 
 #=============================================================================#
 #Save Output                                                                  #
@@ -62,7 +63,7 @@ poly1km.crs= from_epsg(32611)
 FileName='SRB_poly_3km.shp'
 
 WriteDir='~/Documents/GitRepos/IM3-BoiseState/CDL_analysis'
-poly1km.to_file(filename=FileName, driver="ESRI Shapefile")
+poly3km.to_file(filename=FileName, driver="ESRI Shapefile")
 
 
 
