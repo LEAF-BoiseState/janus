@@ -20,7 +20,7 @@ nass_url <- "http://quickstats.nass.usda.gov"
 my_commodity_desc<- "OPERATORS"
 
 # query start year
-my_year <- "2006"
+my_year <- "2000"
 
 # state of interest
 my_state <- "ID"
@@ -45,22 +45,21 @@ id_ops_raw_data <- pmap_dfr(list_raw_id_ops, rbind)
 # Subset Data 
 #####
 regions <- c("EAST", "SOUTHWEST", "SOUTH CENTRAL")
+All_cat<- unique(id_ops_raw_data$class_desc)
+variables<-c("(ALL)", "(ALL), FEMALE")
 
 id_operators <- id_ops_raw_data %>%
   #filter to counties in southern Idaho
   filter(asd_desc %in% regions) %>%
-  
   filter(agg_level_desc == "COUNTY") %>%
-  filter(asd_desc == "SOUTHWEST") %>%
-  
-  filter(class_desc == "(ALL)")  %>%
+  filter(class_desc %in% variables)  %>%
 
   # trim white space from ends (note: 'Value' is a character here, not a number)
   mutate(value_trim = str_trim(Value)) %>%
 
   # select only the columns we'll need
   select(state_alpha, state_ansi, county_code, county_name, asd_desc,
-         agg_level_desc, year, value_char =value_trim, unit_desc) %>%
+         agg_level_desc, year, class_desc, value_char =value_trim, unit_desc) %>%
   
   # filter out entries with codes '(D)' and '(Z)'
   filter(value_char != "(D)" & value_char != "(Z)") %>% 
@@ -79,5 +78,39 @@ id_operators <- id_ops_raw_data %>%
 
 head(id_operators)
 
+age_var<-(All_cat[3:9])
+ages <- id_ops_raw_data %>%
+  #filter to counties in southern Idaho
+  #filter(asd_desc %in% regions) %>%
+  filter(class_desc %in% age_var)  %>%
+  
+  # trim white space from ends (note: 'Value' is a character here, not a number)
+  mutate(value_trim = str_trim(Value)) %>%
+  # select only the columns we'll need
+  select(state_alpha, state_ansi, county_code, county_name, asd_desc,
+         agg_level_desc, year, class_desc, value_char =value_trim, unit_desc) %>%
+  # filter out entries with codes '(D)' and '(Z)'
+  filter(value_char != "(D)" & value_char != "(Z)") %>% 
+  # remove commas from number values and convert to R numeric class
+  mutate(value = as.numeric(str_remove(value_char, ","))) %>%
+  # remove unnecessary columns
+  select(-value_char) %>%
+  # make a column with the county name and year (we'll need this for plotting)
+  mutate(county_year = paste0(str_to_lower(county_name), "_", year)) %>%
+    # make GEOID column to match up with county level spatial data (we'll need this for mapping)
+  mutate(GEOID = paste0(state_ansi, county_code))
 
+  
 
+ggplot(id_operators) +
+  geom_col(aes(x = year, y = value), fill = "grey50") +
+  facet_wrap(~county_name) +
+  xlab("Year") +
+  ylab("Number of Operators") +
+  theme_bw()
+
+ggplot(ages) +
+  geom_col(aes(x= class_desc, y =value), fill="grey50")+
+  xlab("Age Group") +
+  ylab("Number of Operators") +
+  theme_bw()
