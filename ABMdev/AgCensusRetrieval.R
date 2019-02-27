@@ -17,7 +17,7 @@ nass_key <- "B5240598-2A7D-38EE-BF8D-816A27BEF504" #QuickStats
 nass_url <- "http://quickstats.nass.usda.gov"
 
 # commodity description of interest
-my_commodity_desc<- "OPERATORS"
+my_commodity_desc<- "OPERATORS" #FARM OPERATIONS, [AG LAND, INCL BUILDINGS - OPERATIONS WITH ASSET VALUE, MEASURED IN $ / ACRE; $ / OPERATION; $/ACRE; $]; [AG LAND, CROPLAND, PASTURED ONLY - ACRES] [Income, Net or Farm-related?]
 
 # query start year
 my_year <- "2000"
@@ -81,8 +81,8 @@ head(id_operators)
 age_var<-(All_cat[3:9])
 ages <- id_ops_raw_data %>%
   #filter to counties in southern Idaho
-  #filter(asd_desc %in% regions) %>%
-  filter(class_desc %in% age_var)  %>%
+  filter(asd_desc %in% regions) %>%
+  #filter(class_desc %in% age_var)  %>%
   
   # trim white space from ends (note: 'Value' is a character here, not a number)
   mutate(value_trim = str_trim(Value)) %>%
