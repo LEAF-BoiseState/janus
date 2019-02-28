@@ -130,3 +130,43 @@ ggplot(id_farms) +
   ylab("Acres") +
   theme_bw()+
   theme(axis.text.x = element_blank())
+
+###########
+# PERCENTAGE OF IDAHO FARMS
+
+id_state_perc <- id_farms_raw_data %>%
+  filter(agg_level_desc == "STATE") %>%
+  filter(unit_desc == "PCT OF FARM OPERATIONS") %>%
+  # trim white space from ends (note: 'Value' is a character here, not a number)
+  mutate(value_trim = str_trim(Value)) %>%
+  # select only the columns we'll need
+  select(state_alpha, state_ansi,
+         agg_level_desc, year, class_desc, domain_desc, domaincat_desc, value_char =value_trim, unit_desc) %>%
+  
+  # filter out entries with codes '(D)' and '(Z)'
+  filter(value_char != "(D)" & value_char != "(Z)") %>% 
+  # remove commas from number values and convert to R numeric class
+  mutate(value = as.numeric(str_remove(value_char, ","))) %>%
+  # remove unnecessary columns
+  select(-value_char) 
+
+ggplot(id_state_perc %>% filter(domain_desc == "ORGANIZATION")) +
+  geom_col(aes(x= domaincat_desc, y =value, fill=domaincat_desc))+
+  xlab("Type of Farm") +
+  ylab("Percent of Farm Operations") +
+  theme_bw()+
+  theme(axis.text.x = element_blank(), legend.position=c(0.25, 0.84))
+
+ggplot(id_state_perc %>% filter(domain_desc == "AREA OPERATED")) +
+  geom_col(aes(x= domaincat_desc, y =value, fill=domaincat_desc))+
+  xlab("AREA CLASS") +
+  ylab("Percent of Farm Operations") +
+  theme_bw()+
+  theme(axis.text.x = element_blank(), legend.position=c(0.7, 0.7))
+
+ggplot(id_state_perc %>% filter(domain_desc == "ECONOMIC CLASS")) +
+  geom_col(aes(x= domaincat_desc, y =value, fill=domaincat_desc))+
+  xlab("Economic Class") +
+  ylab("Percent of Farm Operations") +
+  theme_bw()+
+  theme(axis.text.x = element_blank(), legend.position=c(0.4, 0.78))
