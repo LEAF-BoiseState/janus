@@ -39,10 +39,13 @@ nchar(char_raw_id_farms)
 list_raw_id_farms<- fromJSON(char_raw_id_farms)
 # apply rbind to each row of the list and convert to a data frame
 id_farms_raw_data <- pmap_dfr(list_raw_id_farms, rbind)
+colnames(id_farms_raw_data)[colnames(id_farms_raw_data)=="CV (%)"] <- "CV"
 
 #####--------------------------------------#
 # Subset Data to State Level Aggreegates
 #####
+
+
 id_state_agg <- id_farms_raw_data %>%
   filter(agg_level_desc == "STATE") %>%
   
@@ -50,7 +53,7 @@ id_state_agg <- id_farms_raw_data %>%
   mutate(value_trim = str_trim(Value)) %>%
   # select only the columns we'll need
   select(state_alpha, state_ansi,
-         agg_level_desc, year, class_desc, domain_desc, domaincat_desc, value_char =value_trim, unit_desc) %>%
+         agg_level_desc, year, class_desc, domain_desc, domaincat_desc, value_char =value_trim, unit_desc, CV) %>%
   
   # filter out entries with codes '(D)' and '(Z)'
   filter(value_char != "(D)" & value_char != "(Z)") %>% 
@@ -69,58 +72,36 @@ id_county_agg <- id_farms_raw_data %>%
   
   # trim white space from ends (note: 'Value' is a character here, not a number)
   mutate(value_trim = str_trim(Value)) %>%
+  mutate(CV_trim = str_trim(CV)) %>%
   # select only the columns we'll need
   select(state_alpha, state_ansi,county_code, county_name, asd_desc,
-         agg_level_desc, year, class_desc, domain_desc, domaincat_desc, value_char =value_trim, unit_desc) %>%
+         agg_level_desc, year, class_desc, domain_desc, domaincat_desc, value_char =value_trim, unit_desc, CV_char = CV_trim) %>%
   
   # filter out entries with codes '(D)' and '(Z)'
   filter(value_char != "(D)" & value_char != "(Z)") %>% 
   # remove commas from number values and convert to R numeric class
   mutate(value = as.numeric(str_remove(value_char, ","))) %>%
+  mutate(CV = suppressWarnings(as.numeric(CV_char))) %>%
   # remove unnecessary columns
   select(-value_char) %>%
+  select(-CV_char) %>%
   # make a column with the county name and year (we'll need this for plotting)
   mutate(county_year = paste0(str_to_lower(county_name), "_", year)) %>%
   # make GEOID column to match up with county level spatial data (we'll need this for mapping)
   mutate(GEOID = paste0(state_ansi, county_code))
 
 #########################
-# Subset Data to tenure
+# Subset Data 
 ###
+variables<-c("TENURE", "AREA OPERATED") 
+classes<-c("ORGANIZATION", "TYPOLOGY")
 
-All_cat<- unique(id_farms_raw_data$class_desc) # Organization
-cat<-id_farms_raw_data$domain_desc
-variables<-c("TENURE") #typology
 
-id_farms <- id_farms_raw_data %>%
-  #filter to counties in southern Idaho
-  filter(asd_desc %in% regions) %>%
-  #filter(agg_level_desc == "COUNTY") %>%
-  filter(domain_desc %in% variables)  %>%
+id_farms <- id_county_agg %>%
+  #filter out categories of interest
+  filter(domain_desc %in% variables | class_desc %in% classes) 
   
-  # trim white space from ends (note: 'Value' is a character here, not a number)
-  mutate(value_trim = str_trim(Value)) %>%
-  
-  # select only the columns we'll need
-  select(state_alpha, state_ansi, county_code, county_name, asd_desc,
-         agg_level_desc, year, class_desc, domain_desc, domaincat_desc, value_char =value_trim, unit_desc) %>%
-  
-  # filter out entries with codes '(D)' and '(Z)'
-  filter(value_char != "(D)" & value_char != "(Z)") %>% 
-  
-  # remove commas from number values and convert to R numeric class
-  mutate(value = as.numeric(str_remove(value_char, ","))) %>%
-  
-  # remove unnecessary columns
-  select(-value_char) %>%
-  
-  # make a column with the county name and year (we'll need this for plotting)
-  mutate(county_year = paste0(str_to_lower(county_name), "_", year)) %>%
-  
-  # make GEOID column to match up with county level spatial data (we'll need this for mapping)
-  mutate(GEOID = paste0(state_ansi, county_code))
 
-head(id_farms)
 
 
 ggplot(id_farms) +
