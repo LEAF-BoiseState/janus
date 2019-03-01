@@ -88,7 +88,10 @@ id_county_agg <- id_farms_raw_data %>%
   # make a column with the county name and year (we'll need this for plotting)
   mutate(county_year = paste0(str_to_lower(county_name), "_", year)) %>%
   # make GEOID column to match up with county level spatial data (we'll need this for mapping)
-  mutate(GEOID = paste0(state_ansi, county_code))
+  mutate(GEOID = paste0(state_ansi, county_code)) %>%
+  
+  #split up class description 
+  separate(class_desc, c("class", "desc", "cat"), ',')
 
 #########################
 # Subset Data 
@@ -96,21 +99,81 @@ id_county_agg <- id_farms_raw_data %>%
 variables<-c("TENURE", "AREA OPERATED") 
 classes<-c("ORGANIZATION", "TYPOLOGY")
 
-
 id_farms <- id_county_agg %>%
   #filter out categories of interest
-  filter(domain_desc %in% variables | class_desc %in% classes) 
+  filter(domain_desc %in% variables | class %in% classes) 
+
+ada_profile <- id_farms %>%
+  filter(county_name == "ADA")
+
+######
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  require(grid)
   
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+  
+  numPlots = length(plots)
+  
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  
+  if (numPlots==1) {
+    print(plots[[1]])
+    
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+######
+library(ggplot2)
 
-
-
-ggplot(id_farms) +
-  geom_col(aes(x= domaincat_desc, y =value, fill=domaincat_desc))+
-  facet_wrap(~county_name) +
-  xlab("Type of Tenure") +
+p1<- ggplot(ada_profile %>% filter(class == "TYPOLOGY" & unit_desc == "ACRES")) +
+  geom_col(aes(x= cat, y =value, fill=cat))+
+  xlab("Type of Farm") +
   ylab("Acres") +
   theme_bw()+
   theme(axis.text.x = element_blank())
+
+p2<- ggplot(ada_profile %>% filter(class == "TYPOLOGY" & unit_desc == "OPERATIONS")) +
+  geom_col(aes(x= cat, y =value, fill=cat))+
+  xlab("Type of Farm") +
+  ylab("Number of Operations") +
+  theme_bw()+
+  theme(axis.text.x = element_blank())
+
+p3<- ggplot(ada_profile %>% filter(unit_desc == "ACRES" & desc == " TAX PURPOSES")) +
+  geom_col(aes(x= cat, y =value, fill=cat))+
+  xlab("Organization Type") +
+  ylab("Acres") +
+  theme_bw()+
+  theme(axis.text.x = element_blank())
+
+p4<- ggplot(ada_profile %>% filter(unit_desc == "OPERATIONS" & desc == " TAX PURPOSES")) +
+  geom_col(aes(x= cat, y =value, fill=cat))+
+  xlab("Organization Type") +
+  ylab("Number of Operations") +
+  theme_bw()+
+  theme(axis.text.x = element_blank())
+
+multiplot(p1,p2,p3,p4, cols=2)
 
 ###########
 # PERCENTAGE OF IDAHO FARMS
