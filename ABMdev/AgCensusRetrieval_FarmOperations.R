@@ -143,7 +143,8 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 ######
-library(ggplot2)
+
+library(scales)
 
 p1<- ggplot(ada_profile %>% filter(class == "TYPOLOGY" & unit_desc == "ACRES")) +
   geom_col(aes(x= cat, y =value, fill=cat))+
@@ -164,7 +165,8 @@ p3<- ggplot(ada_profile %>% filter(unit_desc == "ACRES" & desc == " TAX PURPOSES
   xlab("Organization Type") +
   ylab("Acres") +
   theme_bw()+
-  theme(axis.text.x = element_blank())
+  theme(axis.text.x = element_blank())+
+  guides(colour = guide_legend(nrow = 2))
 
 p4<- ggplot(ada_profile %>% filter(unit_desc == "OPERATIONS" & desc == " TAX PURPOSES")) +
   geom_col(aes(x= cat, y =value, fill=cat))+
@@ -172,6 +174,9 @@ p4<- ggplot(ada_profile %>% filter(unit_desc == "OPERATIONS" & desc == " TAX PUR
   ylab("Number of Operations") +
   theme_bw()+
   theme(axis.text.x = element_blank())
+  #scale_fill_discrete(name="Organization",
+                      #breaks=c("Corp", "Family", "Other", "Partner"),
+                      #labels=c("Corporation", "Family", "Inst/Research/Res", "Partnership"))
 
 multiplot(p1,p2,p3,p4, cols=2)
 
