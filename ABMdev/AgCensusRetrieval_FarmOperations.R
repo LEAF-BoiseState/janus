@@ -44,8 +44,6 @@ colnames(id_farms_raw_data)[colnames(id_farms_raw_data)=="CV (%)"] <- "CV"
 #####--------------------------------------#
 # Subset Data to State Level Aggreegates
 #####
-
-
 id_state_agg <- id_farms_raw_data %>%
   filter(agg_level_desc == "STATE") %>%
   
@@ -92,6 +90,20 @@ id_county_agg <- id_farms_raw_data %>%
   
   #split up class description 
   separate(class_desc, c("class", "desc", "cat"), ',')
+
+##Subset Data Further for a few specific variables for noe
+variables<-c("TENURE", "AREA OPERATED") 
+
+id_county_farm <- id_county_agg %>%
+  filter(domain_desc %in% variables) %>%
+  
+  select(state_alpha, state_ansi,county_code, county_name, year, domaincat_desc, value, unit_desc, CV) %>%
+  
+  #split up domain description 
+  separate(domaincat_desc, c("variable", "category"), ':') %>%
+
+
+
 
 #########################
 # Subset Data 
@@ -182,9 +194,9 @@ multiplot(p1,p2,p3,p4, cols=2)
 
 ###########
 # PERCENTAGE OF IDAHO FARMS
+###########
 
-id_state_perc <- id_farms_raw_data %>%
-  filter(agg_level_desc == "STATE") %>%
+id_state_perc <- id_state_agg %>%
   filter(unit_desc == "PCT OF FARM OPERATIONS") %>%
   # trim white space from ends (note: 'Value' is a character here, not a number)
   mutate(value_trim = str_trim(Value)) %>%
@@ -192,12 +204,6 @@ id_state_perc <- id_farms_raw_data %>%
   select(state_alpha, state_ansi,
          agg_level_desc, year, class_desc, domain_desc, domaincat_desc, value_char =value_trim, unit_desc) %>%
   
-  # filter out entries with codes '(D)' and '(Z)'
-  filter(value_char != "(D)" & value_char != "(Z)") %>% 
-  # remove commas from number values and convert to R numeric class
-  mutate(value = as.numeric(str_remove(value_char, ","))) %>%
-  # remove unnecessary columns
-  select(-value_char) 
 
 ggplot(id_state_perc %>% filter(domain_desc == "ORGANIZATION")) +
   geom_col(aes(x= domaincat_desc, y =value, fill=domaincat_desc))+
