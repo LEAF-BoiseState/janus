@@ -51,6 +51,7 @@ variables<-c("(ALL)", "(ALL), FEMALE", All_cat[3:9])
 id_operators <- id_ops_raw_data %>%
   #filter to specific data
   filter(class_desc %in% variables)  %>%
+  filter(asd_desc %in% regions) %>%
   # trim white space from ends (note: 'Value' is a character here, not a number)
   mutate(value_trim = str_trim(Value)) %>%
   # select only the columns we'll need
