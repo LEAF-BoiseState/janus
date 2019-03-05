@@ -90,7 +90,7 @@ id_county_agg <- id_farms_raw_data %>%
   #split up class description 
   separate(class_desc, c("class", "desc", "cat"), ',')
 
-##Subset Data Further for a few specific variables for noe
+##Subset Data Further for a few specific variables 
 variables<-c("TENURE", "AREA OPERATED") 
 
 id_county_farm <- id_county_agg %>%
@@ -99,7 +99,6 @@ id_county_farm <- id_county_agg %>%
   select(state_alpha, state_ansi,county_code, county_name, year, domaincat_desc, value, unit_desc, CV) %>%
   #split up domain description 
   separate(domaincat_desc, c("variable", "category"), ':')
-
 
 ada<- id_county_farm%>%
   filter(county_name == "ADA") %>% 
