@@ -50,13 +50,13 @@ variables<-c("(ALL)", "(ALL), FEMALE", All_cat[3:9])
 
 id_operators <- id_ops_raw_data %>%
   #filter to specific data
-  filter(class_desc %in% variables)  %>%
+  #filter(class_desc %in% variables)  %>%
   #filter(asd_desc %in% regions) %>%
   # trim white space from ends (note: 'Value' is a character here, not a number)
   mutate(value_trim = str_trim(Value)) %>%
   # select only the columns we'll need
   select(state_alpha, state_ansi, county_code, county_name, asd_desc,
-         agg_level_desc, year, class_desc, value_char =value_trim, unit_desc) %>%
+         agg_level_desc, year, class_desc, domain_desc, domaincat_desc, value_char =value_trim, unit_desc) %>%
   # filter out entries with codes '(D)' and '(Z)'
   filter(value_char != "(D)" & value_char != "(Z)") %>% 
   # remove commas from number values and convert to R numeric class
@@ -72,8 +72,17 @@ ages<- id_operators %>%
   filter( year == 2007) %>%
   filter(class_desc %in% All_cat[3:9])%>%
   select(-state_ansi, -county_name, -county_code, -asd_desc, -county_year, -GEOID)
-
 write.csv(ages, "Ada_ages_2007.csv")
+
+id_ops <- id_operators %>%
+  filter(domain_desc == "OPERATORS, PRINCIPAL, HOUSEHOLD INCOME")
+
+principal <- id_operators %>%
+  filter(domain_desc == "OPERATORS, PRINCIPAL" & class_desc == "(ALL)") 
+
+write.csv(principal, "ID_principal_income_type_age.csv")
+
+
   
 ggplot(id_operators) +
   geom_col(aes(x = year, y = value), fill = "grey50") +

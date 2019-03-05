@@ -41,6 +41,10 @@ list_raw_id_farms<- fromJSON(char_raw_id_farms)
 id_farms_raw_data <- pmap_dfr(list_raw_id_farms, rbind)
 colnames(id_farms_raw_data)[colnames(id_farms_raw_data)=="CV (%)"] <- "CV"
 
+id_econ<- id_farms_raw_data %>%
+  filter(sector_desc == "ECONOMICS") %>%
+  filter(domaincat_desc == "ECONOMIC CLASS: (1,000 TO 2,499 $)")
+  
 #####--------------------------------------#
 # Subset Data to State Level Aggreegates
 #####
@@ -59,6 +63,15 @@ id_state_agg <- id_farms_raw_data %>%
   mutate(value = as.numeric(str_remove(value_char, ","))) %>%
   # remove unnecessary columns
   select(-value_char) 
+
+id_econ <- id_state_agg %>%
+  filter(domain_desc == "ECONOMIC CLASS") %>%
+  filter(year == 2007)  %>%
+  filter(unit_desc == "OPERATIONS") %>%
+  separate(domaincat_desc, c("domain", 'category'), ": ")  %>%
+  select(-domain, -CV, -state_ansi)
+
+write.csv(id_econ, "Idaho_farm_econClass.csv")
 
 #####--------------------------------------#
 # Subset Data to County Level Aggreegates
