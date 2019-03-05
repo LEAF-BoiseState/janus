@@ -51,7 +51,7 @@ variables<-c("(ALL)", "(ALL), FEMALE", All_cat[3:9])
 id_operators <- id_ops_raw_data %>%
   #filter to specific data
   filter(class_desc %in% variables)  %>%
-  filter(asd_desc %in% regions) %>%
+  #filter(asd_desc %in% regions) %>%
   # trim white space from ends (note: 'Value' is a character here, not a number)
   mutate(value_trim = str_trim(Value)) %>%
   # select only the columns we'll need
@@ -68,6 +68,12 @@ id_operators <- id_ops_raw_data %>%
   # make GEOID column to match up with county level spatial data (we'll need this for mapping)
   mutate(GEOID = paste0(state_ansi, county_code))
 
+ages<- id_operators %>%
+  filter( year == 2007) %>%
+  filter(class_desc %in% All_cat[3:9])%>%
+  select(-state_ansi, -county_name, -county_code, -asd_desc, -county_year, -GEOID)
+
+write.csv(ages, "Ada_ages_2007.csv")
   
 ggplot(id_operators) +
   geom_col(aes(x = year, y = value), fill = "grey50") +

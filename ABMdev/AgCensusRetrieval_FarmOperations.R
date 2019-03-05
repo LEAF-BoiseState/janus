@@ -87,7 +87,6 @@ id_county_agg <- id_farms_raw_data %>%
   mutate(county_year = paste0(str_to_lower(county_name), "_", year)) %>%
   # make GEOID column to match up with county level spatial data (we'll need this for mapping)
   mutate(GEOID = paste0(state_ansi, county_code)) %>%
-  
   #split up class description 
   separate(class_desc, c("class", "desc", "cat"), ',')
 
@@ -96,19 +95,21 @@ variables<-c("TENURE", "AREA OPERATED")
 
 id_county_farm <- id_county_agg %>%
   filter(domain_desc %in% variables) %>%
-  
+  #select variables to keep
   select(state_alpha, state_ansi,county_code, county_name, year, domaincat_desc, value, unit_desc, CV) %>%
-  
   #split up domain description 
-  separate(domaincat_desc, c("variable", "category"), ':') %>%
+  separate(domaincat_desc, c("variable", "category"), ':')
 
 
+ada<- id_county_farm%>%
+  filter(county_name == "ADA") %>% 
+  filter(year == 2007)%>%
+  select(-state_ansi, -county_code, -CV)
 
+write.csv(ada, file = "Ada_stats_2007.csv")
 
+# Subset Data for organization details and typology
 #########################
-# Subset Data 
-###
-variables<-c("TENURE", "AREA OPERATED") 
 classes<-c("ORGANIZATION", "TYPOLOGY")
 
 id_farms <- id_county_agg %>%
@@ -117,8 +118,8 @@ id_farms <- id_county_agg %>%
 
 ada_profile <- id_farms %>%
   filter(county_name == "ADA")
-
-######
+##### plot results
+#####
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   require(grid)
   
