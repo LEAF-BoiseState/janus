@@ -50,6 +50,9 @@ for i in np.arange(other.shape[1]):
    
 import geopandas as gp
 
+SRB_3km= gp.read_file('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/CDL_analysis/Shapefiles/SRB_gridpolys/SRB_poly_3km_V2.shp')
+counties_shp= gp.read_file('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/CDL_analysis/Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
+#clip SRB 3km to counties_shp where COUNTY_ALL == 18 for ADA
 cities = gp.read_file('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/ABMdev/citylimits_Ada/citylimits.shp')
 cities_grid =cities.ReadAsArray()
-print(cities)
+
