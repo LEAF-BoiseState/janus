@@ -6,6 +6,7 @@ Calculate distance to closest cell of a given land cover
 @author: kek25
 """
 import numpy as np
+import math
 
 samp=np.random.randint(low = 2, size=(5,6))
 
@@ -15,7 +16,9 @@ other = np.array(np.where(samp==0))
 #x=other[1,:]
 #y=other[0,:]
 
-dist = np.empty(city.shape) #faster than zeros, but b careful!
+d_temp = np.empty(city.shape[1]) #faster than zeros, but b careful!
+minDist= np.empty(other.shape[1])
+dist=np.zeros(samp.shape)
 
 for i in np.arange(other.shape[1]):
   #go through each non-city cell
@@ -27,7 +30,13 @@ for i in np.arange(other.shape[1]):
        xc=city[1,j]
        yc=city[0,j]
        
-       if (x == xc + 1 | x == xc -1 | x == xc) && (y == yc + 1 | y == yc -1 | y == yc)
-   
-   
-        
+       if ((x == xc + 1 | x == xc -1 | x == xc) & (y == yc + 1 | y == yc -1 | y == yc)):
+           d_temp[j] = 0
+       elif (x == xc | y == yc):
+           d_temp[j] = (abs(x-xc) + abs(y-yc)) - 1
+       else: 
+           d_temp[j] = math.sqrt((abs(x-xc)-1)**2 + (abs(y-yc)-1)**2)
+           
+       minDist[i] = min(d_temp)
+
+   dist[y,x]=minDist[i]    
