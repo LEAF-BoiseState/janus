@@ -19,9 +19,8 @@ other = np.array(np.where(samp==0))
 
 d_temp = np.empty(city.shape[1]) #faster than zeros, but b careful!
 minDist= np.empty(other.shape[1])
-
 dist=np.zeros(samp.shape)
-
+#turn into function
 for i in np.arange(other.shape[1]):
   #go through each non-city cell
    x=other[1,i]
@@ -55,4 +54,5 @@ counties_shp= gp.read_file('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseStat
 #clip SRB 3km to counties_shp where COUNTY_ALL == 18 for ADA
 cities = gp.read_file('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/ABMdev/citylimits_Ada/citylimits.shp')
 cities_grid =cities.ReadAsArray()
+#convert from shapefile to raster w 1/0
 
