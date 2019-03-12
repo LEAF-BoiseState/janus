@@ -46,13 +46,26 @@ for i in np.arange(other.shape[1]):
 # Import ada county 
 ####
     
-   
+import os  
 import geopandas as gp
 
-SRB_3km= gp.read_file('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/CDL_analysis/Shapefiles/SRB_gridpolys/SRB_poly_3km_V2.shp')
-counties_shp= gp.read_file('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/CDL_analysis/Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
-#clip SRB 3km to counties_shp where COUNTY_ALL == 18 for ADA
-cities = gp.read_file('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/ABMdev/citylimits_Ada/citylimits.shp')
+
+os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/')
+
+cities = gp.read_file('ABMdev/citylimits_Ada/citylimits.shp')
+SRB_3km= gp.read_file('CDL_analysis/Shapefiles/SRB_gridpolys/SRB_poly_3km_V2.shp')
+counties_shp= gp.read_file('CDL_analysis/Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
+
+#select unique COUNTY_ALL from SRB3km_poly 
+
 cities_grid =cities.ReadAsArray()
 #convert from shapefile to raster w 1/0
 
+from osgeo import ogr
+inds = ogr.Open('test1.shp')
+inlyr=inds.GetLayer()
+inlyr.SetAttributeFilter('NAME = "18"')
+drv = ogr.GetDriverByName( 'ESRI Shapefile' )
+outds = drv.CreateDataSource( "Ada_poly.shp" )
+outlyr = outds.CopyLayer(inlyr,'test2')
+del inlyr,inds,outlyr,outds
