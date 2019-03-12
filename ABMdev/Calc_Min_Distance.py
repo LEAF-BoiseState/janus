@@ -49,6 +49,13 @@ for i in np.arange(other.shape[1]):
 import os  
 import geopandas as gp
 
+import numpy as np
+import matplotlib.pyplot as plt
+import rasterio as rio
+from rasterio.plot import plotting_extent
+from rasterio.mask import mask
+from shapely.geometry import mapping
+
 
 os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/')
 
@@ -57,6 +64,9 @@ SRB_3km= gp.read_file('CDL_analysis/Shapefiles/SRB_gridpolys/SRB_poly_3km_V2.shp
 counties_shp= gp.read_file('CDL_analysis/Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
 
 #select unique COUNTY_ALL from SRB3km_poly 
+Ada_extent=mapping(counties_shp['geometry'][18])
+with rio.open('CDL_analysis/Shapefiles/SRB_gridpolys/SRB_poly_3km_V2.shp') as SRB3km:
+    Ada_3km_crop, Ada_3km_crop_affine = mask()
 
 cities_grid =cities.ReadAsArray()
 #convert from shapefile to raster w 1/0
