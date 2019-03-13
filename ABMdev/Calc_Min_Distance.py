@@ -48,34 +48,40 @@ for i in np.arange(other.shape[1]):
     
 import os  
 import geopandas as gp
-
 import numpy as np
-import matplotlib.pyplot as plt
-import rasterio as rio
-from rasterio.plot import plotting_extent
-from rasterio.mask import mask
-from shapely.geometry import mapping
 
+os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/')
+#os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/')
 
-os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/')
-
-cities = gp.read_file('ABMdev/citylimits_Ada/citylimits.shp')
 SRB_3km= gp.read_file('CDL_analysis/Shapefiles/SRB_gridpolys/SRB_poly_3km_V2.shp')
 counties_shp= gp.read_file('CDL_analysis/Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
+cities = gp.read_file('ABMdev/citylimits_Ada/citylimits.shp')
+cities=cities.to_crs(counties_shp.crs)
 
-#select unique COUNTY_ALL from SRB3km_poly 
-Ada_extent=mapping(counties_shp['geometry'][18])
-with rio.open('CDL_analysis/Shapefiles/SRB_gridpolys/SRB_poly_3km_V2.shp') as SRB3km:
-    Ada_3km_crop, Ada_3km_crop_affine = mask()
 
-cities_grid =cities.ReadAsArray()
-#convert from shapefile to raster w 1/0
+#select unique COUNTIES from SRB3km_poly 
+Ada_3km=SRB_3km[SRB_3km.geometry.intersects(counties_shp['geometry'][17])]
 
-from osgeo import ogr
-inds = ogr.Open('test1.shp')
-inlyr=inds.GetLayer()
-inlyr.SetAttributeFilter('NAME = "18"')
-drv = ogr.GetDriverByName( 'ESRI Shapefile' )
-outds = drv.CreateDataSource( "Ada_poly.shp" )
-outlyr = outds.CopyLayer(inlyr,'test2')
-del inlyr,inds,outlyr,outds
+Ada_3km.plot()
+cities.plot()
+#join the cities data with the clipped ada county polygons
+Ada_cities_3km=gp.sjoin(Ada_3km, cities[['CITY', 'geometry']], how = 'left', op='intersects')
+#replace Nas
+Ada_cities_3km['index_right']=Ada_cities_3km['index_right'].fillna(99)
+Ada_cities_3km['CITY']=Ada_cities_3km['CITY'].fillna('Rural')
+Ada_cities_3km.plot(column='CITY', categorical =True, legend=True, figsize=(5,10))
+
+Ada_cities_3km['index_right'].plot()
+
+#SUBSET INTO SEPERATE SHAPEFILES to calculate distance
+Ada_rural=Ada_cities_3km[Ada_cities_3km['CITY'] == 'Rural']
+Ada_cities=Ada_cities_3km[Ada_cities_3km['CITY'] != 'Rural']
+#calculate distance to closest city
+Ada_rural['distCity'] = Ada_rural.geometry.apply(lambda g: Ada_cities.distance(g).min())
+Ada_rural.plot(column='distCity', legend = True, figsize=(5,10))
+
+
+##RECOMBINING THEM DOESNT WORK YET
+if Ada_cities_3km[Ada_cities_3km['CITY'] == 'Rural']:
+    Ada_cities_3km['distCity'] = 0
+else: Ada_cities_3km['distCity'] = Ada_rural['distCity']
