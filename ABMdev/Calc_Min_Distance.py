@@ -22,7 +22,11 @@ cities=cities.to_crs(counties_shp.crs) #convert projection
 #select unique COUNTIES from SRB3km_poly * change the code here when we have all counties city info
 Ada_3km=SRB_3km[SRB_3km.geometry.intersects(counties_shp['geometry'][17])]
 Canyon_3km=SRB_3km[SRB_3km.geometry.intersects(counties_shp['geometry'][12])]
-Ada_Canyon=SRB_3km.loc[[12,17],:]#this doesnt work for plotting the two??
+
+#you can select two shapefiles, but need to return geometry of the union - this no longer distinguishes two
+AC=counties_shp['geometry'][[12,17]].unary_union #this is the row index, not the "COUNTY_ALL" index
+Ada_Canyon=SRB_3km[SRB_3km.geometry.intersects(AC)]
+Ada_Canyon.plot()
 
 Ada_3km.plot()
 Canyon_3km.plot()
