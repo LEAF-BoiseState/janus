@@ -11,12 +11,12 @@ import geopandas as gp
 import numpy as np
 
 #set user directory
-#os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/')
-os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/')
+os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/CDL_analysis/Shapefiles/')
+#os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/CDL_analysis/Shapefiles/')
 
-SRB_3km= gp.read_file('CDL_analysis/Shapefiles/SRB_gridpolys/SRB_poly_3km_V2.shp')
-counties_shp= gp.read_file('CDL_analysis/Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
-cities = gp.read_file('ABMdev/citylimits_Ada/citylimits.shp')
+SRB_3km= gp.read_file('SRB_gridpolys/SRB_poly_3km_V2.shp')
+counties_shp= gp.read_file('County_polys/Counties_SRB_clip_SingleID.shp')
+cities = gp.read_file('citylimits_Ada/citylimits.shp')
 cities=cities.to_crs(counties_shp.crs) #convert projection
 
 #select unique COUNTIES from SRB3km_poly * change the code here when we have all counties city info
