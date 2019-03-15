@@ -17,6 +17,13 @@ import skbio.diversity as sci #not working on desktop...
 import geopandas as gpd
 import rasterio as rio
 import glob
+from rasterstats import zonal_stats
+import rasterstats as rs
+import pandas as pd
+from rasterio.plot import show
+
+from rasterio.mask import mask
+from shapely.geometry import mapping
 
 os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/CDL_analysis')
 
@@ -28,42 +35,43 @@ ReadDir = '/Users/kek25/Dropbox/BSU/IM3/Data/GCAM_UTM/30m/'
 files = glob.glob(ReadDir +'*.tiff')
 files.sort()
 
-
-from rasterio.mask import mask
-
 # extract the geometry in GeoJSON format
 geoms = SRB_3km.geometry.values # list of shapely geometries
-
 #LOOP THROUGH THE GEOMETRIES HERE
-geometry = geoms[0] # shapely geometry
+geometry = geoms[5000] # shapely geometry
 # transform to GeJSON format
-from shapely.geometry import mapping
-geoms = [mapping(geoms[0])]
+geom = [mapping(geoms[0])]
 
 # extract the raster values values within the polygon, The out_image result is a Numpy masked array
-with rasterio.open(files[0]) as src:
-     out_image, out_transform = mask(src, geoms, crop=True)
+with rio.open(files[0]) as src:
+    #cdl = src.read(1, masked =True) #numpy array
+    #cdl_meta = src.profile
+    out_image, out_transform = mask(src, geom, crop=True)
+
+    #cdl[cdl == 0] = np.nan
 
 
 # no data values of the original raster
 no_data=src.nodata
-print no_data
--9999.0
+
 # extract the values of the masked array
 data = out_image.data[0]
 # extract the row, columns of the valid values
 import numpy as np
 row, col = np.where(data != no_data) 
-elev = np.extract(data != no_data, data)
+val = np.extract(data != no_data, data)
+from rasterio import Affine # or from affine import Affine
+T1 = out_transform * Affine.translation(0.5, 0.5) # reference the pixel centre
+rc2xy = lambda r, c: (c, r) * T1 
 
+d = gpd.GeoDataFrame({'col':col,'row':row,'val':val})
+# coordinate transformation
+d['x'] = d.apply(lambda row: rc2xy(row.row,row.col)[0], axis=1)
+d['y'] = d.apply(lambda row: rc2xy(row.row,row.col)[1], axis=1)
+# geometry
+from shapely.geometry import Point
+d['geometry'] =d.apply(lambda row: Point(row['x'], row['y']), axis=1)
+# first 2 points
+d.head(2)
 
-
-#calculate Shannon diversity index within each 3km polygon at 1km and 30m scale
-with rio.open(files[0]) as src:
-     r =src.read(1)
-     
-     #need to count the number of each landcover in each 3km pixel
-
-     for j in np.arange(28): 
-     counts[j]=np.count_nonzero(cdl == j+1) 
   
