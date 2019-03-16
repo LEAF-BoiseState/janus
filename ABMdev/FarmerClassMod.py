@@ -61,15 +61,35 @@
 
 
 class Farmer:
-    def __init__(self, Age, CropID, CropYield, CropPrice, AreaCultivated, DistFromCity, OffFarmIncome):
+    def __init__(self, Age, CropID, CropYield, CropPrice, AreaCultivated, 
+                 PreHarvestEnergyCosts, PreHarvestLaborCosts, PreHarvestMaterialCosts, 
+                 HarvestEnergyCosts, HarvestLaborCosts, HarvestMaterialCosts,
+                 DistFromCity, OffFarmIncome):
+        
         self.Age = Age
         self.CropID = CropID
         self.CropYield = CropYield
         self.CropPrice = CropPrice
         self.AreaCultivated = AreaCultivated
+        
+        self.PreHarvestEnergyCosts = PreHarvestEnergyCosts
+        self.PreHarvestLaborCosts = PreHarvestLaborCosts
+        self.PreHarvestMaterialCosts = PreHarvestMaterialCosts
+        self.PreHarvestCosts = PreHarvestEnergyCosts + PreHarvestLaborCosts + PreHarvestMaterialCosts
+        
+        self.HarvestEnergyCosts = HarvestEnergyCosts
+        self.HarvestLaborCosts = HarvestLaborCosts
+        self.HarvestMaterialCosts = HarvestMaterialCosts
+        self.HarvestCosts = HarvestEnergyCosts + HarvestLaborCosts + HarvestMaterialCosts
+        
+        self.Costs = self.PreHarvestCosts + self.HarvestCosts # Cost per unit area of this crop
+        self.TotalCosts = self.AreaCultivated * self.Costs
+        
         self.DistFromCity = DistFromCity
         self.OnFarmIncome = self.AreaCultivated * self.CropYield * self.CropPrice
         self.OffFarmIncome = OffFarmIncome
+
+    # Set/Update functions
 
     def UpdateAge(self):
         self.Age += 1
@@ -78,11 +98,31 @@ class Farmer:
         self.DistFromCity += dx
     
     def UpdateOnFarmIncome(self, NewAreaCultivated=None, NewCropYield=None, NewCropPrice=None):
-        NewAreaCult  = NewAreaCult if NewAreaCult is not None else self.AreaCultivated
-        NewCropYield = NewCropYield if NewCropYield is not None else self.CropYield
-        NewCropPrice = NewCropPrice if NewCropPrice is not None else self.CropPrice
+        self.AreaCulttivated  = NewAreaCult if NewAreaCult is not None else self.AreaCultivated
+        self.CropYield = NewCropYield if NewCropYield is not None else self.CropYield
+        self.CropPrice = NewCropPrice if NewCropPrice is not None else self.CropPrice
         self.OnFarmIncome = NewAreaCult * NewCropYield * NewCropPrice
+        
+    def UpdateOnFarmCosts(self, NewPreHarvestEnergyCosts=None, NewPreHarvestLaborCosts=None, 
+                          NewPreHarvestMaterialCosts=None, NewHarvestEnergyCosts=None, 
+                          NewHarvestLaborCosts=None, NewHarvestMaterialCosts=None):
+        # Update preharvest costs
+        self.PreHarvestEnergyCosts    = NewPreHarvestEnergyCosts if NewPreHarvestEnergyCosts is not None else self.PreHarvestEnergyCosts
+        self.PreHarvestLaborCosts     = NewPreHarvestLaborCosts if NewPreHarvestLaborCosts is not None else self.PreHarvestLaborCosts 
+        self.PreHarvestMaterialCosts  = NewPreHarvestMaterialCosts if NewPreHarvestMaterialCosts is not None else self.PreHarvestMaterialCosts 
+        
+        self.PreHarvestCosts = self.PreHarvestEnergyCosts + self.PreHarvestLaborCosts + PreHarvestMaterialCosts
+        
+        # Update harvest costs
+        self.HarvestEnergyCosts    = NewHarvestEnergyCosts if NewHarvestEnergyCosts is not None else self.HarvestEnergyCosts
+        self.HarvestLaborCosts     = NewHarvestLaborCosts if NewHarvestLaborCosts is not None else self.HarvestLaborCosts 
+        self.HarvestMaterialCosts  = NewHarvestMaterialCosts if NewHarvestMaterialCosts is not None else self.HarvestMaterialCosts 
 
+        self.HarvestCosts = self.HarvestEnergyCosts + self.HarvestLaborCosts + self.HarvestMaterialCosts
+ 
+        self.Costs = self.PreHarvestCosts + self.HarvestCosts
+        self.TotalCosts = self.AreaCultivated * self.Costs
+        
     def UpdateOffFarmIncome(self,loc=0.0,scale=1.0):
         self.OffFarmIncome *= scale
         self.OffFarmIncome += loc
@@ -90,4 +130,7 @@ class Farmer:
     def EvaluateAlternativeCrop(self, AltCropID, AltAreaCult=None, AltCropYield, AltCropPrice):
         AltAreaCult = AltAreaCult if AltAreaCult is not None else self.AreaCultivated
         AltOnFarmIncome = AltAreaCult * AltCropYield * AltCropPrice
+        
+    def Decide(self)
+        
         
