@@ -15,15 +15,9 @@ calculate zonal stats using polygon coverage
 import os
 import skbio.diversity as sci #not working on desktop...
 import geopandas as gpd
-import rasterio as rio
 import glob
 from rasterstats import zonal_stats
-import rasterstats as rs
-import pandas as pd
-from rasterio.plot import show
-
-from rasterio.mask import mask
-from shapely.geometry import mapping
+import numpy as np
 
 os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/CDL_analysis')
 
@@ -35,43 +29,31 @@ ReadDir = '/Users/kek25/Dropbox/BSU/IM3/Data/GCAM_UTM/30m/'
 files = glob.glob(ReadDir +'*.tiff')
 files.sort()
 
-# extract the geometry in GeoJSON format
-geoms = SRB_3km.geometry.values # list of shapely geometries
-#LOOP THROUGH THE GEOMETRIES HERE
-geometry = geoms[5000] # shapely geometry
-# transform to GeJSON format
-geom = [mapping(geoms[0])]
+counts= zonal_stats(SRB_3km, files[0], stats=["unique"])
 
-# extract the raster values values within the polygon, The out_image result is a Numpy masked array
-with rio.open(files[0]) as src:
-    #cdl = src.read(1, masked =True) #numpy array
-    #cdl_meta = src.profile
-    out_image, out_transform = mask(src, geom, crop=True)
+#not working yet
+cx=[d.values() for d in counts]
 
-    #cdl[cdl == 0] = np.nan
+for key, value in cx.items():
+    c=value
+
+    
 
 
-# no data values of the original raster
-no_data=src.nodata
+#calculate Shannon diversity index for each year at each scale
+#need counts for each shapefile 
+l=np.zeros((28,3))
+sh=np.zeros((8,3))
 
-# extract the values of the masked array
-data = out_image.data[0]
-# extract the row, columns of the valid values
-import numpy as np
-row, col = np.where(data != no_data) 
-val = np.extract(data != no_data, data)
-from rasterio import Affine # or from affine import Affine
-T1 = out_transform * Affine.translation(0.5, 0.5) # reference the pixel centre
-rc2xy = lambda r, c: (c, r) * T1 
+for y in np.arange(8):
+    x= counts[years[y]]
+    for s in np.arange(3):
+        temp = []
+        dictlist = []
+        for key, value in x.items():
+            temp = value[s]
+            dictlist.append(temp)
+        
+        l[:,s]=np.asarray(dictlist)
 
-d = gpd.GeoDataFrame({'col':col,'row':row,'val':val})
-# coordinate transformation
-d['x'] = d.apply(lambda row: rc2xy(row.row,row.col)[0], axis=1)
-d['y'] = d.apply(lambda row: rc2xy(row.row,row.col)[1], axis=1)
-# geometry
-from shapely.geometry import Point
-d['geometry'] =d.apply(lambda row: Point(row['x'], row['y']), axis=1)
-# first 2 points
-d.head(2)
-
-  
+si=sci.alpha.shannon(counts)
