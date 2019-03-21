@@ -58,16 +58,14 @@ counts = zonal_stats(SRB_3km, files[0], categorical=True, geojson_out=True) # wh
 crop_keys=np.arange(1,28)
 # ------ Calculate and store Shannons Diversity Index
 
+sdix=[]
 for n in np.arange(len(counts)):
     countx=counts[n]
     count_prop=countx['properties'] 
     cdls={k:count_prop[k] for k in crop_keys if k in count_prop} #subest data to dictionary of keys: count
     sd=sdi(cdls)
+    sdix.append(sd)
     counts[n].update({'sd' : sd})  #calculate Shannons Index append to dictionary
-
-#this is a list of dictionaries with geometries .... need to be able to plot them
-tstr=counts[19990:20010]
-df=pd.DataFrame(tstr)
-df.set_geometry(SRB_3km['geometry']) #CHEATING??
-gdf=GeoDataFrame(df)  
-gdf.plot(column='sd') #not working
+    
+SRB_3km['sd']= sdix
+SRB_3km.plot(column='sd') #WORKS! need to mask out the nans
