@@ -14,10 +14,11 @@ calculate zonal stats using polygon coverage
 
 import os
 import geopandas as gpd
+from geopandas import GeoDataFrame
 import glob
 from rasterstats import zonal_stats
 import numpy as np
-import rasterio
+import pandas as pd
 import matplotlib.pyplot as plt
 from osgeo import gdal
 from math import log as ln
@@ -52,20 +53,21 @@ def sdi(data):
     return -sum(p(n, N) for n in data.values() if n is not 0)
 
 #------- Retreive categorical counts for each pixel
-counts = zonal_stats(SRB_3km, files[0], categorical=True, 
-                    geojson_out=True)
+counts = zonal_stats(SRB_3km, files[0], categorical=True, geojson_out=True) # when no geojson_out it's just a list of dictionaries
 #------- define CDL keys for subsetting dictionary
 crop_keys=np.arange(1,28)
 # ------ Calculate and store Shannons Diversity Index
-sd=[]
+
 for n in np.arange(len(counts)):
     countx=counts[n]
     count_prop=countx['properties'] 
     cdls={k:count_prop[k] for k in crop_keys if k in count_prop} #subest data to dictionary of keys: count
-    sd.append(sdi(cdls)) #calculate Shannons Index
-    
+    sd=sdi(cdls)
+    counts[n].update({'sd' : sd})  #calculate Shannons Index append to dictionary
 
-
-
-
-
+#this is a list of dictionaries with geometries .... need to be able to plot them
+tstr=counts[19990:20010]
+df=pd.DataFrame(tstr)
+df.set_geometry(SRB_3km['geometry']) #CHEATING??
+gdf=GeoDataFrame(df)  
+gdf.plot(column='sd') #not working
