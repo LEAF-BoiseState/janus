@@ -23,12 +23,9 @@ from joblib import Parallel, delayed
 #=============================================================================#
 
 os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/CDL_analysis')
-####FIX THIS POLYGON
-SRB=gpd.read_file('Shapefiles/SRB.shp') #not reading in for some reason
-SRB_poly_3km=gpd.read_file('Shapefiles/SRB_gridpolys/SRB_poly_3km_V2.shp')
-SRB_poly_1km=gpd.read_file('Shapefiles/SRB_gridpolys/SRB_poly_1km_V2.shp')
 
-SRB_poly_clip=SRB_poly_3km[SRB_poly_3km.geometry.intersects(SRB)]
+SRB_poly_3km=gpd.read_file('Shapefiles/SRB_gridpolys/SRB_poly_3km_clip.shp')
+SRB_poly_1km=gpd.read_file('Shapefiles/SRB_gridpolys/SRB_poly_1km_V2.shp')
 
 ReadDir = '/Users/kek25/Dropbox/BSU/IM3/Data/GCAM_UTM/30m/'
 files = glob.glob(ReadDir +'*.tiff')
@@ -78,15 +75,16 @@ def zonalSDI(SRB_poly, file):
     varName='sdi_30m_'+ os.path.basename(file)[5:9]
     SRB_poly[varName]= sdix #append to the original polygons- create new name based on filename
     
+zonalSDI(SRB_poly_3km, files[0])
 
 #=============================================================================#
 # Retreive categorical counts for each pixel, calculate and store SDI                            
 #=============================================================================#
-Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(zonalSDI)(SRB_poly_clip, files[i]) \
+Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(zonalSDI)(SRB_poly_3km, files[i]) \
          for i in np.arange(len(files)))
 
 #=============================================================================#
 #Save Output                                                                  #
 #=============================================================================#
-#SRB_poly.plot(column=varName) #WORKS! need to mask out the nans
-SRB_poly_clip.to_file(filename=SRB_poly_3km_sri, driver="ESRI Shapefile")
+SRB_poly_3km.plot(column='sdi_30m_2015')
+SRB_poly_3km.to_file(filename='SRB_poly_3km_sri', driver="ESRI Shapefile")

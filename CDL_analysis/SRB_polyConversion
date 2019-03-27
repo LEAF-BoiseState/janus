@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Mar 27 09:58:21 2019
+Convert snake river basin polygon to have geometries and in the correct crs
+@author: kek25
+"""
+import os
+os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/CDL_analysis')
+from osgeo import ogr
+
+file = ogr.Open('Shapefiles/SRB.shp')
+shape = file.GetLayer(0)
+#first feature of the shapefile
+feature = shape.GetFeature(0)
+first = feature.ExportToJson()
+print (first) # (GeoJSON format)
+
+from shapely.geometry import shape
+shp_geom = shape(first['geometry']) # or shp_geom = shape(first) with PyShp)
+
+print (shp_geom)
+type(shp_geom)
