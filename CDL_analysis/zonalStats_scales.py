@@ -7,30 +7,28 @@ Created on Tue Jan 29 17:10:15 2019
 
 calculate zonal stats using polygon coverage
 """
-
-#clip polygon coverage to the county
-#calculate shannons diversity at 1km and 3km
 #other zonal stats?
 
 import os
 import geopandas as gpd
-from geopandas import GeoDataFrame
 import glob
 from rasterstats import zonal_stats
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 from osgeo import gdal
 from math import log as ln
+from joblib import Parallel, delayed
 
 #=============================================================================#
 # Set working  directories and inout files                                    #
 #=============================================================================#
 
 os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/CDL_analysis')
-
+####FIX THIS POLYGON
+SRB=gpd.read_file('Shapefiles/SRB.shp') #not reading in for some reason
 SRB_poly_3km=gpd.read_file('Shapefiles/SRB_gridpolys/SRB_poly_3km_V2.shp')
 SRB_poly_1km=gpd.read_file('Shapefiles/SRB_gridpolys/SRB_poly_1km_V2.shp')
+
+SRB_poly_clip=SRB_poly_3km[SRB_poly_3km.geometry.intersects(SRB)]
 
 ReadDir = '/Users/kek25/Dropbox/BSU/IM3/Data/GCAM_UTM/30m/'
 files = glob.glob(ReadDir +'*.tiff')
@@ -46,8 +44,9 @@ gcam30m = np.array(g30.GetRasterBand(1).ReadAsArray())
 gcam30m[gcam30m==0] = np.nan #retains shape
 
 #=============================================================================#
-# Define shannons diversity index                                
+# Define functions                          
 #=============================================================================#
+#shannons diversity index    
 def sdi(data):
     """ Given a dictionary { 'species': count }, returns sdi"""   
     def p(n, N):
@@ -59,12 +58,10 @@ def sdi(data):
     N = sum(data.values())
     return -sum(p(n, N) for n in data.values() if n is not 0)
 
-#=============================================================================#
-# Retreive categorical counts for each pixel, calculate and store SDI                            
-#=============================================================================#
 # define CDL keys for subsetting dictionary
 crop_keys=np.arange(1,28) 
 
+# Retreive categorical counts for each pixel, calculate and store SDI  
 def zonalSDI(SRB_poly, file):
     
     counts = zonal_stats(SRB_poly, file, categorical=True, geojson_out=True) # when no geojson_out it's just a list of dictionaries
@@ -83,7 +80,13 @@ def zonalSDI(SRB_poly, file):
     
 
 #=============================================================================#
+# Retreive categorical counts for each pixel, calculate and store SDI                            
+#=============================================================================#
+Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(zonalSDI)(SRB_poly_clip, files[i]) \
+         for i in np.arange(len(files)))
+
+#=============================================================================#
 #Save Output                                                                  #
 #=============================================================================#
 #SRB_poly.plot(column=varName) #WORKS! need to mask out the nans
-SRB_poly.to_file(filename=SRB_poly_3km_sri, driver="ESRI Shapefile")
+SRB_poly_clip.to_file(filename=SRB_poly_3km_sri, driver="ESRI Shapefile")
