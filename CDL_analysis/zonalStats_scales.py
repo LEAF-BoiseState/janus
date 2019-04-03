@@ -25,9 +25,9 @@ from joblib import Parallel, delayed
 os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/CDL_analysis')
 
 SRB_poly_3km=gpd.read_file('Shapefiles/SRB_gridpolys/SRB_poly_3km_clip.shp')
-SRB_poly_1km=gpd.read_file('Shapefiles/SRB_gridpolys/SRB_poly_1km_V2.shp')
+#SRB_poly_1km=gpd.read_file('Shapefiles/SRB_gridpolys/SRB_poly_1km_clip.shp')
 
-ReadDir = '/Users/kek25/Dropbox/BSU/IM3/Data/GCAM_UTM/30m/'
+ReadDir = '/Users/kek25/Dropbox/BSU/IM3/Data/GCAM_UTM/1km/'
 files = glob.glob(ReadDir +'*.tiff')
 files.sort()
 
@@ -72,10 +72,8 @@ def zonalSDI(SRB_poly, file):
         sd=sdi(cdls) #calculate SDI
         sdix.append(sd) #append to vector
      
-    varName='sdi_30m_'+ os.path.basename(file)[5:9]
+    varName='sdi_1km_'+ os.path.basename(file)[5:9]
     SRB_poly[varName]= sdix #append to the original polygons- create new name based on filename
-    
-zonalSDI(SRB_poly_3km, files[0])
 
 #=============================================================================#
 # Retreive categorical counts for each pixel, calculate and store SDI                            
@@ -86,5 +84,6 @@ Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(zonalSDI)(SRB_poly_3
 #=============================================================================#
 #Save Output                                                                  #
 #=============================================================================#
-SRB_poly_3km.plot(column='sdi_30m_2015')
+#SRB_poly_1km.plot(column='sdi_30m_2015')
+
 SRB_poly_3km.to_file(filename='SRB_poly_3km_sri', driver="ESRI Shapefile")
