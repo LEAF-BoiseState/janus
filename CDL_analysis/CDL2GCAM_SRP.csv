@@ -1,5 +1,5 @@
 CDL_id,CDL_name,GCAM_id,SRP_GCAM_id,Price_Unit,Price,Yield_Unit,Yield
-36,Alfalfa,9,9,$ / TON,127,TONS / ACRE,3.99
+36,Alfalfa,10,10,$ / TON,127,TONS / ACRE,3.99
 75,Almonds,12,12,NA,NA,NA,NA
 68,Apples,12,18, $ / LB,0.23,LB / ACRE,23100
 223,Apricots,12,18,$ / TON,722,TONS / ACRE,5.46
