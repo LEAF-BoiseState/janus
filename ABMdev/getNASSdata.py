@@ -10,7 +10,7 @@ function to create pdfs from NASS Data
 import nass
 import pandas as pd
 import numpy as np
-pd.options.mode.chained_assignment = None
+#pd.options.mode.chained_assignment = None
 #api.param_values('class_desc')
 #q.count()
 
@@ -56,27 +56,17 @@ def getNASSdata(countyList, YR):
     q.filter('commodity_desc', 'FARM OPERATIONS').filter('state_alpha', 'ID').filter('year', YR).filter('domain_desc', variables).filter('county_name', countyList)
     data=q.execute()
     dataF=pd.DataFrame(data)
-    
-    
+    dataF['Value']=dataF['Value'].apply(cleanup)    
     
     farms=pd.DataFrame(0, index=np.arange(len(cat)), columns=('category', 'acres', 'operations'))
     farms['category']= cat
     
     for i in range(len(cat)):
         sub=dataF[(dataF['domaincat_desc'] == farms['category'][i]) & (dataF['unit_desc'] == 'ACRES')]
-        farms['acres'][i] = cleanup(sub['Value'])
+        farms['acres'][i] = sub['Value']
         sub2=dataF[(dataF['domaincat_desc'] == farms['category'][i]) & (dataF['unit_desc'] == 'OPERATIONS')]
-        farms['operations'][i] = cleanup(sub2['Value'])
+        farms['operations'][i] = sub2['Value']
 
-    
-    ops=[d for d in data if d['unit_desc'] in 'OPERATIONS']
-    acres=[d for d in data if d['unit_desc'] in 'ACRES']
-    
-
-    
-    for i in range(len(farms)):
-        farms['acres'][i]=cleanup(acres['domaincat_desc' == farms['category'][i]]['Value'])
-        farms['operations'][i]=cleanup(ops['domaincat_desc' == farms['category'][i]]['Value'])
     return(farms)
 
 
