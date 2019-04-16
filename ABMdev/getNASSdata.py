@@ -22,7 +22,7 @@ age_cat=["AGE LT 25", "AGE 25 TO 34", "AGE 35 TO 44", "AGE 45 TO 54", "AGE 55 TO
 area_cat=["AREA OPERATED: (1.0 TO 9.9 ACRES)","AREA OPERATED: (10.0 TO 49.9 ACRES)", "AREA OPERATED: (50.0 TO 69.9 ACRES)", "AREA OPERATED: (70.0 TO 99.9 ACRES)", "AREA OPERATED: (100 TO 139 ACRES)","AREA OPERATED: (140 TO 179 ACRES)", "AREA OPERATED: (180 TO 219 ACRES)", "AREA OPERATED: (220 TO 259 ACRES)", "AREA OPERATED: (260 TO 499 ACRES)", "AREA OPERATED: (500 TO 999 ACRES)", "AREA OPERATED: (1,000 TO 1,999 ACRES)", "AREA OPERATED: (2,000 OR MORE ACRES)"]#, "AREA OPERATED: (50 TO 179 ACRES)", "AREA OPERATED: (180 TO 499 ACRES)", "AREA OPERATED: (1,000 OR MORE ACRES)"]          
 tenure_cat=["TENURE: (FULL OWNER)", "TENURE: (PART OWNER)", "TENURE: (TENANT)" ]  
 cat=tenure_cat + area_cat
-
+CDL2GCAM_key=  pd.read_csv('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/CDL2GCAM_SRP.csv', sep=',')
 
   
 def cleanup(value):
@@ -51,7 +51,7 @@ countyList='ADA'
 countyList=counties
 
 
-def getNASSdata(countyList, YR):
+def getTenureArea(countyList, YR): #this returns a warning bc of the way it is being sliced
     q = api.query()
     q.filter('commodity_desc', 'FARM OPERATIONS').filter('state_alpha', 'ID').filter('year', YR).filter('domain_desc', variables).filter('county_name', countyList)
     data=q.execute()
@@ -70,14 +70,23 @@ def getNASSdata(countyList, YR):
     return(farms)
 
 
+stats=['AREA HARVESTED', 'YIELD', 'SALES', 'PRICE RECEIVED']
 
 
-
-def getCropProduction(year):    
+def getCropProduction(YR):    
      #yeild, price, acres for each crop CDL to GCAM
      q=api.query()
-     q.filter()
+     q.filter('sector_desc', 'CROPS').filter('state_alpha', 'ID').filter('year', '2007').filter('agg_level_desc', 'STATE').filter('statisticcat_desc', stats).filter('reference_period_desc', 'YEAR')
+     crops=q.execute()
+     u_value = set(for dic in crops in dic['commodity_desc'])
 
-    
-ages=getAges(2007)
-tenure=getNASSdata('ADA', 2007)
+tst=crops[91]
+tst['commodity_desc']
+
+import time 
+tenure=getTenureArea('ADA', 2007) #2sec
+
+start= time.time()  
+ages=getAges(2007) #0.8sec
+end = time.time()
+print(end-start)
