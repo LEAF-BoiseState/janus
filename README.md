@@ -1,6 +1,8 @@
 # IM3-BoiseState
 
-# CDL Analysis
+# GIS Analysis
+
+## CDL Analysis
 Order of operations
 
 1. cdl2gcam - converts from cdl categories to GCAM SRP categories using a csv lookup 
