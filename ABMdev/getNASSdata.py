@@ -22,7 +22,8 @@ age_cat=["AGE LT 25", "AGE 25 TO 34", "AGE 35 TO 44", "AGE 45 TO 54", "AGE 55 TO
 area_cat=["AREA OPERATED: (1.0 TO 9.9 ACRES)","AREA OPERATED: (10.0 TO 49.9 ACRES)", "AREA OPERATED: (50.0 TO 69.9 ACRES)", "AREA OPERATED: (70.0 TO 99.9 ACRES)", "AREA OPERATED: (100 TO 139 ACRES)","AREA OPERATED: (140 TO 179 ACRES)", "AREA OPERATED: (180 TO 219 ACRES)", "AREA OPERATED: (220 TO 259 ACRES)", "AREA OPERATED: (260 TO 499 ACRES)", "AREA OPERATED: (500 TO 999 ACRES)", "AREA OPERATED: (1,000 TO 1,999 ACRES)", "AREA OPERATED: (2,000 OR MORE ACRES)"]#, "AREA OPERATED: (50 TO 179 ACRES)", "AREA OPERATED: (180 TO 499 ACRES)", "AREA OPERATED: (1,000 OR MORE ACRES)"]          
 tenure_cat=["TENURE: (FULL OWNER)", "TENURE: (PART OWNER)", "TENURE: (TENANT)" ]  
 cat=tenure_cat + area_cat
-CDL2GCAM_key=  pd.read_csv('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/CDL2GCAM_SRP.csv', sep=',')
+#CDL2GCAM_key=  pd.read_csv('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/CDL2GCAM_SRP.csv', sep=',')
+CDL2GCAM_key=  pd.read_csv('/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/CDL2GCAM_SRP.csv', sep=',')
 
   
 def cleanup(value):
