@@ -42,7 +42,7 @@ def ReprojectGCAMGrid(GCAM_ReadDir,GCAM_ReadFile,GCAM_WriteDir,dst_epsg_str):
     GCAM_WriteFile = GCAM_ReadFile.replace('srb','srb_geo')
 
     # Use gdal.Warp to reproject the file
-    gdal.Warp(GCAM_WriteDir+GCAM_WriteFile,src_ds,dstSRS='EPSG:4326') ## << NEEDED AS AN INTERMEDIATE BECAUSE NO INITIAL PROJECTION DEFINED
+    gdal.Warp(GCAM_WriteDir+GCAM_WriteFile,src_ds,dstSRS='EPSG:4326') ## << NEEDED AS AN INTERMEDIATE BECAUSE NO INITIAL PROJECTION DEFINED << that doesnt make sense ...
 
     src_ds = None
     
