@@ -12,41 +12,61 @@ import matplotlib.pyplot as plt
 
 #set user directory
 #os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_analysis/Shapefiles/')
-os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/Shapefiles/')
+os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
+DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/Shapefiles/'
 
-SRB_3km= gp.read_file('SRB_gridpolys/SRB_poly_3km_V2.shp')
-cities = gp.read_file('COMPASS/CityLimits_AdaCanyon.shp') # ADD NEW CITIES SHP HERE 
-cities=cities.to_crs(SRB_3km.crs) #convert projection
-cities.plot()
+#cities = gp.read_file(DataPath+'Cities/SRB_cities.shp') 
+cities = gp.read_file(DataPath+'COMPASS/CityLimits_AdaCanyon.shp') # ADD NEW CITIES SHP HERE 
 
-#join the cities data with the SRB polygons
-SRB_cities_3km=gp.sjoin(SRB_3km, cities[['CITY', 'geometry']], how = 'left', op='intersects')
-#replace Nas
-SRB_cities_3km['index_right']=SRB_cities_3km['index_right'].fillna(99)
-SRB_cities_3km['CITY']=SRB_cities_3km['CITY'].fillna('Rural')
 
-SRB_cities_3km.plot(column='CITY', categorical =True, legend=True, figsize=(5,10))
+extent=getGISdata(countyList, '3km')
 
-#SUBSET INTO SEPERATE SHAPEFILES to calculate distance
-SRB_rural=SRB_cities_3km[SRB_cities_3km['CITY'] == 'Rural']
-SRB_cities=SRB_cities_3km[SRB_cities_3km['CITY'] != 'Rural']
-SRB_rural=SRB_rural.rename(columns={'index_right':'city_index'})
-SRB_cities=SRB_cities.rename(columns={'index_right':'city_index'})
+#scale should be '3km' or '1km'
 
-#calculate distance to closest city
-SRB_rural['distCity'] = SRB_rural.geometry.apply(lambda g: SRB_cities.distance(g).min())
-SRB_cities['distCity']=0
+def minDistCity(cityShape, scale, extent_poly):
+    
+    cities=cityShape.to_crs(extent_poly.crs) #convert projection - do this somewhere else?
+    #join the cities data with the SRB polygons
+    city_poly=gp.sjoin(extent_poly, cities[['CITY', 'geometry']], how = 'left', op='intersects')
+    #replace Nas
+    city_poly['index_right']=city_poly['index_right'].fillna(99)
+    city_poly['CITY']=city_poly['CITY'].fillna('Rural')
+
+    #city_poly.plot(column='CITY', categorical =True, legend=True, figsize=(5,10))
+
+    #SUBSET INTO SEPERATE SHAPEFILES to calculate distance
+    rural=city_poly[city_poly['CITY'] == 'Rural']
+    city=city_poly[city_poly['CITY'] != 'Rural']
+    rural=rural.rename(columns={'index_right':'city_index'})
+    city=city.rename(columns={'index_right':'city_index'})
+
+    #calculate distance to closest city
+    rural['distCity'] =rural.geometry.apply(lambda g:city.distance(g).min())
+    city['distCity']=0
+    
+    
+    #now add column back to main coverage THIS DOESNT WORK
+    #SRB_city_poly[SRB_city_poly['id'] ==rural['id']]['distCity']=rural['distCity']
+    
+    rural_filename = 'ruralDist_'+ scale +'.shp'
+    ##CANT Figure out how to combine them yet - and should they be rasters, rather than shapefiles?
+    rural.to_file(driver='ESRI Shapefile', filename=rural_filename)
+
+    
+    return(rural,city_poly)
+    #return(SRB_city_poly)
+
+
+out=minDistCity(cities, '3km', extent)
 
 fig, ax = plt.subplots(figsize = (10,10))
-SRB_rural.plot(column='distCity', legend = True, figsize=(5,10), ax=ax)
-SRB_cities.plot(column='distCity', ax=ax)
+city_poly.plot(column='CITY', categorical =True, ax=ax)
+rural.plot(column='distCity', legend = True, ax=ax)
 
-SRB_rural.to_file(driver='ESRI Shapefile', filename='SRB_ruralDist_3000.shp')
-SRB_cities.to_file(driver='ESRI Shapefile', filename='SRB_cities_3000.shp')
 
-##CANT Figure out how to combine them yet - and these should eb as rasters, rather than shapefiles .... THEM DOESNT WORK YET
-AC = gp.sjoin(SRB_rural, SRB_cities[:], op= 'intersects')
-AC=gp.overlay(SRB_rural, SRB_cities, how= 'union')
+
+#AC = gp.sjoin(SRB_rural,city_poly[:], op= 'intersects')
+#AC=gp.overlay(SRB_rural,city_poly, how= 'union')
 
 
 
