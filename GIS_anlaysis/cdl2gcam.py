@@ -20,13 +20,12 @@ import os
 LejoDataPath  = '/Users/lejoflores/Dropbox/CDL/'
 LejoWritePath = '/Users/lejoflores/IM3-BoiseState/CDL_analysis/'
 
-kekDataPath= '/Users/kek25/Dropbox/BSU/Python/Data/CDL/'
-kekWritePath= '/Users/kek25/Dropbox/BSU/Python/Data/'
+kekDataPath= '/Volumes/GFS_RAID/Dropbox/BSU/Python/Data-IM3/CDL/'
+kekWritePath= '/Volumes/GFS_RAID//Dropbox/BSU/Python/Data-IM3/'
 
-
-CDL_GCAM_keyfile = kekWritePath+'CDL2GCAM_SRP.csv'
+CDL_GCAM_keyfile = kekWritePath + 'CDL2GCAM_SRP_price_yield.csv'
 #CDL_ReadDir   =  LejoDataPath 
-CDL_ReadDir  = '/Users/kek25/Dropbox/BSU/Python/Data/CDL/'
+CDL_ReadDir  = kekDataPath
 GCAM_WriteDir = kekWritePath+'GCAM_SRP/'
 
 
@@ -143,7 +142,7 @@ GCAM_cat     = CDL2GCAM_key['SRP_GCAM_id'].values
 CDL_Data  = []
 GCAM_Data = []
 for file in files:
-    # Initialize CDL data structures with paths adn file names
+    # Initialize CDL data structures with paths and file names
     cdl_path   = os.path.dirname(file)
     cdl_infile = os.path.basename(file)
     CDL_Data.append(CDL_DataStruct(cdl_path,cdl_infile))
@@ -202,8 +201,6 @@ for i in np.arange(28):
     yieldV=CDL2GCAM_key['Yield'][GCAM_cat == i+1]
     
     base_price[i]=np.average(np.multiply(perc[pd.notnull(price)], price[pd.notnull(price)]))
-
-  
     base_yield[i]=np.average(np.multiply(perc[pd.notnull(price)], yieldV[pd.notnull(price)]))
 
 np.savetxt("base_price.csv", base_price, delimiter=",")

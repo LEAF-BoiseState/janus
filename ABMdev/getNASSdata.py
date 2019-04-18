@@ -72,16 +72,14 @@ def getTenureArea(countyList, YR): #this returns a warning bc of the way it is b
 
 stats=['AREA HARVESTED', 'YIELD', 'SALES', 'PRICE RECEIVED']
 
-
+#the trouble here is that there are only some of these that have Idaho price/yield, and otherwise would need to pull from national data, there are also categories that need to be averaged (e.g. beans, or double crops)
 def getCropProduction(YR):    
      #yeild, price, acres for each crop CDL to GCAM
      q=api.query()
      q.filter('sector_desc', 'CROPS').filter('state_alpha', 'ID').filter('year', '2007').filter('agg_level_desc', 'STATE').filter('statisticcat_desc', stats).filter('reference_period_desc', 'YEAR')
      crops=q.execute()
-     u_value = set(for dic in crops in dic['commodity_desc'])
-
-tst=crops[91]
-tst['commodity_desc']
+     tst=crops[91]
+     tst['commodity_desc']
 
 import time 
 tenure=getTenureArea('ADA', 2007) #2sec
