@@ -20,8 +20,8 @@ import os
 LejoDataPath  = '/Users/lejoflores/Dropbox/CDL/'
 LejoWritePath = '/Users/lejoflores/IM3-BoiseState/CDL_analysis/'
 
-kekDataPath= '/Volumes/GFS_RAID/Dropbox/BSU/Python/Data-IM3/CDL/'
-kekWritePath= '/Volumes/GFS_RAID//Dropbox/BSU/Python/Data-IM3/'
+kekDataPath= '/Users/kek25/Dropbox/BSU/Python/IM3/CDL/'#THIS ISN"T RUNNING ON MY DESKTOP
+kekWritePath= '/Users/kek25/Dropbox/BSU/Python/IM3/'
 
 CDL_GCAM_keyfile = kekWritePath + 'CDL2GCAM_SRP_price_yield.csv'
 #CDL_ReadDir   =  LejoDataPath 
