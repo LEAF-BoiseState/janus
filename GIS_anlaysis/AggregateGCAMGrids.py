@@ -35,7 +35,7 @@ GCAM_ReprojWriteDir  = GCAM_ReadDir + '/3km/'
 def AggregateGCAMGrid(GCAM_ReadDir,GCAM_ReadFile,GCAM_WriteDir,AggRes):
     
     # Open the GeoTiff based on the input path and file
-    src_ds = gdal.Open(GCAM_ReadDir+'/'+GCAM_ReadFile)
+    src_ds = gdal.Open(GCAM_ReadFile)
 
     # Create the name of the output file by modifying the input file
     GCAM_WriteFile = GCAM_ReadFile.replace('srb','srb'+'_'+str(int(AggRes)))
