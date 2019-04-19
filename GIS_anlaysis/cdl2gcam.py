@@ -122,19 +122,13 @@ def saveGCAMGrid(GCAM_struct):
     gcam_driver = gdal.GetDriverByName('Gtiff')
     gcam_gdal   = gcam_driver.Create(gcam_outfile, ncols, nrows, 1, gdal.GDT_Float32)
 
-    #gdal.Warp(GCAM_WriteDir+GCAM_WriteFile,src_ds,dstSRS='EPSG:4326')
-    #alternative to warping after the fact is just setting it here 
-    #http://geoexamples.blogspot.com/2012/01/creating-files-in-ogr-and-gdal-with.html
     proj = osr.SpatialReference()
-    #proj.SetWellKnownGeogCS('EPSG:32611')
-    proj.ImportFromEPSG(32611)
+    proj.ImportFromEPSG(4326) # << NEEDED AS AN INTERMEDIATE BECAUSE NO INITIAL PROJECTION DEFINED <<
     gcam_gdal.SetProjection(proj.ExportToWkt())
-
-    #gcam_gdal.SetProjection(GCAM_struct.gcam_projection)
-    
     gcam_gdal.SetGeoTransform(GCAM_struct.gcam_geotransform)
-    
     gcam_gdal.GetRasterBand(1).WriteArray(GCAM_struct.gcam_grid)
+    gdal.Warp(gcam_outfile,gcam_gdal,dstSRS='EPSG:32611')
+    
     gcam_gdal.FlushCache()
     gcam_gdal = None
 
@@ -174,14 +168,13 @@ Parallel(n_jobs=6, verbose=60, backend='threading')(delayed(ReadArcGrid)(CDL_Dat
 # 2b. Perform the CDL-GCAM category conversion                                #
 #=============================================================================#
 Parallel(n_jobs=6, verbose=10, backend='threading')(delayed(CDL2GCAM)(CDL_Data[i],CDL_cat,GCAM_Data[i],GCAM_cat) \
-         for i in np.arange(len(CDL_Data)))
+         for i in np.arange(len(CDL_Data))) 
 
 #=============================================================================#
 # 2c. Save recategorized GCAM grids to files                                  #
 #=============================================================================#
 Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(saveGCAMGrid)(GCAM_Data[i]) \
-         for i in np.arange(len(CDL_Data)))
-
+         for i in np.arange(len(CDL_Data))) 
 #=============================================================================#
 # 3. Create Arrays of Results
 #=============================================================================#
