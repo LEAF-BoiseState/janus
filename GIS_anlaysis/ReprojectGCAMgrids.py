@@ -29,6 +29,8 @@ GCAM_ReadFiles = glob.glob(GCAM_ReadDir+'gcam*srb.tiff')
 # Location and name of output file
 GCAM_ReprojWriteDir  = GCAM_ReadDir + 'GCAM_UTM/'
 
+read='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/GCAM_UTM/gcam_2010_srb_utm11N.tiff'
+
 dst_epsg_str = 'EPSG:32611'
 
 #=============================================================================#
@@ -42,7 +44,7 @@ def ReprojectGCAMGrid(GCAM_ReadDir,GCAM_ReadFile,GCAM_WriteDir,dst_epsg_str):
     GCAM_WriteFile = GCAM_ReadFile.replace('srb','srb_geo')
 
     # Use gdal.Warp to reproject the file
-    gdal.Warp(GCAM_WriteDir+GCAM_WriteFile,src_ds,dstSRS='EPSG:4326') ## << NEEDED AS AN INTERMEDIATE BECAUSE NO INITIAL PROJECTION DEFINED << that doesnt make sense ...
+    gdal.Warp(GCAM_WriteDir+GCAM_WriteFile,src_ds,dstSRS='EPSG:4326') ## << NEEDED AS AN INTERMEDIATE BECAUSE NO INITIAL PROJECTION DEFINED <<
 
     src_ds = None
     
