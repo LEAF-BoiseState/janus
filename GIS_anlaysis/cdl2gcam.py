@@ -184,7 +184,7 @@ GCAM_stats = np.zeros((28, f))
     
 for i in np.arange(f):
     CDL_stats[:,i]= CDL_Data[i].cdl_stats
-    GCAM_stats[:,i]= CDL_Data[i].gcam_stats
+    GCAM_stats[:,i]= GCAM_Data[i].gcam_stats
 
 np.savetxt("cdl_res.csv", CDL_stats, delimiter=",")
 np.savetxt("gcam_res.csv", GCAM_stats, delimiter=",")
