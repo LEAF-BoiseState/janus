@@ -24,7 +24,7 @@ LejoWritePath = '/Users/lejoflores/IM3-BoiseState/CDL_analysis/'
 kekDataPath= '/Users/kek25/Dropbox/BSU/Python/IM3/CDL/'#THIS ISN"T RUNNING ON MY DESKTOP
 kekWritePath= '/Users/kek25/Dropbox/BSU/Python/IM3/'
 
-CDL_GCAM_keyfile = kekWritePath + 'CDL2GCAM_SRP_price_yield.csv'
+CDL_GCAM_keyfile = kekDataPath + 'CDL2GCAM_SRP_price_yield.csv'
 #CDL_ReadDir   =  LejoDataPath 
 CDL_ReadDir  = kekDataPath
 GCAM_WriteDir = kekWritePath+'GCAM_SRP/'
@@ -126,8 +126,10 @@ def saveGCAMGrid(GCAM_struct):
     #alternative to warping after the fact is just setting it here 
     #http://geoexamples.blogspot.com/2012/01/creating-files-in-ogr-and-gdal-with.html
     proj = osr.SpatialReference()
-    proj.SetWellKnownGeogCS( "EPSG:32611" )
-    gcam_gdal.SetProjection(proj.ExportToWkt(GCAM_struct.gcam_projection))
+    #proj.SetWellKnownGeogCS('EPSG:32611')
+    proj.ImportFromEPSG(32611)
+    gcam_gdal.SetProjection(proj.ExportToWkt())
+
     #gcam_gdal.SetProjection(GCAM_struct.gcam_projection)
     
     gcam_gdal.SetGeoTransform(GCAM_struct.gcam_geotransform)
@@ -159,8 +161,8 @@ for file in files:
     # Initialize GCAM data structures with paths and file names
     gcam_path    = GCAM_WriteDir
     gcam_outfile = cdl_infile.replace('cdl','gcam')
-    gram_outfile = gcam_outfile.replace('txt','tiff')
-    GCAM_Data.append(GCAM_DataStruct(gcam_path,gram_outfile)) 
+    gcam_outfile = gcam_outfile.replace('txt','tiff')
+    GCAM_Data.append(GCAM_DataStruct(gcam_path,gcam_outfile)) 
     
 #=============================================================================#
 # 2a. Read in all the CDL files and store data in CDL_DataStruct              #
