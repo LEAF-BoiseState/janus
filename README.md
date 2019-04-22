@@ -5,6 +5,9 @@
 ## CDL Analysis
 Order of operations
 
-1. cdl2gcam - converts from cdl categories to GCAM SRP categories using a csv lookup 
-2. Reproject GCAM grids - this just gives a projection so that #3 can happen
-3. Aggregate GCAM grids - currently set to aggregate from 30m to 3km using the mode
+1. cdl2gcam - converts from cdl categories to GCAM SRP categories using a csv lookup, calculates area wieghted price and yeild based on 2010 NASS values (CDL2GCAM_SRP_price_yield.csv)
+2. Aggregate GCAM grids - currently set to aggregate from 30m to 3km using the mode
+
+Zonal Stats calculates the Shannon Diversity Index of 30m CDL data within each 1km/3km grid cell
+
+getGISdata - functions getGISextent, getGCAM, minDistCity
