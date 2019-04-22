@@ -9,6 +9,7 @@ function that clips GIS data based on counties, year, and resolution
 """
 import os  
 import geopandas as gp
+import gdal
 
 #set user directory
 os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
@@ -41,7 +42,10 @@ def getGISextent(countyList, scale):
 
 def getGCAM(extent, year, scale):
     #use scale to dtermine which folder to id
-    file=GCAMpath+scale+'/gcam_'+year
+    file=GCAMpath+scale+'/gcam_'+year+'*.tiff'
+    gcam_dat=gdal.Open(file)
+    ds= gcam_dat.GetRasterBand(1)
+    
 
 
 def minDistCity(cityShape, scale, extent_poly):
