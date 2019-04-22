@@ -44,10 +44,52 @@ def getGCAM(extent, year, scale):
     file=GCAMpath+scale+'/gcam_'+year
 
 
+def minDistCity(cityShape, scale, extent_poly):
+    
+    cities=cityShape.to_crs(extent_poly.crs) #convert projection - do this somewhere else?
+    #join the cities data with the SRB polygons
+    city_poly=gp.sjoin(extent_poly, cities[['CITY', 'geometry']], how = 'left', op='intersects')
+    #replace Nas
+    city_poly['index_right']=city_poly['index_right'].fillna(99)
+    city_poly['CITY']=city_poly['CITY'].fillna('Rural')
 
+    #city_poly.plot(column='CITY', categorical =True, legend=True, figsize=(5,10))
+
+    #SUBSET INTO SEPERATE SHAPEFILES to calculate distance
+    rural=city_poly[city_poly['CITY'] == 'Rural']
+    city=city_poly[city_poly['CITY'] != 'Rural']
+    rural=rural.rename(columns={'index_right':'city_index'})
+    city=city.rename(columns={'index_right':'city_index'})
+
+    #calculate distance to closest city
+    rural['distCity'] =rural.geometry.apply(lambda g:city.distance(g).min())
+    city['distCity']=0
+    
+    
+    #now add column back to main coverage THIS DOESNT WORK
+    #SRB_city_poly[SRB_city_poly['id'] ==rural['id']]['distCity']=rural['distCity']
+    
+    rural_filename = 'ruralDist_'+ scale +'.shp'
+    ##CANT Figure out how to combine them yet - and should they be rasters, rather than shapefiles?
+    rural.to_file(driver='ESRI Shapefile', filename=rural_filename)
+
+    return(rural,city_poly)
+    #return(SRB_city_poly)
+
+
+
+
+#TEST FUNCTIONS
+import matplotlib.pyplot as plt
+#cities = gp.read_file(DataPath+'Cities/SRB_cities.shp') 
+cities = gp.read_file(DataPath+'COMPASS/CityLimits_AdaCanyon.shp') # ADD NEW CITIES SHP HERE 
 
 countyList=['Ada', 'Canyon']  
    
-extent=getGISdata(countyList, '3km')
+extent=getGISextent(countyList, '3km')
     #also this probably just needs to be a raster ... 
-    
+out=minDistCity(cities, '3km', extent)
+
+fig, ax = plt.subplots(figsize = (10,10))
+city_poly.plot(column='CITY', categorical =True, ax=ax)
+rural.plot(column='distCity', legend = True, ax=ax)
