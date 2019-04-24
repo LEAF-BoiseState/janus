@@ -10,12 +10,14 @@ function that clips GIS data based on counties, year, and resolution
 import os  
 import geopandas as gp
 import gdal
-
+import glob2 
+import numpy as np
 #set user directory
 os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
 #os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/Shapefiles/')
-DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/Shapefiles/'
-GCAMpath='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
+DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/'
+#GCAMpath='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
+GCAMpath='/Users/kendrakaiser/Volumes/GFS_RAID/Dropbox/BSU/Python/IM3/GCAM_SRP/'
 
 counties_shp= gp.read_file('Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
@@ -24,9 +26,9 @@ counties_shp=counties_shp.set_index('county')
 def getGISextent(countyList, scale):
     
     if scale == '3km':
-        SRB_poly= gp.read_file(DataPath+'SRB_gridpolys/SRB_poly_3km_V2.shp') 
+        SRB_poly= gp.read_file(DataPath+'Shapefiles/SRB_gridpolys/SRB_poly_3km_V2.shp') 
     elif scale == '1km':
-        SRB_poly= gp.read_file(DataPath+'SRB_gridpolys/SRB_poly_1km_V2.shp') 
+        SRB_poly= gp.read_file(DataPath+'Shapefiles/SRB_gridpolys/SRB_poly_1km_V2.shp') 
     
     #select two shapefiles, this returns geometry of the union - this no longer distinguishes two
     extent=counties_shp['geometry'].loc[countyList].unary_union #this is the row index, not the "COUNTY_ALL" index
@@ -39,15 +41,17 @@ def getGISextent(countyList, scale):
     #no-build mask
     #cdl data
 
+year=2014
+scale=3000
 
 def getGCAM(extent, year, scale):
-    #use scale to dtermine which folder to id
-    file=GCAMpath+scale+'/gcam_'+year+'*.tiff'
-    gcam_dat=gdal.Open(file)
+    file=glob2.glob('GCAM_SRP/gcam_'+str(year)+'_srb_'+str(scale)+'.tiff')
+    gcam_dat=gdal.Open(DataPath+file[0])
     ds= gcam_dat.GetRasterBand(1)
+    ds_grid = np.float64(ds.ReadAsArray())
+
+
     
-
-
 def minDistCity(cityShape, scale, extent_poly):
     
     cities=cityShape.to_crs(extent_poly.crs) #convert projection - do this somewhere else?
@@ -86,14 +90,21 @@ def minDistCity(cityShape, scale, extent_poly):
 #TEST FUNCTIONS
 import matplotlib.pyplot as plt
 #cities = gp.read_file(DataPath+'Cities/SRB_cities.shp') 
-cities = gp.read_file(DataPath+'COMPASS/CityLimits_AdaCanyon.shp') # ADD NEW CITIES SHP HERE 
+cities = gp.read_file(DataPath+'Shapefiles/COMPASS/CityLimits_AdaCanyon.shp') # ADD NEW CITIES SHP HERE 
 
 countyList=['Ada', 'Canyon']  
-   
-extent=getGISextent(countyList, '3km')
+ 
+extent_poly=getGISextent(countyList, '3km')
     #also this probably just needs to be a raster ... 
 out=minDistCity(cities, '3km', extent)
 
 fig, ax = plt.subplots(figsize = (10,10))
 city_poly.plot(column='CITY', categorical =True, ax=ax)
 rural.plot(column='distCity', legend = True, ax=ax)
+
+
+fig, ax = plt.subplots(figsize=(10, 8))
+ax.imshow(gcam_im, cmap='terrain')
+extent.plot(ax=ax, alpha=.8)
+ax.set_title("Raster Layer with Shapefile Overlayed")
+ax.set_axis_off()
