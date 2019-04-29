@@ -12,6 +12,12 @@ import geopandas as gp
 import gdal
 import glob2 
 import numpy as np
+import rasterio
+from rasterio.mask import mask
+from rasterio.plot import show
+import pycrs
+from shapely.ops import cascaded_union
+
 #set user directory
 os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
 #os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/Shapefiles/')
@@ -21,6 +27,7 @@ GCAMpath='/Users/kendrakaiser/Volumes/GFS_RAID/Dropbox/BSU/Python/IM3/GCAM_SRP/'
 
 counties_shp= gp.read_file('Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
+
 
 
 def getGISextent(countyList, scale):
@@ -36,19 +43,37 @@ def getGISextent(countyList, scale):
     
     extent_poly.plot()
     return(extent_poly)
-    #urban extent, and distance to city - done
     #area of influence
     #no-build mask
-    #cdl data
+
 
 year=2014
 scale=3000
 
-def getGCAM(extent, year, scale):
-    file=glob2.glob('GCAM_SRP/gcam_'+str(year)+'_srb_'+str(scale)+'.tiff')
-    gcam_dat=gdal.Open(DataPath+file[0])
-    ds= gcam_dat.GetRasterBand(1)
-    ds_grid = np.float64(ds.ReadAsArray())
+
+#https://automating-gis-processes.github.io/CSC/notebooks/L5/clipping-raster.html
+def getGCAM(countyList, year, scale): #returns a numpy array 
+    import json #whats the diff btw importing libraries here v in main environ?
+    #from pycrs import parse #mightnot be necessary
+    file=glob2.glob('GCAM_SRP/gcam_'+str(year)+'_srb_'+str(scale)+'.tiff') #other way to use this other than glob?? 
+
+    data = rasterio.open(DataPath+file[0])
+    extent_shp=counties_shp['geometry'].loc[countyList]
+    boundary = gp.GeoSeries(cascaded_union(extent_shp))
+    coords = [json.loads(boundary.to_json())['features'][0]['geometry']] #parses features from GeoDataFrame the way rasterio wants them
+    out_img, out_transform = mask(dataset=data, shapes=coords, crop=True)
+    out_meta = data.meta.copy()
+    epsg_code = int(data.crs.data['init'][5:])
+    
+    out_meta.update({"driver": "GTiff",
+                 "height": out_img.shape[1],
+                 "width": out_img.shape[2],
+                 "transform": out_transform,
+                 "crs": pycrs.parse.from_epsg_code(epsg_code).to_proj4()}
+                        )
+    show(out_img)
+    #need to return this as a geo data frame? basically this will get updated, and then fed into the minDistCity function ... 
+    return(out_img)
 
 
     
@@ -81,7 +106,7 @@ def minDistCity(cityShape, scale, extent_poly):
     ##CANT Figure out how to combine them yet - and should they be rasters, rather than shapefiles?
     rural.to_file(driver='ESRI Shapefile', filename=rural_filename)
 
-    return(rural,city_poly)
+    return(rural,city_poly) #this only returns rural, need to joing the two back together ... 
     #return(SRB_city_poly)
 
 
@@ -96,12 +121,12 @@ countyList=['Ada', 'Canyon']
  
 extent_poly=getGISextent(countyList, '3km')
     #also this probably just needs to be a raster ... 
-out=minDistCity(cities, '3km', extent)
+out=minDistCity(cities, '3km', extent_poly)
 
 fig, ax = plt.subplots(figsize = (10,10))
 city_poly.plot(column='CITY', categorical =True, ax=ax)
 rural.plot(column='distCity', legend = True, ax=ax)
-
+counties.plot()
 
 fig, ax = plt.subplots(figsize=(10, 8))
 ax.imshow(gcam_im, cmap='terrain')
