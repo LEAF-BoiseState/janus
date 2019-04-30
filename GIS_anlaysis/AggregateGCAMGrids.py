@@ -24,9 +24,9 @@ AggRes = 3000.0 # In units of m
 #user = lejo
 
 # Specific directories of where to find the data
-GCAM_ReadDir = '/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP'
+GCAM_ReadDir = '/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
 
-GCAM_ReadFiles = glob.glob(GCAM_ReadDir +'/gcam*srb.tiff')
+GCAM_ReadFiles = glob.glob(GCAM_ReadDir +'gcam*srb.tiff')
 
 GCAM_ReprojWriteDir  = GCAM_ReadDir + '/3km/'
 
@@ -35,7 +35,7 @@ GCAM_ReprojWriteDir  = GCAM_ReadDir + '/3km/'
 def AggregateGCAMGrid(GCAM_ReadDir,GCAM_ReadFile,GCAM_WriteDir,AggRes):
     
     # Open the GeoTiff based on the input path and file
-    src_ds = gdal.Open(GCAM_ReadFile)
+    src_ds = gdal.Open(GCAM_ReadDir+GCAM_ReadFile)
 
     # Create the name of the output file by modifying the input file
     GCAM_WriteFile = GCAM_ReadFile.replace('srb','srb'+'_'+str(int(AggRes)))
