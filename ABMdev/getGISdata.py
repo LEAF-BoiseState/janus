@@ -9,7 +9,6 @@ function that clips GIS data based on counties, year, and resolution
 """
 import os  
 import geopandas as gp
-import gdal
 import glob2 
 import numpy as np
 import rasterio
@@ -19,17 +18,19 @@ import pycrs
 from shapely.ops import cascaded_union
 
 #set user directory
-os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
-#os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
-DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/'
-#DataPath='/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/'
-#GCAMpath='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
-GCAMpath='/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/GCAM_SRP/'
+#os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
+#DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/'
+#GCAMpath='/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/GCAM_SRP/'
+os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
+DataPath='/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/'
+GCAMpath='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
 
 counties_shp= gp.read_file('Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
 
-
+#------------------------------------------------------------------------
+# DEFINE FUNCTIONS
+#------------------------------------------------------------------------
 
 def getGISextent(countyList, scale):
     
@@ -44,14 +45,7 @@ def getGISextent(countyList, scale):
     
     extent_poly.plot()
     return(extent_poly)
- 
 
-
-year=2014
-scale=3000
-
-
-#https://automating-gis-processes.github.io/CSC/notebooks/L5/clipping-raster.html
 def getGCAM(countyList, year, scale): #returns a numpy array 
     import json #whats the diff btw importing libraries here v in main environ?
     file=glob2.glob(GCAMpath+'gcam_'+str(year)+'_srb_'+str(scale)+'.tiff') #other way to use this other than glob?? 
@@ -75,45 +69,13 @@ def getGCAM(countyList, year, scale): #returns a numpy array
     return(out_img)
 
 
-    
-def minDistCity(cityShape, scale, extent_poly):
-    
-    cities=cityShape.to_crs(extent_poly.crs) #convert projection - do this somewhere else?
-    #join the cities data with the SRB polygons
-    city_poly=gp.sjoin(extent_poly, cities[['CITY', 'geometry']], how = 'left', op='intersects')
-    #replace Nas
-    city_poly['index_right']=city_poly['index_right'].fillna(99)
-    city_poly['CITY']=city_poly['CITY'].fillna('Rural')
 
-    #city_poly.plot(column='CITY', categorical =True, legend=True, figsize=(5,10))
-
-    #SUBSET INTO SEPERATE SHAPEFILES to calculate distance
-    rural=city_poly[city_poly['CITY'] == 'Rural']
-    city=city_poly[city_poly['CITY'] != 'Rural']
-    rural=rural.rename(columns={'index_right':'city_index'})
-    city=city.rename(columns={'index_right':'city_index'})
-
-    #calculate distance to closest city
-    rural['distCity'] =rural.geometry.apply(lambda g:city.distance(g).min())
-    city['distCity']=0
-    
-    
-    #now add column back to main coverage THIS DOESNT WORK
-    #SRB_city_poly[SRB_city_poly['id'] ==rural['id']]['distCity']=rural['distCity']
-    
-    rural_filename = 'ruralDist_'+ scale +'.shp'
-    ##CANT Figure out how to combine them yet - and should they be rasters, rather than shapefiles?
-    rural.to_file(driver='ESRI Shapefile', filename=rural_filename)
-
-    return(rural,city_poly) #this only returns rural, need to join the two back together ... 
-    #return(SRB_city_poly)
-
-
-def minDistCityg(gcam):
+def minDistCity(gcam):
     
     from scipy import spatial
     urban_bool= np.logical_or(np.logical_or(gcam[0] == 26, gcam[0] == 27), np.logical_or(gcam[0] == 17, gcam[0] == 25)) 
-    rur=np.where(~urban_bool)
+    
+    rur=np.where(np.logical_and(~urban_bool, gcam[0] != 0)) 
     rural=np.array((rur[0],rur[1])).transpose()
     
     urb=np.where(urban_bool)
@@ -125,34 +87,27 @@ def minDistCityg(gcam):
     urb_val=np.zeros(urban.shape[0])
     idx = np.vstack((urban, rural))
     dist= np.vstack((urb_val[:, None], mindist[:, None]))
+    out=np.zeros(gcam[0].shape)
+    out.fill(np.nan)
+    for i in np.arange(dist.size):
+        out[idx[i,0]][idx[i,1]]= dist[i]
     
-
-    
-    return(mindist)
+    return(out)
     
 
 
 
 #TEST FUNCTIONS
 import matplotlib.pyplot as plt
-#cities = gp.read_file(DataPath+'Cities/SRB_cities.shp') 
-cities = gp.read_file(DataPath+'Shapefiles/COMPASS/CityLimits_AdaCanyon.shp') # ADD NEW CITIES SHP HERE 
 
 countyList=['Ada', 'Canyon']  
- 
+year=2014
+scale=3000
+
+
 extent_poly=getGISextent(countyList, '3km')
 gcam=getGCAM(countyList, year, scale)
+dist2city=minDistCity(gcam)
 
-    #also this probably just needs to be a raster ... 
-out=minDistCity(cities, '3km', extent_poly)
-
-fig, ax = plt.subplots(figsize = (10,10))
-city_poly.plot(column='CITY', categorical =True, ax=ax)
-rural.plot(column='distCity', legend = True, ax=ax)
-counties.plot()
-
-fig, ax = plt.subplots(figsize=(10, 8))
-ax.imshow(gcam_im, cmap='terrain')
-extent.plot(ax=ax, alpha=.8)
-ax.set_title("Raster Layer with Shapefile Overlayed")
-ax.set_axis_off()
+show(dist2city)
+plt.colorbar()
