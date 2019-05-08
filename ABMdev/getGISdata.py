@@ -121,6 +121,12 @@ def minDistCityg(gcam):
     
     tree = spatial.cKDTree(urban)
     mindist, minid = tree.query(rural)
+    #reconstruct 2D np array with distance values
+    urb_val=np.zeros(urban.shape[0])
+    idx = np.vstack((urban, rural))
+    dist= np.vstack((urb_val[:, None], mindist[:, None]))
+    
+
     
     return(mindist)
     
