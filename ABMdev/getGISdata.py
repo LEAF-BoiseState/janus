@@ -19,12 +19,12 @@ import pycrs
 from shapely.ops import cascaded_union
 
 #set user directory
-#os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
-os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
-#DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/'
-DataPath='/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/'
-GCAMpath='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
-#GCAMpath='/Users/kendrakaiser/Volumes/GFS_RAID/Dropbox/BSU/Python/IM3/GCAM_SRP/'
+os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
+#os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
+DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/'
+#DataPath='/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/'
+#GCAMpath='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
+GCAMpath='/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/GCAM_SRP/'
 
 counties_shp= gp.read_file('Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
@@ -108,28 +108,22 @@ def minDistCity(cityShape, scale, extent_poly):
     return(rural,city_poly) #this only returns rural, need to join the two back together ... 
     #return(SRB_city_poly)
 
-import scipy.spatial
 
-def minDistCityg(gcam[0]):
-    urban= np.logical_or(np.logical_or(gcam == 26, gcam == 27), np.logical_or(gcam == 17, gcam == 25)) 
-    urb=gcam[urban].reshape(gcam.shape)
-    rural=~urban
-    rur=np.where(rural)
-    tst=np.where(np.logical_or(np.logical_or(gcam == 26, gcam == 27), np.logical_or(gcam == 17, gcam == 25)))
-    tstr=np.array([tst[0], tst[1]])
+def minDistCityg(gcam):
     
-     #THIS IS FUCKED - hree ways to do this and i cant figure out formatting
-    eudistance = np.linalg.norm(rural - urban)
-    dist=scipy.spatial.distance.cdist(rur, tst, metric='euclidean')
-
-from sklearn.metrics.pairwise import paired_distances
-X = [[0, 1], [1, 1]]
-Y = [[0, 1], [2, 1]]
-pairwise.paired_distances(X,Y)
-
-a = np.random.normal(size=(10,3))
-b = np.random.normal(size=(1,3))
-dist = scipy.spatial.distance.cdist(a,b)
+    from scipy import spatial
+    urban_bool= np.logical_or(np.logical_or(gcam[0] == 26, gcam[0] == 27), np.logical_or(gcam[0] == 17, gcam[0] == 25)) 
+    rur=np.where(~urban_bool)
+    rural=np.array((rur[0],rur[1])).transpose()
+    
+    urb=np.where(urban_bool)
+    urban = np.array((urb[0], urb[1])).transpose()
+    
+    tree = spatial.cKDTree(urban)
+    mindist, minid = tree.query(rural)
+    
+    return(mindist)
+    
 
 
 
