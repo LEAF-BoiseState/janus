@@ -4,16 +4,16 @@
 #==================================================================================#
 
 class dCellClass:
-	def __init__(self,Area,cLat,cLon,Elev,Slope,Aspect,perSand,perSilt,perClay):
-		self.Area       = Area
-		self.cLat       = cLat
-		self.cLon       = cLon
-		self.Elev       = Elev
-		self.Slope      = Slope
-		self.Aspect     = Aspect
-		self.perSand    = perSand
-		self.perSilt    = perSilt
-		self.perClay    = perClay
+	def __init__(self,**kwargs):
+		self.Area       = kwargs.get('Area')
+		self.cLat       = kwargs.get('cLat')
+		self.cLon       = kwargs.get('cLon')
+		self.Elev       = kwargs.get('Elev')
+		self.Slope      = kwargs.get('Slope')
+		self.Aspect     = kwargs.get('Aspect')
+		self.perSand    = kwargs.get('perSand')
+		self.perSilt    = kwargs.get('perSilt')
+		self.perClay    = kwargs.get('perClay')
 		self.nFarmAgent = 0
 		self.nUrbAgent  = 0
 
@@ -88,7 +88,7 @@ class dCellClass:
 		#=====================#
 		# Add toAgent         #
 		#=====================#
-		# This is just a function call to the above functio
+		# This is just a function call to the above function
 		self.AddAgent(toType,toAgentStruct)
 
 	#==============================================================================#

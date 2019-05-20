@@ -5,7 +5,7 @@
 #==================================================================================#
 import numpy as np
 
-output_base = 'test_landscape_'
+output_base = 'test_landscape/test_landscape_'
 
 nRows = 40
 nCols = 40
@@ -26,10 +26,10 @@ PerSand = 0.4
 PerSilt = 0.4
 PerClay = 0.2
 
-assert (perSand+perSilt+perClay)==1.0, "percent sand, silt, clay must sum to 1.0"
+assert (PerSand+PerSilt+PerClay)==1.0, "percent sand, silt, clay must sum to 1.0"
 
-minLat = clat - delLat*(nRows/2)
-minLon = clon - delLon*(nRows/2)
+minLat = cLat - delLat*(nRows/2)
+minLon = cLon - delLon*(nRows/2)
 
 lat = np.linspace(minLat,minLat+nRows*delLat,num=nRows)
 lon = np.linspace(minLon,minLon+nCols*delLon,num=nCols)
@@ -46,9 +46,9 @@ gElev   = np.random.normal(loc=meanElev,scale=2.0,size=(nRows,nCols))
 gSlope  = np.random.uniform(low=0.001*meanSlope,high=10*meanSlope,size=(nRows,nCols))
 gAspect = np.random.uniform(low=0.5*meanAspect,high=2*meanAspect,size=(nRows,nCols))
 
-gPerSand = PerSand*ones((nRows,nCols)) 
-gPerSilt = PerSilt*ones((nRows,nCols))
-gPerClay = PerClay*ones((nRows,nCols))
+gPerSand = PerSand*np.ones((nRows,nCols)) 
+gPerSilt = PerSilt*np.ones((nRows,nCols))
+gPerClay = PerClay*np.ones((nRows,nCols))
 
 # Save outputs
 np.save(output_base+'area.npy',gArea)
