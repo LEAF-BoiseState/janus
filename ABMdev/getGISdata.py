@@ -9,11 +9,10 @@ function that clips GIS data based on counties, year, and resolution
 """
 import os  
 import geopandas as gp
-import glob2 
 import numpy as np
+import glob2 
 import rasterio
 from rasterio.mask import mask
-from rasterio.plot import show
 import pycrs
 from shapely.ops import cascaded_union
 
@@ -21,11 +20,11 @@ from shapely.ops import cascaded_union
 #os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
 #DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/'
 #GCAMpath='/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/GCAM_SRP/'
-os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
+os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/')
 DataPath='/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/'
 GCAMpath='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
 
-counties_shp= gp.read_file('Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
+counties_shp= gp.read_file('GIS_anlaysis/Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
 
 #------------------------------------------------------------------------
@@ -42,9 +41,8 @@ def getGISextent(countyList, scale):
     #select two shapefiles, this returns geometry of the union - this no longer distinguishes two
     extent=counties_shp['geometry'].loc[countyList].unary_union #this is the row index, not the "COUNTY_ALL" index
     extent_poly=SRB_poly[SRB_poly.geometry.intersects(extent)]
-    
-    extent_poly.plot()
     return(extent_poly)
+    
 
 def getGCAM(countyList, year, scale): #returns a numpy array 
     import json #whats the diff btw importing libraries here v in main environ?
@@ -64,50 +62,19 @@ def getGCAM(countyList, year, scale): #returns a numpy array
                  "transform": out_transform,
                  "crs": pycrs.parse.from_epsg_code(epsg_code).to_proj4()}
                         )
-    show(out_img)
-    #need to return this as a geo data frame? basically this will get updated, and then fed into the minDistCity function ... 
     return(out_img)
 
-
-
-def minDistCity(gcam):
-    
-    from scipy import spatial
-    urban_bool= np.logical_or(np.logical_or(gcam[0] == 26, gcam[0] == 27), np.logical_or(gcam[0] == 17, gcam[0] == 25)) 
-    
-    rur=np.where(np.logical_and(~urban_bool, gcam[0] != 0)) 
-    rural=np.array((rur[0],rur[1])).transpose()
-    
-    urb=np.where(urban_bool)
-    urban = np.array((urb[0], urb[1])).transpose()
-    
-    tree = spatial.cKDTree(urban)
-    mindist, minid = tree.query(rural)
-    #reconstruct 2D np array with distance values
-    urb_val=np.zeros(urban.shape[0])
-    idx = np.vstack((urban, rural))
-    dist= np.vstack((urb_val[:, None], mindist[:, None]))
-    out=np.zeros(gcam[0].shape)
-    out.fill(np.nan)
-    for i in np.arange(dist.size):
-        out[idx[i,0]][idx[i,1]]= dist[i]
-    
-    return(out)
-    
-
-
-
-#TEST FUNCTIONS
-import matplotlib.pyplot as plt
+#------------------------------------------------------------------------
+# Select and save npy file of specific initialization year
+#------------------------------------------------------------------------
 
 countyList=['Ada', 'Canyon']  
-year=2014
-scale=3000
+year=2010
+scale=1000
 
 
-extent_poly=getGISextent(countyList, '3km')
-gcam=getGCAM(countyList, year, scale)
-dist2city=minDistCity(gcam)
+extent_poly=getGISextent(countyList, '1km')
+gcam_init=getGCAM(countyList, year, scale)
 
-show(dist2city)
-plt.colorbar()
+np.save('/ABMdev/Data/extent.npy', extent_poly)
+np.save('/ABMdev/Data/gcam_1km_2010_AdaCanyon.npy', gcam_init)
