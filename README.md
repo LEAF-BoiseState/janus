@@ -10,4 +10,10 @@ Order of operations
 
 Zonal Stats calculates the Shannon Diversity Index of 30m CDL data within each 1km/3km grid cell
 
-getGISdata - functions getGISextent, getGCAM, minDistCity
+## Spatial Initialization
+getGISdata - functions getGISextent, getGCAM, 
+
+## geofxs
+*will be further populated to preform various statistical analysis
+
+minDistCity - takes a np array of SRP GCAM categories, returns np arry of distances to closest city cell
