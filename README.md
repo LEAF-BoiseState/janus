@@ -15,4 +15,5 @@ getGISdata - functions getGISextent, getGCAM,
 
 ## geofxs
 *will be further populated to preform various statistical analysis
+
 minDistCity - takes a np array of SRP GCAM categories, returns np arry of distances to closest city cell
