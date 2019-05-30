@@ -4,6 +4,8 @@
 Created on Wed May  8 11:38:40 2019
 
 @author: kek25
+
+This returns a shape file of polygons with values in it, not entirely working or what we need
 """
 
 import os  
