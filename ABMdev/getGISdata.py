@@ -21,7 +21,7 @@ from shapely.ops import cascaded_union
 #DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/'
 #GCAMpath='/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/GCAM_SRP/'
 os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/')
-DataPath='/Users/kek25/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/'
+DataPath='/Users/kek25/Documents/GitRepos/IM3-BoiseState/'
 GCAMpath='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
 
 counties_shp= gp.read_file('GIS_anlaysis/Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
@@ -34,9 +34,9 @@ counties_shp=counties_shp.set_index('county')
 def getGISextent(countyList, scale):
     
     if scale == '3km':
-        SRB_poly= gp.read_file(DataPath+'Shapefiles/SRB_gridpolys/SRB_poly_3km_V2.shp') 
+        SRB_poly= gp.read_file(DataPath+'GIS_anlaysis/Shapefiles/SRB_gridpolys/SRB_poly_3km_V2.shp') 
     elif scale == '1km':
-        SRB_poly= gp.read_file(DataPath+'Shapefiles/SRB_gridpolys/SRB_poly_1km_V2.shp') 
+        SRB_poly= gp.read_file(DataPath+'GIS_anlaysis/Shapefiles/SRB_gridpolys/SRB_poly_1km_V2.shp') 
     
     #select two shapefiles, this returns geometry of the union - this no longer distinguishes two
     extent=counties_shp['geometry'].loc[countyList].unary_union #this is the row index, not the "COUNTY_ALL" index
@@ -76,5 +76,5 @@ scale=1000
 extent_poly=getGISextent(countyList, '1km')
 gcam_init=getGCAM(countyList, year, scale)
 
-np.save('/ABMdev/Data/extent.npy', extent_poly)
-np.save('/ABMdev/Data/gcam_1km_2010_AdaCanyon.npy', gcam_init)
+np.save(DataPath+'ABMdev/Data/extent_1km_AdaCanyon.npy', extent_poly)
+np.save(DataPath+'ABMdev/Data/gcam_1km_2010_AdaCanyon.npy', gcam_init)
