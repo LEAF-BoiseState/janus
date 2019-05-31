@@ -17,3 +17,13 @@ getGISdata - functions getGISextent, getGCAM,
 *will be further populated to preform various statistical analysis
 
 minDistCity - takes a np array of SRP GCAM categories, returns np arry of distances to closest city cell
+
+# ABM Development
+##Classes:
+aFarmer - (a= agent) sets up farmer class with details on atrributes and functions of farmer 
+dCell- (d = domain) - pixel with geographic information about terrain, and which agents are located
+
+FarmerClassMod and CropClass Mod are depricated
+
+##Crop functions:
+ReadCropCycle
