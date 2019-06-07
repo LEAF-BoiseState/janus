@@ -19,7 +19,7 @@ from shapely.ops import cascaded_union
 #set user directory
 os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/')
 DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/'
-GCAMpath='/Users/kendrakaiser/Documents/Dropbox/BSU/Python/IM3/GCAM_SRP/'
+GCAMpath='/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_analysis/GCAM_SRP/'
 #os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/')
 #DataPath='/Users/kek25/Documents/GitRepos/IM3-BoiseState/'
 #GCAMpath='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
