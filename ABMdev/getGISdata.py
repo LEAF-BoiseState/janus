@@ -17,12 +17,12 @@ import pycrs
 from shapely.ops import cascaded_union
 
 #set user directory
-#os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
-#DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/'
-#GCAMpath='/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/GCAM_SRP/'
-os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/')
-DataPath='/Users/kek25/Documents/GitRepos/IM3-BoiseState/'
-GCAMpath='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
+os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/')
+DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/'
+GCAMpath='/Users/kendrakaiser/Documents/Dropbox/BSU/Python/IM3/GCAM_SRP/'
+#os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/')
+#DataPath='/Users/kek25/Documents/GitRepos/IM3-BoiseState/'
+#GCAMpath='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
 
 counties_shp= gp.read_file('GIS_anlaysis/Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
