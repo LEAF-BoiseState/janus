@@ -11,9 +11,13 @@ minDistCity - Calculates the distance from any cell to a city cell of any densit
 """
 import numpy as np
 
+#read in from file
+file ='/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/ABMdev/Data/gcam_1km_2010_AdaCanyon.npy'
+gcam=np.load(file)
+
 def minDistCity(gcam):
     
-    assert gcam.max <=28, "Array does not conform to SRP GCAM categories"
+    #assert gcam.max <=28, "Array does not conform to SRP GCAM categories"
     
     from scipy import spatial
     urban_bool= np.logical_or(np.logical_or(gcam[0] == 26, gcam[0] == 27), np.logical_or(gcam[0] == 17, gcam[0] == 25)) 
@@ -35,3 +39,8 @@ def minDistCity(gcam):
     for i in np.arange(dist.size):
         out[idx[i,0]][idx[i,1]]= dist[i]
     return(out)
+    
+
+dist2city=minDistCity(gcam)
+
+np.save('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/ABMdev/Data/dist2city_1km_2010_AdaCanyon.npy', dist2city)
