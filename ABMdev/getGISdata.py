@@ -76,5 +76,5 @@ scale=1000
 extent_poly=getGISextent(countyList, '1km')
 gcam_init=getGCAM(countyList, year, scale)
 
-np.save(DataPath+'ABMdev/Data/extent_1km_AdaCanyon.npy', extent_poly)
-np.save(DataPath+'ABMdev/Data/gcam_1km_2010_AdaCanyon.npy', gcam_init)
+extent_poly.to_file(DataPath+'ABMdev/Data/extent_1km_AdaCanyon.shp')
+np.save(DataPath+'ABMdev/Data/gcam_1km_2010_AdaCanyon.npy', gcam_init) #not sure if this one needs to be changed ...

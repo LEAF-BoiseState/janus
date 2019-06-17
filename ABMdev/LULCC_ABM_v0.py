@@ -37,3 +37,10 @@
 #   - Aggregate statistics through time (csv or NetCDF)
 #   - Spatial land use patterns through time (NetCDF)
 
+
+import geopandas as gp
+DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/'
+
+
+#load extent
+extent=gp.read_file(DataPath + 'ABMdev/Data/extent_1km_AdaCanyon.shp')
