@@ -39,8 +39,50 @@
 
 
 import geopandas as gp
-DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/'
+import numpy as np
+from geofxns import minDistCity #slow
+import matplotlib.pyplot as plt
+import Classes.aFarmer as farmer
 
+DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/'
 
 #load extent
 extent=gp.read_file(DataPath + 'ABMdev/Data/extent_1km_AdaCanyon.shp')
+#load inital landcover
+lc=np.load(DataPath + 'ABMdev/Data/gcam_1km_2010_AdaCanyon.npy')
+lc=lc.squeeze()
+nRows, nCols = lc.shape
+
+
+#setup grid space for agent locations
+AgentArray = np.empty((nRows,nCols),dtype='U10')
+
+
+#loop
+#update statistics
+#update minimum distance to city
+minDist=minDistCity(lc)
+
+#assign agents on the landscape
+AgentArray[np.logical_and(lc > 0, lc <28)] = 'aFarmer'
+AgentArray[np.logical_or(lc == 28, lc == 23)] ='water' #somehow with the reclassification, a bunch of edge cells are labled as water??
+AgentArray[minDist == 0] = 'aUrban'
+AgentArray[np.logical_or(lc == 24, lc == 21)] = 'empty' #RockIceDesert, Shrubland
+AgentArray[np.logical_or(lc == 19, lc == 15)] = 'empty' #forest, pasture
+
+
+for i in np.arange(nRows):
+ 	for j in np.arange(nCols):
+		
+ 		if(AgentArray[i][j]=='aFarmer'):
+ 			NewAgent = farmer.aFarmer()
+	 		#what is happening here?
+ 		#dFASM[i][j].AddAgent(AgentArray[i][j],NewAgent)
+
+    
+    #assign farmer ages
+    #use the update age function
+    #assign distance to city from minDist layer
+    
+    #crop prices updated
+    price = 100
