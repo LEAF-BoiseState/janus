@@ -52,11 +52,18 @@ extent=gp.read_file(DataPath + 'ABMdev/Data/extent_1km_AdaCanyon.shp')
 lc=np.load(DataPath + 'ABMdev/Data/gcam_1km_2010_AdaCanyon.npy')
 lc=lc.squeeze()
 nRows, nCols = lc.shape
-
+Nt=20
 
 #setup grid space for agent locations
 AgentArray = np.empty((nRows,nCols),dtype='U10')
 
+#each of these inital values randomly selected from NASS distributions
+#Initialization values
+AgeInit = 45.0
+DistFromCityInit = 20.0
+OnFIInit = 45000.0
+OffFIInit = 20000.0
+CropIDInit = 1
 
 #loop
 #update statistics
@@ -78,11 +85,37 @@ for i in np.arange(nRows):
  			NewAgent = farmer.aFarmer()
 	 		#what is happening here?
  		#dFASM[i][j].AddAgent(AgentArray[i][j],NewAgent)
+         
+        
+        #Farmer(AgeInit, DistFromCityInit, OnFIInit, OffFIInit, 1)
+    
+        #assign farmer ages
+        #use the update age function
+        #assign distance to city from minDist layer
+        
+myF1 = farmer(AgeInit, DistFromCityInit, OnFIInit, OffFIInit, 1)
+myF2 = farmer(AgeInit, DistFromCityInit, OnFIInit, OffFIInit, 2)
 
+for t in np.arange(Nt,dtype=int):
     
-    #assign farmer ages
-    #use the update age function
-    #assign distance to city from minDist layer
+
+    DeltaDistToCity = ((-0.1 - -0.2)*np.random.random() - 0.2)    
+    OnFI_gr = 1.0 + OnFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)    
+    OffFI_gr = 1.0 + OffFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)
+
+    myF1.UpdateAge()
+    myF1.UpdateDistFromCity(DeltaDistToCity)
+    myF1.UpdateOnFarmIncome(scale=OnFI_gr)
+    myF1.UpdateOffFarmIncome(scale=OffFI_gr)
+
+    DeltaDistToCity = ((-0.1 - -0.2)*np.random.random() - 0.2)    
+    OnFI_gr = 1.0 + OnFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)    
+    OffFI_gr = 1.0 + OffFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)
     
-    #crop prices updated
-    price = 100
+    myF2.UpdateAge()
+    myF2.UpdateDistFromCity(DeltaDistToCity)
+    if(t==10):
+        myF2.UpdateOnFarmIncome(loc=20000)        
+    else:
+        myF2.UpdateOnFarmIncome(scale=OnFI_gr)
+    myF2.UpdateOffFarmIncome(scale=OffFI_gr)
