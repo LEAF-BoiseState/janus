@@ -43,6 +43,7 @@ import numpy as np
 from geofxns import minDistCity #slow
 import matplotlib.pyplot as plt
 import Classes.aFarmer as farmer
+import Classes.dCellClass as cell
 
 DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/'
 
@@ -56,6 +57,7 @@ Nt=20
 
 #setup grid space for agent locations
 AgentArray = np.empty((nRows,nCols),dtype='U10')
+dFASM = np.empty((nRows,nCols), dtype=object) #domain 
 
 #each of these inital values randomly selected from NASS distributions
 #Initialization values
@@ -64,6 +66,11 @@ DistFromCityInit = 20.0
 OnFIInit = 45000.0
 OffFIInit = 20000.0
 CropIDInit = 1
+
+#initalize farmer
+nFields=1 
+AreaFields=10 
+LandStatus=0
 
 #loop
 #update statistics
@@ -82,9 +89,9 @@ for i in np.arange(nRows):
  	for j in np.arange(nCols):
 		
  		if(AgentArray[i][j]=='aFarmer'):
- 			NewAgent = farmer.aFarmer()
+ 			NewAgent = farmer.aFarmer(AgeInit, nFields, AreaFields, LandStatus)
 	 		#what is happening here?
- 		#dFASM[i][j].AddAgent(AgentArray[i][j],NewAgent)
+ 		dFASM[i][j].AddAgent(AgentArray[i][j], NewAgent)
          
         
         #Farmer(AgeInit, DistFromCityInit, OnFIInit, OffFIInit, 1)

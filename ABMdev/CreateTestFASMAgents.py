@@ -9,7 +9,7 @@ nCols = 40
 
 
 # Load domain with stub cells
-
+#from Create FASM domain
 
 # Create a random array of either farmer or urban agents
 ind = np.random.randint(3,size=(nRows,nCols))
@@ -26,7 +26,7 @@ for i in np.arange(nRows):
 		
  		if(AgentArray[i][j]=='aFarmer'):
  			NewAgent = farmer.aFarmer()
-	 	elif(AgentArray[i][j]=='aUrban'):
+	 	elif(AgentArray[i][j]=='aUrban'): #has not been created yetß
 	 		NewAgent = urban.aUrban()
 	 		
  		dFASM[i][j].AddAgent(AgentArray[i][j],NewAgent)
