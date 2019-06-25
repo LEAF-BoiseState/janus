@@ -51,8 +51,8 @@ DataPath= '/Users/kek25/Documents/GitRepos/IM3-BoiseState/'
 extent=gp.read_file(DataPath + 'ABMdev/Data/extent_1km_AdaCanyon.shp')
 #load inital landcover
 lc=np.load(DataPath + 'ABMdev/Data/gcam_1km_2010_AdaCanyon.npy')
-lc=lc.squeeze()
-nRows, nCols = lc.shape
+#lc=lc.squeeze()
+nRows, nCols = lc[0].shape
 Nt=20
 
 #setup grid space for agent locations
@@ -66,15 +66,15 @@ for i in np.arange(nRows):
 
 #each of these inital values randomly selected from NASS distributions
 #Initialization values
-AgeInit = 45.0
+AgeInit = int(45.0)
 DistFromCityInit = 20.0
 OnFIInit = 45000.0
 OffFIInit = 20000.0
 CropIDInit = 1
 
 #initalize farmer
-nFields=1 
-AreaFields=10 
+nFields=1
+AreaFields=np.array([10])
 LandStatus=0
 
 #loop
@@ -83,20 +83,20 @@ LandStatus=0
 dist2city=minDistCity(lc)
 
 #assign agents on the landscape
-AgentArray[np.logical_and(lc > 0, lc <28)] = 'aFarmer'
-AgentArray[np.logical_or(lc == 28, lc == 23)] ='water' #somehow with the reclassification, a bunch of edge cells are labled as water??
+AgentArray[np.logical_and(lc[0] > 0, lc[0] <28)] = 'aFarmer'
+AgentArray[np.logical_or(lc[0] == 28, lc[0] == 23)] ='water' #somehow with the reclassification, a bunch of edge cells are labled as water??
 AgentArray[dist2city == 0] = 'aUrban'
-AgentArray[np.logical_or(lc == 24, lc == 21)] = 'empty' #RockIceDesert, Shrubland
-AgentArray[np.logical_or(lc == 19, lc == 15)] = 'empty' #forest, pasture
+AgentArray[np.logical_or(lc[0] == 24, lc[0] == 21)] = 'empty' #RockIceDesert, Shrubland
+AgentArray[np.logical_or(lc[0] == 19, lc[0] == 15)] = 'empty' #forest, pasture
 
 
 for i in np.arange(nRows):
  	for j in np.arange(nCols):
 		
  		if(AgentArray[i][j]=='aFarmer'):
- 			NewAgent = farmer.aFarmer(AgeInit, nFields, AreaFields, LandStatus)
-	 		#what is happening here?
- 		dFASM[i][j].AddAgent(AgentArray[i][j], NewAgent)
+             NewAgent = farmer.aFarmer(AgeInit, nFields, AreaFields, LandStatus)
+             dFASM[i][j].AddAgent(AgentArray[i][j], NewAgent)
+            
          
         
         #Farmer(AgeInit, DistFromCityInit, OnFIInit, OffFIInit, 1)

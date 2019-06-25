@@ -16,7 +16,7 @@ class aFarmer:
         
         self.Age = Age          # Initial age of the farmer in years
         
-        if(type(nFields)!=int) & (nFields.is_integer()==False):
+        if(type(nFields)!=int)): #& (nFields.is_integer()==False int' object has no attribute 'is_integer'
             sys.exit("nFields must be passed as a whole number float or integer")
         else:
             self.nFields = nFields  # Number of fields cultivated on farm
