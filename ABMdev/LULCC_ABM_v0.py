@@ -81,18 +81,38 @@ AgentArray[dist2city == 0] = 'aUrban'
 AgentArray[np.logical_or(lc[0] == 24, lc[0] == 21)] = 'empty' #RockIceDesert, Shrubland
 AgentArray[np.logical_or(lc[0] == 19, lc[0] == 15)] = 'empty' #forest, pasture
 
-
 for i in np.arange(nRows):
  	for j in np.arange(nCols):
          if(AgentArray[i][j]=='aFarmer'):
              NewAgent = farmer.aFarmer(AgeInit, nFields, AreaFields, LandStatus, dist2city[i][j])
              dFASM[i][j].AddAgent(AgentArray[i][j], NewAgent)
             
+#convert agent array to np array for plotting
+Agents=np.empty((nRows,nCols))   
+for i in np.arange(nRows):
+    for j in np.arange(nCols):
+        if (AgentArray[i][j]=='aFarmer'):
+            Agents[i][j] = 4
+        elif (AgentArray[i][j]=='aUrban'):
+            Agents[i][j] = 2
+        elif (AgentArray[i][j]=='water'):
+            Agents[i][j] = 3
+        elif (AgentArray[i][j]=='empty'):
+            Agents[i][j] = 1
+plt.imshow(Agents)
 
-            
-#loop
-#update statistics         
-        
+#loop through decision processes
+              
+#write landcover to array and save with year
+#update agent array 
+             
+#update statistics  
+
+for i in np.arange(nRows):
+ 	for j in np.arange(nCols):
+         if(AgentArray[i][j]=='aFarmer'):            
+             dFASM[i][j].FarmAgents[0].UpdateAge()
+             dFASM[i][j].FarmAgents[0].UpdateDist2city(self, dist2city[i][j])
         #use the update age function
         #update distance to city from minDist layer
         
