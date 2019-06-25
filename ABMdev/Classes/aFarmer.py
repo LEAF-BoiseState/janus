@@ -43,10 +43,10 @@ class aFarmer:
             
         self.Dist2city = Dist2city
             
-def UpdateAge(self):
-    self.Age += 1
-def UpdateDist2city(self, newDist):
-    self.Dist2city = newDist
+    def UpdateAge(self):
+        self.Age += 1
+    def UpdateDist2city(self, newDist):
+        self.Dist2city = newDist
 
 # Stub to make fields more complex in the future. Unused now
 class __Field:
