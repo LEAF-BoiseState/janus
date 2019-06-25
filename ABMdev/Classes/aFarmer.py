@@ -12,11 +12,11 @@ import traceback
 
 class aFarmer:
     
-    def __init__(self, Age, nFields, AreaFields, LandStatus):
+    def __init__(self, Age, nFields, AreaFields, LandStatus, Dist2city):
         
         self.Age = Age          # Initial age of the farmer in years
         
-        if(type(nFields)!=int)): #& (nFields.is_integer()==False int' object has no attribute 'is_integer'
+        if(type(nFields)!=int): #& (nFields.is_integer()==False) int' object has no attribute 'is_integer'
             sys.exit("nFields must be passed as a whole number float or integer")
         else:
             self.nFields = nFields  # Number of fields cultivated on farm
@@ -41,7 +41,12 @@ class aFarmer:
             print("Invalid value of LandStatus passed to Fermer constructor".format(line, text))
             exit(1)
             
-
+        self.Dist2city = Dist2city
+            
+def UpdateAge(self):
+    self.Age += 1
+def UpdateDist2city(self, newDist):
+    self.Dist2city = newDist
 
 # Stub to make fields more complex in the future. Unused now
 class __Field:
