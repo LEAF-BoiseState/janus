@@ -1,9 +1,9 @@
-
+#Functional Agent Simulater for MSD
 import numpy as np
 import Classes.dCellClass as cell
 
 
-input_base = 'test_landscape/test_landscape_'
+input_base = 'test_landscape/test_landscape_' #this will have base layers of landscape characteristics in it
 input_ext = '.npy'
 
 output_file = input_base+'domain.npy'

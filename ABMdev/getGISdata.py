@@ -10,19 +10,18 @@ function that clips GIS data based on counties, year, and resolution
 import os  
 import geopandas as gp
 import numpy as np
-import glob2 
 import rasterio
 from rasterio.mask import mask
 import pycrs
 from shapely.ops import cascaded_union
 
 #set user directory
-#os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/')
-#DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/'
-#GCAMpath='/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/GCAM_SRP/'
-os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/')
-DataPath='/Users/kek25/Documents/GitRepos/IM3-BoiseState/'
-GCAMpath='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
+os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/')
+DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/'
+GCAMpath='/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/GCAM_SRP/'
+#os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/')
+#DataPath='/Users/kek25/Documents/GitRepos/IM3-BoiseState/'
+#GCAMpath='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
 
 counties_shp= gp.read_file('GIS_anlaysis/Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
@@ -46,9 +45,8 @@ def getGISextent(countyList, scale):
 
 def getGCAM(countyList, year, scale): #returns a numpy array 
     import json #whats the diff btw importing libraries here v in main environ?
-    file=glob2.glob(GCAMpath+'gcam_'+str(year)+'_srb_'+str(scale)+'.tiff') #other way to use this other than glob?? 
 
-    data = rasterio.open(file[0])
+    data = rasterio.open(GCAMpath+'gcam_'+str(year)+'_srb_'+str(scale)+'.tiff') #this isn't working consistently ...?
     extent_shp=counties_shp['geometry'].loc[countyList]
     boundary = gp.GeoSeries(cascaded_union(extent_shp))
     coords = [json.loads(boundary.to_json())['features'][0]['geometry']] #parses features from GeoDataFrame the way rasterio wants them
@@ -62,7 +60,7 @@ def getGCAM(countyList, year, scale): #returns a numpy array
                  "transform": out_transform,
                  "crs": pycrs.parse.from_epsg_code(epsg_code).to_proj4()}
                         )
-    return(out_img)
+    return(out_img) #this results in a 3D shape?
 
 #------------------------------------------------------------------------
 # Select and save npy file of specific initialization year
@@ -76,5 +74,5 @@ scale=1000
 extent_poly=getGISextent(countyList, '1km')
 gcam_init=getGCAM(countyList, year, scale)
 
-np.save(DataPath+'ABMdev/Data/extent_1km_AdaCanyon.npy', extent_poly)
-np.save(DataPath+'ABMdev/Data/gcam_1km_2010_AdaCanyon.npy', gcam_init)
+extent_poly.to_file(DataPath+'ABMdev/Data/extent_1km_AdaCanyon.shp')
+np.save(DataPath+'ABMdev/Data/gcam_1km_2010_AdaCanyon.npy', gcam_init) #not sure if this one needs to be changed ...
