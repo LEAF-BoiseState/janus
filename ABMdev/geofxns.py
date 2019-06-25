@@ -12,8 +12,8 @@ minDistCity - Calculates the distance from any cell to a city cell of any densit
 import numpy as np
 
 #read in from file
-file ='/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/ABMdev/Data/gcam_1km_2010_AdaCanyon.npy'
-gcam=np.load(file)
+#file ='/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/ABMdev/Data/gcam_1km_2010_AdaCanyon.npy'
+#gcam=np.load(file)
 
 def minDistCity(gcam):
     
@@ -41,6 +41,6 @@ def minDistCity(gcam):
     return(out)
     
 
-dist2city=minDistCity(gcam)
+dist2city=minDistCity(lc)
 
-np.save('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/ABMdev/Data/dist2city_1km_2010_AdaCanyon.npy', dist2city)
+#np.save('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/ABMdev/Data/dist2city_1km_2010_AdaCanyon.npy', dist2city)
