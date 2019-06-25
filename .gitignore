@@ -2,7 +2,6 @@
 *.txt
 *.asc
 *.tiff
-*.npy
 .DS_Store
 /GCAM_SRP/*.*
 /GCAM_SRP/**/*.*
