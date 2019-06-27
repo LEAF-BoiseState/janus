@@ -44,6 +44,7 @@ from geofxns import minDistCity #slow
 import matplotlib.pyplot as plt
 import Classes.aFarmer as farmer
 import Classes.dCellClass as cell
+import Classes.aUrban as urban
 
 DataPath= '/Users/kek25/Documents/GitRepos/IM3-BoiseState/'
 
@@ -72,22 +73,27 @@ AgeInit = int(45.0)
 nFields=1
 AreaFields=np.array([10])
 LandStatus=0
+density=2
 
 
-#assign agents on the landscape
+#assign agents on the landscape 
 AgentArray[np.logical_and(lc[0] > 0, lc[0] <28)] = 'aFarmer'
 AgentArray[np.logical_or(lc[0] == 28, lc[0] == 23)] ='water' #somehow with the reclassification, a bunch of edge cells are labled as water??
 AgentArray[dist2city == 0] = 'aUrban'
 AgentArray[np.logical_or(lc[0] == 24, lc[0] == 21)] = 'empty' #RockIceDesert, Shrubland
 AgentArray[np.logical_or(lc[0] == 19, lc[0] == 15)] = 'empty' #forest, pasture
 
+#place agent structures onto landscape and define attributes -> this is SLOW
 for i in np.arange(nRows):
  	for j in np.arange(nCols):
          if(AgentArray[i][j]=='aFarmer'):
              NewAgent = farmer.aFarmer(AgeInit, nFields, AreaFields, LandStatus, dist2city[i][j])
              dFASM[i][j].AddAgent(AgentArray[i][j], NewAgent)
+         if(AgentArray[i][j] =='aUrban'):
+             NewAgent = urban.aUrban(density)
+             dFASM[i][j].AddAgent(AgentArray[i][j], NewAgent)
             
-#convert agent array to np array for plotting
+#convert agent array to np array for plotting -- 
 Agents=np.empty((nRows,nCols))   
 for i in np.arange(nRows):
     for j in np.arange(nCols):
@@ -112,7 +118,8 @@ for i in np.arange(nRows):
  	for j in np.arange(nCols):
          if(AgentArray[i][j]=='aFarmer'):            
              dFASM[i][j].FarmAgents[0].UpdateAge()
-             dFASM[i][j].FarmAgents[0].UpdateDist2city(self, dist2city[i][j])
-        #use the update age function
-        #update distance to city from minDist layer
+             dFASM[i][j].FarmAgents[0].UpdateDist2city(dist2city[i][j])
+        #need to update AgentArray after each loop -> how to go from dFASM to AA?
+        
+            
         
