@@ -40,7 +40,7 @@ def minDistCity(gcam):
         out[idx[i,0]][idx[i,1]]= dist[i]
     return(out)
     
-
+    
 #dist2city=minDistCity(lc)
 
 #np.save('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/ABMdev/Data/dist2city_1km_2010_AdaCanyon.npy', dist2city)
