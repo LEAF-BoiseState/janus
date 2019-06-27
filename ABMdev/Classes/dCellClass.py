@@ -14,6 +14,7 @@ class dCellClass:
 		self.perSand    = kwargs.get('perSand')
 		self.perSilt    = kwargs.get('perSilt')
 		self.perClay    = kwargs.get('perClay')
+        self.county     = kwargs.get('county')
 		self.nFarmAgent = 0
 		self.nUrbAgent  = 0
 
