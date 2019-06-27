@@ -67,8 +67,10 @@ def getGCAM(countyList, year, scale): #returns a numpy array
 #tryin to figureout hoew to turn the shapefile with two counties into a raster   
 def countyID(countyList, lc):
     
-    extent_shp=counties_shp['geometry'].loc[countyList]
+    extent_shp=counties_shp['geometry'].loc[countyList]#figuerout how to save the value that can go into the raster
     numCounties=len(extent_shp)
+    es=gp.GeoDataFrame(extent_shp)
+    es=es.assign(value=np.arange(numCounties)) #or figure out how to make up the values
     coords = [json.loads(extent_shp.to_json())['features'][0]['geometry']] 
     
     if numCounties > 1:
@@ -78,24 +80,9 @@ def countyID(countyList, lc):
     #this version dont work
    # coords =[json.loads(extent_shp.to_json())['features'][geom['geometry'] for geom in extent_shp] #parses features from GeoDataFrame the way rasterio wants them
     #shapes=features.shapes(extent_shp) input to this has to be a rasterio object
-    out=features.rasterize(coords, lc[0].shape, all_touched=FALSE)
+    out=features.rasterize(coords, lc[0].shape, fill=999, all_touched=False)
     
-    
-    out_img, out_transform = mask(dataset=data, shapes=coords, crop=True)
-    out_meta = data.meta.copy()
-    epsg_code = int(data.crs.data['init'][5:])
-    
-    out_meta.update({"driver": "GTiff",
-                 "height": out_img.shape[1],
-                 "width": out_img.shape[2],
-                 "transform": out_transform,
-                 "crs": pycrs.parse.from_epsg_code(epsg_code).to_proj4()}
-                        )
-    return(out_img) 
-    
-import arcpy
-
-arcpy.FeatureToRaster_conversion(extent_shp, "Index", "countyRaster", 1000)
+    return(out) 
 #------------------------------------------------------------------------
 # Select and save npy file of specific initialization year
 #------------------------------------------------------------------------
