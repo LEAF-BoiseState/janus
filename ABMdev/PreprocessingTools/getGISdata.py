@@ -12,8 +12,10 @@ import geopandas as gp
 import numpy as np
 import rasterio
 from rasterio.mask import mask
+from rasterio import features
 import pycrs
 from shapely.ops import cascaded_union
+import json
 
 #set user directory
 os.chdir('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/')
@@ -21,7 +23,7 @@ DataPath= '/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/'
 GCAMpath='/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/GIS_anlaysis/GCAM_SRP/'
 #os.chdir('/Users/kek25/Documents/GitRepos/IM3-BoiseState/')
 #DataPath='/Users/kek25/Documents/GitRepos/IM3-BoiseState/'
-#GCAMpath='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
+GCAMpath='/Users/kek25/Dropbox/BSU/Python/IM3/GCAM_SRP/'
 
 counties_shp= gp.read_file('GIS_anlaysis/Shapefiles/County_polys/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
@@ -44,7 +46,6 @@ def getGISextent(countyList, scale):
     
 
 def getGCAM(countyList, year, scale): #returns a numpy array 
-    import json #whats the diff btw importing libraries here v in main environ?
 
     data = rasterio.open(GCAMpath+'gcam_'+str(year)+'_srb_'+str(scale)+'.tiff') #this isn't working consistently ...?
     extent_shp=counties_shp['geometry'].loc[countyList]
@@ -62,6 +63,39 @@ def getGCAM(countyList, year, scale): #returns a numpy array
                         )
     return(out_img) #this results in a 3D shape?
 
+
+#tryin to figureout hoew to turn the shapefile with two counties into a raster   
+def countyID(countyList, lc):
+    
+    extent_shp=counties_shp['geometry'].loc[countyList]
+    numCounties=len(extent_shp)
+    coords = [json.loads(extent_shp.to_json())['features'][0]['geometry']] 
+    
+    if numCounties > 1:
+        for i in np.arange(1, numCounties):
+            coords.append(json.loads(extent_shp.to_json())['features'][i]['geometry'])
+  
+    #this version dont work
+   # coords =[json.loads(extent_shp.to_json())['features'][geom['geometry'] for geom in extent_shp] #parses features from GeoDataFrame the way rasterio wants them
+    #shapes=features.shapes(extent_shp) input to this has to be a rasterio object
+    out=features.rasterize(coords, lc[0].shape, all_touched=FALSE)
+    
+    
+    out_img, out_transform = mask(dataset=data, shapes=coords, crop=True)
+    out_meta = data.meta.copy()
+    epsg_code = int(data.crs.data['init'][5:])
+    
+    out_meta.update({"driver": "GTiff",
+                 "height": out_img.shape[1],
+                 "width": out_img.shape[2],
+                 "transform": out_transform,
+                 "crs": pycrs.parse.from_epsg_code(epsg_code).to_proj4()}
+                        )
+    return(out_img) 
+    
+import arcpy
+
+arcpy.FeatureToRaster_conversion(extent_shp, "Index", "countyRaster", 1000)
 #------------------------------------------------------------------------
 # Select and save npy file of specific initialization year
 #------------------------------------------------------------------------
