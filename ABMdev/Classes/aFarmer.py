@@ -29,7 +29,7 @@ class aFarmer:
             self.AreaFields[i] = AreaFields[i]
             
         try:
-            assert(LandStatus==0 or LandStatus==1 or LandStatus==2)
+            assert(LandStatus==0 or LandStatus==1 or LandStatus==2) #what is landstatus?
             self.LandStatus = LandStatus
   
         except AssertionError:
@@ -38,7 +38,7 @@ class aFarmer:
             tb_info = traceback.extract_tb(tb)
             filename, line, func, text = tb_info[-1]
         
-            print("Invalid value of LandStatus passed to Fermer constructor".format(line, text))
+            print("Invalid value of LandStatus passed to Farmer constructor".format(line, text))
             exit(1)
             
         self.Dist2city = Dist2city
