@@ -73,14 +73,13 @@ def countyID(countyList, lc):
     es=es.assign(value=np.arange(numCounties)) #add values to each shape
 
 #### none of this works
-    coords = [json.loads(extent_shp.to_json())['features'][0]['geometry']] 
+    coords = [json.loads(extent_shp.to_json())['features'][0]['geometry']]#parses features from GeoDataFrame the way rasterio wants them... hypothetically
     if numCounties > 1:
         for i in np.arange(1, numCounties):
             coords.append(json.loads(extent_shp.to_json())['features'][i]['geometry'])
             
         #this version dont work
-   # coords =[json.loads(extent_shp.to_json())['features'][geom['geometry'] for geom in extent_shp] #parses features from GeoDataFrame the way rasterio wants them
-    #shapes=features.shapes(extent_shp) input to this has to be a rasterio object
+   #shapes=features.shapes(extent_shp) input to this has to be a rasterio object
    # coords[0]['coordinates'] - this is a list of 2 lists that have explicit coordinates of locations (pixels??)
     shapes=features.shapes(coords[0]['coordinates']) #'list' object has no attribute 'dtype'
     shapes=((geometry,value) for geometry, value in SOMETHING) #this creates a generator which is an iterable
