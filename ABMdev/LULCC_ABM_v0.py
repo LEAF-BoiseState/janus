@@ -75,15 +75,19 @@ AreaFields=np.array([10])
 LandStatus=0
 density=2
 
-
-#assign agents on the landscape 
+#---------------------------------------
+#  assign agents on the landscape 
+#---------------------------------------
 AgentArray[np.logical_and(lc[0] > 0, lc[0] <28)] = 'aFarmer'
-AgentArray[np.logical_or(lc[0] == 28, lc[0] == 23)] ='water' #somehow with the reclassification, a bunch of edge cells are labled as water??
+AgentArray[np.logical_or(lc[0] == 28, lc[0] == 23)] ='water' 
 AgentArray[dist2city == 0] = 'aUrban'
 AgentArray[np.logical_or(lc[0] == 24, lc[0] == 21)] = 'empty' #RockIceDesert, Shrubland
 AgentArray[np.logical_or(lc[0] == 19, lc[0] == 15)] = 'empty' #forest, pasture
 
+#---------------------------------------
 #place agent structures onto landscape and define attributes -> this is SLOW
+#---------------------------------------
+
 for i in np.arange(nRows):
  	for j in np.arange(nCols):
          if(AgentArray[i][j]=='aFarmer'):
@@ -92,28 +96,22 @@ for i in np.arange(nRows):
          if(AgentArray[i][j] =='aUrban'):
              NewAgent = urban.aUrban(density)
              dFASM[i][j].AddAgent(AgentArray[i][j], NewAgent)
-            
-#convert agent array to np array for plotting -- 
-Agents=np.empty((nRows,nCols))   
-for i in np.arange(nRows):
-    for j in np.arange(nCols):
-        if (AgentArray[i][j]=='aFarmer'):
-            Agents[i][j] = 4
-        elif (AgentArray[i][j]=='aUrban'):
-            Agents[i][j] = 2
-        elif (AgentArray[i][j]=='water'):
-            Agents[i][j] = 3
-        elif (AgentArray[i][j]=='empty'):
-            Agents[i][j] = 1
-plt.imshow(Agents)
-
-#loop through decision processes
-              
-#write landcover to array and save with year
-#update agent array 
+        
+#---------------------------------------
+#loop through decision process
+#---------------------------------------
              
-#update statistics  
 
+#---------------------------------------             
+#write landcover to array, update agent array and save with year
+#---------------------------------------
+             
+
+        
+#---------------------------------------
+#update statistics  
+#---------------------------------------
+             
 for i in np.arange(nRows):
  	for j in np.arange(nCols):
          if(AgentArray[i][j]=='aFarmer'):            
