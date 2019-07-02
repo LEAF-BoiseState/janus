@@ -52,7 +52,7 @@ def minDistCity(gcam):
 
 def saveLC(temp_lc, startYear, iteration, DataPath):
     
-    year= startYear + iteration
+    year= str(startYear + iteration)
     
     outfile = DataPath+'ABMdev/Output/lc_'+year+'.npy'
     
