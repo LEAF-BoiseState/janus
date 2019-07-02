@@ -42,3 +42,5 @@ for i in np.arange(numstep):
         elif :
             
 #create adjacency matrix by finding where agents overlap
+
+# here is a new comment, yay!
