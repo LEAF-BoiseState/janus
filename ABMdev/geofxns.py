@@ -10,6 +10,7 @@ Library of functions for geospatial processing
 minDistCity - Calculates the distance from any cell to a city cell of any density category. It requires np.array of SRP GCAM categories, otherwise city cells will not be identified properly.
 """
 import numpy as np
+import matplotlib.pyplot as plt
 
 #read in from file
 #file ='/Users/kek25/Documents/GitRepos/IM3-BoiseState/ABMdev/Data/gcam_1km_2010_AdaCanyon.npy'
@@ -44,3 +45,20 @@ def minDistCity(gcam):
 #dist2city=minDistCity(lc)
 
 #np.save('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/ABMdev/Data/dist2city_1km_2010_AdaCanyon.npy', dist2city)
+#convert agent array to np array for plotting -- 
+
+def plotAgents(AgentArray, nRows, nCols):
+    Agents=np.empty((nRows,nCols))   
+    for i in np.arange(nRows):
+        for j in np.arange(nCols):
+            if (AgentArray[i][j]=='aFarmer'):
+                Agents[i][j] = 4
+            elif (AgentArray[i][j]=='aUrban'):
+                Agents[i][j] = 2
+            elif (AgentArray[i][j]=='water'):
+                Agents[i][j] = 3
+            elif (AgentArray[i][j]=='empty'):
+                Agents[i][j] = 1
+    return(plt.imshow(Agents))
+    
+    
