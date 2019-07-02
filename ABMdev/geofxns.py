@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 
 def minDistCity(gcam):
     
-    #assert gcam.max <=28, "Array does not conform to SRP GCAM categories"
+    #assert gcam.max <=28, "Array does not conform to SRP GCAM categories" had to remove, bc it was throwing error
     
     from scipy import spatial
     urban_bool= np.logical_or(np.logical_or(gcam[0] == 26, gcam[0] == 27), np.logical_or(gcam[0] == 17, gcam[0] == 25)) 
@@ -43,9 +43,26 @@ def minDistCity(gcam):
     
     
 #dist2city=minDistCity(lc)
-
+#should we save this output every time?
 #np.save('/Users/kendrakaiser/Documents/GitRepos/IM3-BoiseState/ABMdev/Data/dist2city_1km_2010_AdaCanyon.npy', dist2city)
+
+#------------------------------------------------
+#Save output
+#------------------------------------------------
+
+def saveLC(temp_lc, startYear, iteration, DataPath):
+    
+    year= startYear + iteration
+    
+    outfile = DataPath+'ABMdev/Output/lc_'+year+'.npy'
+    
+    np.save(outfile, temp_lc)
+    
+    return
+    
+#------------------------------------------------
 #convert agent array to np array for plotting -- 
+#------------------------------------------------
 
 def plotAgents(AgentArray, nRows, nCols):
     Agents=np.empty((nRows,nCols))   
