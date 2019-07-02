@@ -41,12 +41,13 @@
 import geopandas as gp
 import numpy as np
 from geofxns import minDistCity #slow
-import matplotlib.pyplot as plt
+from geofxns import saveLC #do we need to import each function, or can we just load all of them?
 import Classes.aFarmer as farmer
 import Classes.dCellClass as cell
 import Classes.aUrban as urban
 
-DataPath= '/Users/kek25/Documents/GitRepos/IM3-BoiseState/'
+userPath='/Users/kek25/Documents/GitRepos/'
+DataPath= userPath+'IM3-BoiseState/'
 
 #load extent
 extent=gp.read_file(DataPath + 'ABMdev/Data/extent_1km_AdaCanyon.shp')
@@ -100,24 +101,32 @@ for i in np.arange(nRows):
 #---------------------------------------
 #loop through decision process
 #---------------------------------------
-             
 
-#---------------------------------------             
-#write landcover to array, update agent array and save with year
-#---------------------------------------
-             
+#Update AgentArray 
+#where in the model does the code denote that the agent goes from farmer to urban or visa versa
+     #dFASM[i][j].SwapAgent('aFarmer','aUrban',fromIndex,AgentArray)
+     
+     
+it=0 #this is the iteration in the loop (e.g. i/j)     
+temp_lc= lc #output of decision process
 
-        
+#write landcover to array
+saveLC(temp_lc, 2010, it, DataPath)
+           
+
 #---------------------------------------
 #update statistics  
 #---------------------------------------
-             
+
+#update distance to city for new landcover
+dist2city=minDistCity(temp_lc)
+       
 for i in np.arange(nRows):
  	for j in np.arange(nCols):
          if(AgentArray[i][j]=='aFarmer'):            
              dFASM[i][j].FarmAgents[0].UpdateAge()
              dFASM[i][j].FarmAgents[0].UpdateDist2city(dist2city[i][j])
-        #need to update AgentArray after each loop -> how to go from dFASM to AA?
+      
         
             
         
