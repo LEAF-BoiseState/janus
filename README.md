@@ -19,6 +19,7 @@ To add: pull physiographic information, re-grid, save
 ## geofxs
 *will be further populated to preform various statistical analysis
 minDistCity - takes a np array of SRP GCAM categories, returns np arry of distances to closest city cell
+added saveLC - save the landcover of a given year to a labeled npy file 
 
 
 # ABM Development
