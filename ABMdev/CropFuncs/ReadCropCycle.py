@@ -9,6 +9,8 @@ FieldOps_nMonths = 12
 FieldOps_nCols = 6
 FieldOps_nRows = 12
 
+#defines how agent is operating field; for each month what is being grown, vector of 1/0 did you plant, irrigate or harvest
+
 class FieldOpsStruct:
 	def __init__(self,Description,CropID,flagPlant,flagDevelop,flagIrrigate,flagHarvest):
 
