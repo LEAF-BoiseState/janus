@@ -93,7 +93,7 @@ for i in np.arange(nRows):
         #use the update age function
         #assign distance to city from minDist layer
         
-myF1 = farmer(AgeInit, DistFromCityInit, OnFIInit, OffFIInit, 1)
+myF1 = farmer(AgeInit, DistFromCityInit, OnFIInit, OffFIInit, 1) #where does farmer() come from??
 myF2 = farmer(AgeInit, DistFromCityInit, OnFIInit, OffFIInit, 2)
 
 for t in np.arange(Nt,dtype=int):
@@ -104,8 +104,8 @@ for t in np.arange(Nt,dtype=int):
     OffFI_gr = 1.0 + OffFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)
 
     myF1.UpdateAge()
-    myF1.UpdateDistFromCity(DeltaDistToCity)
-    myF1.UpdateOnFarmIncome(scale=OnFI_gr)
+    myF1.UpdateDistFromCity(DeltaDistToCity) # change this based on minDist coverage
+    myF1.UpdateOnFarmIncome(scale=OnFI_gr) #how does this work if the OnFI_gr comes after?
     myF1.UpdateOffFarmIncome(scale=OffFI_gr)
 
     DeltaDistToCity = ((-0.1 - -0.2)*np.random.random() - 0.2)    
