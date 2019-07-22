@@ -145,7 +145,7 @@ ax.stackplot(t,Percent_Crop1,Percent_Crop2,Percent_Crop3,Percent_Crop4,
              '#4AFFCE','#3A8A00','#005C94'], labels=['Crop 1','Crop 2','Crop 3',
              'Crop 4','Crop 5','Crop 6'])
 
-ax.set_xlim([0,29])
+ax.set_xlim([0,Nt-1])
 ax.set_ylim([0,100])
 ax.grid()
 ax.legend(loc='lower left')
@@ -182,7 +182,7 @@ ax.grid()
 ax.set_ylabel('Profit [$]')
 ax.set_xlabel('Time [yr]')
 ax.set_ylim([0,40000])
-ax.set_xlim([0,29])
+ax.set_xlim([0,Nt-1])
 
 plt.savefig('Exp3_plot2.png',dpi=300,facecolor='w', edgecolor='w', 
              bbox_inches='tight')    
