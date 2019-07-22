@@ -101,4 +101,66 @@ def DecideN(alpha, beta, fmin, fmax, n, profit, vec_crops,
         
     # Return the crop choice and associated profit
     return CropChoice, ProfitChoice
+
+#=============================================================================#
+#                                                                             #
+# GeneratePrices: Generates 6 synthetic crop profits with different           #
+#                 behaviors. This function is largely for debugging purposes  #
+#                 to test new model test cases, etc.                          #
+#                                                                             #
+#=============================================================================#
+
+def GeneratePrices(Nt):
     
+    # Crop 1 = Steadily increasing
+    P1_i = 20000.0
+    P1_f = 31000.0
+    P1_s = 1000.0
+
+    P1 = (np.linspace(P1_i,P1_f,num=Nt).reshape((Nt,1)) + np.random.normal(loc=0.0, scale=P1_s, size=(Nt,1)))
+    
+    # Crop 2
+    P2_i = 30000.0
+    P2_f = 15000.0
+    P2_s = 1000.0
+    
+    P2 = (np.linspace(P2_i,P2_f,num=Nt).reshape((Nt,1)) + np.random.normal(loc=0.0, scale=P2_s, size=(Nt,1)))
+    
+    # Crop 3 = Sinusoidal fluctuation
+    P3_l = 28000.0
+    P3_a = 5000.0
+    P3_n = 2.0
+    P3_s = 1000.0
+    
+    x3 = np.linspace(0.0, P3_n*2*np.pi, num=Nt).reshape((Nt,1))
+    P3 = (P3_l + P3_a*np.sin(x3) + np.random.normal(loc=0.0, scale=P3_s, size=(Nt,1)))
+    
+    # Crop 4 = Step decrease
+    P4_i = 31000.0
+    P4_f = 14000.0
+    P4_s = 1000.0
+    
+    P4 = np.zeros((Nt,1))
+    P4[0:(int(P4.size/2))] = P4_i
+    P4[(int(P4.size/2)):]  = P4_f
+    P4 += np.random.normal(loc=0.0, scale=P4_s, size=(Nt,1))
+    
+    # Crop 5 = Step increase
+    P5_i = 10000.0
+    P5_f = 30000.0
+    P5_s = 1000.0
+
+    P5 = np.zeros((Nt,1))
+    P5[0:(int(P5.size/2))] = P5_i
+    P5[(int(P5.size/2)):]  = P5_f
+    P5 += np.random.normal(loc=0.0, scale=P5_s, size=(Nt,1))
+    
+    # Crop 6 = Constant with noise
+    P6_l = 27000.0
+    P6_s = 1000.0
+
+    P6 = (P6_l*np.ones((Nt,1)) + np.random.normal(loc=0.0, scale=P6_s, size=(Nt,1)))
+
+    P_matrix = np.column_stack((P1,P2,P3,P4,P5,P6))
+    
+    return P_matrix
