@@ -19,7 +19,7 @@ nass_url <- "http://quickstats.nass.usda.gov"
 #my_commodity_desc<- "OPERATORS" #FARM OPERATIONS, [AG LAND, INCL BUILDINGS - OPERATIONS WITH ASSET VALUE, MEASURED IN $ / ACRE; $ / OPERATION; $/ACRE; $]; [AG LAND, CROPLAND, PASTURED ONLY - ACRES] [Income, Net or Farm-related?]
 my_group_desc <-"CROPS"
 # query start year
-my_year <- "2010"
+my_year <- "2005"
 
 # state of interest
 my_state <- "ID"
@@ -64,29 +64,11 @@ id_sales <- id_ops_raw_data %>%
   mutate(value = as.numeric(str_remove(value_char, ","))) %>%
   # remove unnecessary columns
   select(-value_char)%>%
-  separate(short_desc, c("crop", 'info'), "- ")  %>%
+  separate(short_desc, c("crop", 'info'), "- ") 
   #filter(crop %in% crops)
 
+write.csv(id_sales, file='IdahoSales_2005.csv')
 
 plot(id_sales$year[id_yeilds$crop == 'HOPS '], id_sales$value[id_sales$crop == 'HOPS '])
 plot(id_sales$year[id_sales$crop == 'HOPS ' && id_sales$info == "AREA HARVESTED"], id_sales$value[id_sales$crop == 'HOPS ' && id_sales$info == "AREA HARVESTED"])
 
-stones<-c("PEACHES ", )
-id_stone_acres <- id_ops_raw_data %>%
-  #filter to specific data
-  filter(unit_desc=="ACRES") %>%
-  #filter(unit_desc=="$") %>%
-  filter(agg_level_desc=="STATE") %>%
-  # trim white space from ends (note: 'Value' is a character here, not a number)
-  mutate(value_trim = str_trim(Value)) %>%
-  # select only the columns we'll need
-  select(asd_desc,
-         agg_level_desc, year, short_desc, class_desc, domain_desc, value_char =value_trim, unit_desc) %>%
-  # filter out entries with codes '(D)' and '(Z)'
-  filter(value_char != "(D)" & value_char != "(Z)") %>% 
-  # remove commas from number values and convert to R numeric class
-  mutate(value = as.numeric(str_remove(value_char, ","))) %>%
-  # remove unnecessary columns
-  select(-value_char)%>%
-  separate(short_desc, c("crop", 'info'), "- ")  %>%
-  filter(crop %in% crops)
