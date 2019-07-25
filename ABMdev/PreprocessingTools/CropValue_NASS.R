@@ -37,27 +37,28 @@ list_raw_id_ops<- fromJSON(char_raw_id_ops)
 id_ops_raw_data <- pmap_dfr(list_raw_id_ops, rbind)
 
 # US path string
-path_id_ops <- paste0("api/api_GET/?key=", nass_key, "&sector_desc=", my_group_desc, "&year=", my_year, "&state_alpha=", "US")
+path_us_ops <- paste0("api/api_GET/?key=", nass_key, "&sector_desc=", my_group_desc, "&year=", my_year, "&state_alpha=", "US")
 #unpack JSON object
-raw_id_ops <- GET(url = nass_url, path = path_id_ops)
-char_raw_id_ops<- rawToChar(raw_id_ops$content)
+raw_us_ops <- GET(url = nass_url, path = path_us_ops)
+char_raw_us_ops<- rawToChar(raw_us_ops$content)
 # check size of object
-nchar(char_raw_id_ops)
+nchar(char_raw_us_ops)
 #turn into list
-list_raw_id_ops<- fromJSON(char_raw_id_ops)
+list_raw_us_ops<- fromJSON(char_raw_us_ops)
 # apply rbind to each row of the list and convert to a data frame
-id_ops_raw_data <- pmap_dfr(list_raw_id_ops, rbind)
+us_ops_raw_data <- pmap_dfr(list_raw_us_ops, rbind)
 ###--------------------------------------#
 # Subset Data based on highest value crops
 #####
 categories<-c("AREA HARVESTED", "PRICE RECEIVED", "YIELD")
 agg_level<-c("STATE", "NATIONAL")
+ref_period<-c("YEAR", "MARKETING YEAR")
 sales<- function(raw_data){
   out <- raw_data %>%
   #filter to specific data
    filter(statisticcat_desc %in% categories)%>%
    filter(agg_level_desc %in% agg_level) %>%
-   filter(reference_period_desc == 'YEAR') %>%
+   filter(reference_period_desc %in% ref_period) %>%
    # trim white space from ends (note: 'Value' is a character here, not a number)
    mutate(value_trim = str_trim(Value)) %>%
   # select only the columns we'll need
@@ -73,9 +74,11 @@ sales<- function(raw_data){
 }
 
 ID<-sales(id_ops_raw_data)
+US<-sales(us_ops_raw_data)
 
-
-write.csv(id_sales, file='IdahoSales_2005.csv')
+#It would be ideal if there was an automated sorting and processing of this data to get at values, also -- we used CDL areas to get at the value for 2010 (e.g. crops that aren't going to be quantified bc of an individual farmer)
+write.csv(ID, file='IdahoSales_1975.csv')
+write.csv(US, file='NationalSales_1975.csv')
 
 plot(id_sales$year[id_yeilds$crop == 'HOPS '], id_sales$value[id_sales$crop == 'HOPS '])
 plot(id_sales$year[id_sales$crop == 'HOPS ' && id_sales$info == "AREA HARVESTED"], id_sales$value[id_sales$crop == 'HOPS ' && id_sales$info == "AREA HARVESTED"])
