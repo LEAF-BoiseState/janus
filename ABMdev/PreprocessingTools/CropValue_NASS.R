@@ -16,8 +16,8 @@ nass_key <- "B5240598-2A7D-38EE-BF8D-816A27BEF504" #QuickStats
 nass_url <- "http://quickstats.nass.usda.gov"
 
 my_group_desc <-"CROPS"
-# query start year
-my_year <- "1975"
+# query start year 1975, 1990, 2005, 
+my_year <- "2005"
 
 
 ###--------------------------------------#
@@ -51,14 +51,16 @@ us_ops_raw_data <- pmap_dfr(list_raw_us_ops, rbind)
 # Subset Data based on highest value crops
 #####
 categories<-c("AREA HARVESTED", "PRICE RECEIVED", "YIELD")
-agg_level<-c("STATE", "NATIONAL")
+agg_level<-c("STATE", "NATIONAL", "AGRICULTURAL DISTRICT", "COUNTY")
 ref_period<-c("YEAR", "MARKETING YEAR")
+district<-c("SOUTHWEST", "EAST", "SOUTH CENTRAl")
 sales<- function(raw_data){
   out <- raw_data %>%
   #filter to specific data
    filter(statisticcat_desc %in% categories)%>%
    filter(agg_level_desc %in% agg_level) %>%
    filter(reference_period_desc %in% ref_period) %>%
+   filter(asd_desc %in% district) %>%
    # trim white space from ends (note: 'Value' is a character here, not a number)
    mutate(value_trim = str_trim(Value)) %>%
   # select only the columns we'll need
@@ -77,9 +79,9 @@ ID<-sales(id_ops_raw_data)
 US<-sales(us_ops_raw_data)
 
 #It would be ideal if there was an automated sorting and processing of this data to get at values, also -- we used CDL areas to get at the value for 2010 (e.g. crops that aren't going to be quantified bc of an individual farmer)
-write.csv(ID, file='IdahoSales_1975.csv')
-write.csv(US, file='NationalSales_1975.csv')
+write.csv(ID, file='IdahoSales_2010.csv')
+write.csv(US, file='NationalSales_2010.csv')
 
-plot(id_sales$year[id_yeilds$crop == 'HOPS '], id_sales$value[id_sales$crop == 'HOPS '])
-plot(id_sales$year[id_sales$crop == 'HOPS ' && id_sales$info == "AREA HARVESTED"], id_sales$value[id_sales$crop == 'HOPS ' && id_sales$info == "AREA HARVESTED"])
+#plot(id_sales$year[id_yeilds$crop == 'HOPS '], id_sales$value[id_sales$crop == 'HOPS '])
+#plot(id_sales$year[id_sales$crop == 'HOPS ' && id_sales$info == "AREA HARVESTED"], id_sales$value[id_sales$crop == 'HOPS ' && id_sales$info == "AREA HARVESTED"])
 
