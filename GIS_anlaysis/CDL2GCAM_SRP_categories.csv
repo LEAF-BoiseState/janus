@@ -1,133 +1,133 @@
 ﻿CDL_id,CDL_name,GCAM_id,SRP_GCAM_id,GCAM_id_list,GCAM_Name,SRB_GCAM_id_list,GCAM_SRB_Name
-36,Alfalfa,10,10,1,Corn,1,Corn
-75,Almonds,12,12,2,Wheat,2,Wheat
-68,Apples,12,18,3,Rice,3,Dry Beans
-223,Apricots,12,18,4,Root_Tuber,4,Root_Tuber
-92,Aquaculture,24,28,5,OilCrop,5,OilCrop
-207,Asparagus,12,12,6,SugarCrop,6,SugarCrop
-21,Barley,7,7,7,OtherGrain,7,OtherGrain
-131,Barren,24,24,8,FiberCrop,8,Onions
-65,Barren,24,24,9,FodderGrass,9,FodderGrass
-242,Blueberries,12,12,10,FodderHerb,10,FodderHerb
-214,Broccoli,12,12,11,Biomass,11,Peas
-39,Buckwheat,7,7,12,MiscCrop,12,MiscCrop
-243,Cabbage,12,12,13,OtherArableLand,13,OtherArableLand
-38,Camelina,5,5,14,PalmFruit,14,Sod / Grass Seeds
-55,Caneberries,12,12,15,Pasture,15,Pasture
-31,Canola,5,5,16,UnmanagedPasture,16,Hops
-209,Cantaloupes,12,12,17,UrbanLand,17,UrbanLand - High Intensity
-206,Carrots,4,4,18,Willow,18,Stone/Pome Fruit
-244,Cauliflower,12,12,19,Forest,19,Forest
-245,Celery,12,12,20,UnmanagedForest,20,Grapes
-66,Cherries,12,18,21,Shrubland,21,Shrubland
-51,Chick Peas,12,3,22,Grassland,22,Mint
-70,Christmas Trees,12,12,23,Tundra,23,Wetlands
-72,Citrus,12,12,24,RockIceDesert,24,RockIceDesert
-81,Clouds/No Data,24,24,,,25,UrbanLand - Med Intensity
-58,Clover/Wildflowers,12,12,,,26,UrbanLand - Low Intensity
-1,Corn,1,1,,,27,UrbanLand - Open Space
-2,Cotton,8,12,,,28,Water
-250,Cranberries,12,12,,,,
-50,Cucumbers,12,12,,,,
-237,Dbl Crop Barley/Corn,1,1,,,,
-235,Dbl Crop Barley/Sorghum,7,7,,,,
-254,Dbl Crop Barley/Soybeans,7,7,,,,
-241,Dbl Crop Corn/Soybeans,1,1,,,,
-234,Dbl Crop Durum Wht/Sorghum,7,7,,,,
-233,Dbl Crop Lettuce/Barley,7,7,,,,
-231,Dbl Crop Lettuce/Cantaloupe,12,12,,,,
-232,Dbl Crop Lettuce/Cotton,12,12,,,,
-230,Dbl Crop Lettuce/Durum Wht,2,2,,,,
-226,Dbl Crop Oats/Corn,7,7,,,,
-239,Dbl Crop Soybeans/Cotton,5,5,,,,
-240,Dbl Crop Soybeans/Oats,7,7,,,,
-225,Dbl Crop WinWht/Corn,2,2,,,,
-238,Dbl Crop WinWht/Cotton,2,2,,,,
-236,Dbl Crop WinWht/Sorghum,7,7,,,,
-26,Dbl Crop WinWht/Soybeans,2,2,,,,
-141,Deciduous Forest,19,19,,,,
-82,Developed,17,26,,,,
-124,Developed/High Intensity,17,17,,,,
-122,Developed/Low Intensity,17,26,,,,
-123,Developed/Med Intensity,17,25,,,,
-121,Developed/Open Space,17,27,,,,
-42,Dry Beans,12,3,,,,
-22,Durum Wheat,2,2,,,,
-248,Eggplants,12,12,,,,
-142,Evergreen Forest,19,19,,,,
-61,Fallow/Idle Cropland,13,13,,,,
-32,Flaxseed,5,5,,,,
-63,Forest,19,19,,,,
-208,Garlic,12,12,,,,
-249,Gourds,12,12,,,,
-69,Grapes,12,20,,,,
-176,Grassland/Pasture,15,15,,,,
-219,Greens,12,12,,,,
-195,Herbaceous Wetlands,23,23,,,,
-57,Herbs,10,10,,,,
-213,Honeydew Melons,12,12,,,,
-56,Hops,12,16,,,,
-52,Lentils,12,12,,,,
-227,Lettuce,12,12,,,,
-29,Millet,7,7,,,,
-14,Mint,12,22,,,,
-47,Misc Vegs & Fruits,12,12,,,,
-143,Mixed Forest,19,19,,,,
-35,Mustard,5,5,,,,
-218,Nectarines,12,18,,,,
-88,Nonag/Undefined,24,24,,,,
-28,Oats,7,7,,,,
-211,Olives,5,5,,,,
-49,Onions,12,8,,,,
-111,Open Water,24,28,,,,
-212,Oranges,12,12,,,,
-44,Other Crops,12,12,,,,
-37,Other Hay/Non Alfalfa,15,9,,,,
-25,Other Small Grains,7,7,,,,
-71,Other Tree Crops,12,12,,,,
-62,Pasture/Grass,15,15,,,,
-67,Peaches,12,18,,,,
-10,Peanuts,5,5,,,,
-77,Pears,12,18,,,,
-53,Peas,12,11,,,,
-74,Pecans,12,12,,,,
-216,Peppers,12,12,,,,
-112,Perennial Ice/Snow ,24,24,,,,
-204,Pistachios,12,12,,,,
-220,Plums,12,18,,,,
-217,Pomegranates,12,12,,,,
-13,Pop or Orn Corn,1,1,,,,
-43,Potatoes,4,4,,,,
-210,Prunes,12,18,,,,
-229,Pumpkins,12,12,,,,
-246,Radishes,4,4,,,,
-34,Rape Seed,5,5,,,,
-3,Rice,3,12,,,,
-27,Rye,7,7,,,,
-33,Safflower,5,5,,,,
-152,Shrubland,21,21,,,,
-64,Shrubland,21,21,,,,
-59,Sod/Grass Seed,12,14,,,,
-4,Sorghum,7,7,,,,
+1,Corn,1,1,1,Corn,1,Corn
+237,Dbl Crop Barley/Corn,1,1,2,Wheat,2,Wheat
+241,Dbl Crop Corn/Soybeans,1,1,3,Rice,3,Dry Beans
+13,Pop or Orn Corn,1,1,4,Root_Tuber,4,Root_Tuber
+12,Sweet Corn,1,1,5,OilCrop,5,OilCrop
+230,Dbl Crop Lettuce/Durum Wht,2,2,6,SugarCrop,6,SugarCrop
+225,Dbl Crop WinWht/Corn,2,2,7,OtherGrain,7,OtherGrain
+238,Dbl Crop WinWht/Cotton,2,2,8,FiberCrop,8,Onions
+26,Dbl Crop WinWht/Soybeans,2,2,9,FodderGrass,9,FodderGrass
+22,Durum Wheat,2,2,10,FodderHerb,10,FodderHerb
+23,Spring Wheat,2,2,11,Biomass,11,Peas
+24,Winter Wheat,2,2,12,MiscCrop,12,MiscCrop
+51,Chick Peas,12,3,13,OtherArableLand,13,OtherArableLand
+42,Dry Beans,12,3,14,PalmFruit,14,Sod / Grass Seeds
+206,Carrots,4,4,15,Pasture,15,Pasture
+43,Potatoes,4,4,16,UnmanagedPasture,16,Hops
+246,Radishes,4,4,17,UrbanLand,17,UrbanLand - High Intensity
+46,Sweet Potatoes,4,4,18,Willow,18,Stone/Pome Fruit
+247,Turnips,4,4,19,Forest,19,Forest
+38,Camelina,5,5,20,UnmanagedForest,20,Grapes
+31,Canola,5,5,21,Shrubland,21,Shrubland
+239,Dbl Crop Soybeans/Cotton,5,5,22,Grassland,22,Mint
+32,Flaxseed,5,5,23,Tundra,23,Wetlands
+35,Mustard,5,5,24,RockIceDesert,24,RockIceDesert
+211,Olives,5,5,,,25,UrbanLand - Med Intensity
+10,Peanuts,5,5,,,26,UrbanLand - Low Intensity
+34,Rape Seed,5,5,,,27,UrbanLand - Open Space
+33,Safflower,5,5,,,28,Water
 5,Soybeans,5,5,,,,
-30,Speltz,7,7,,,,
-23,Spring Wheat,2,2,,,,
-222,Squash,12,12,,,,
-221,Strawberries,12,12,,,,
+6,Sunflower,5,5,,,,
 41,Sugarbeets,6,6,,,,
 45,Sugarcane,6,6,,,,
-6,Sunflower,5,5,,,,
-12,Sweet Corn,1,1,,,,
-46,Sweet Potatoes,4,4,,,,
+21,Barley,7,7,,,,
+39,Buckwheat,7,7,,,,
+235,Dbl Crop Barley/Sorghum,7,7,,,,
+254,Dbl Crop Barley/Soybeans,7,7,,,,
+234,Dbl Crop Durum Wht/Sorghum,7,7,,,,
+233,Dbl Crop Lettuce/Barley,7,7,,,,
+226,Dbl Crop Oats/Corn,7,7,,,,
+240,Dbl Crop Soybeans/Oats,7,7,,,,
+236,Dbl Crop WinWht/Sorghum,7,7,,,,
+29,Millet,7,7,,,,
+28,Oats,7,7,,,,
+25,Other Small Grains,7,7,,,,
+27,Rye,7,7,,,,
+4,Sorghum,7,7,,,,
+30,Speltz,7,7,,,,
+205,Triticale,7,7,,,,
+49,Onions,12,8,,,,
+37,Other Hay/Non Alfalfa,15,9,,,,
+36,Alfalfa,10,10,,,,
+57,Herbs,10,10,,,,
+224,Vetch,10,10,,,,
+53,Peas,12,11,,,,
+75,Almonds,12,12,,,,
+207,Asparagus,12,12,,,,
+242,Blueberries,12,12,,,,
+214,Broccoli,12,12,,,,
+243,Cabbage,12,12,,,,
+55,Caneberries,12,12,,,,
+209,Cantaloupes,12,12,,,,
+244,Cauliflower,12,12,,,,
+245,Celery,12,12,,,,
+70,Christmas Trees,12,12,,,,
+72,Citrus,12,12,,,,
+58,Clover/Wildflowers,12,12,,,,
+2,Cotton,8,12,,,,
+250,Cranberries,12,12,,,,
+50,Cucumbers,12,12,,,,
+231,Dbl Crop Lettuce/Cantaloupe,12,12,,,,
+232,Dbl Crop Lettuce/Cotton,12,12,,,,
+248,Eggplants,12,12,,,,
+208,Garlic,12,12,,,,
+249,Gourds,12,12,,,,
+219,Greens,12,12,,,,
+213,Honeydew Melons,12,12,,,,
+52,Lentils,12,12,,,,
+227,Lettuce,12,12,,,,
+47,Misc Vegs & Fruits,12,12,,,,
+212,Oranges,12,12,,,,
+44,Other Crops,12,12,,,,
+71,Other Tree Crops,12,12,,,,
+74,Pecans,12,12,,,,
+216,Peppers,12,12,,,,
+204,Pistachios,12,12,,,,
+217,Pomegranates,12,12,,,,
+229,Pumpkins,12,12,,,,
+3,Rice,3,12,,,,
+222,Squash,12,12,,,,
+221,Strawberries,12,12,,,,
 60,Switchgrass,11,12,,,,
 11,Tobacco,12,12,,,,
 54,Tomatoes,12,12,,,,
-205,Triticale,7,7,,,,
-247,Turnips,4,4,,,,
-224,Vetch,10,10,,,,
 76,Walnuts,12,12,,,,
-83,Water,24,28,,,,
 48,Watermelons,12,12,,,,
+61,Fallow/Idle Cropland,13,13,,,,
+59,Sod/Grass Seed,12,14,,,,
+176,Grassland/Pasture,15,15,,,,
+62,Pasture/Grass,15,15,,,,
+56,Hops,12,16,,,,
+124,Developed/High Intensity,17,17,,,,
+68,Apples,12,18,,,,
+223,Apricots,12,18,,,,
+66,Cherries,12,18,,,,
+218,Nectarines,12,18,,,,
+67,Peaches,12,18,,,,
+77,Pears,12,18,,,,
+220,Plums,12,18,,,,
+210,Prunes,12,18,,,,
+141,Deciduous Forest,19,19,,,,
+142,Evergreen Forest,19,19,,,,
+63,Forest,19,19,,,,
+143,Mixed Forest,19,19,,,,
+69,Grapes,12,20,,,,
+152,Shrubland,21,21,,,,
+64,Shrubland,21,21,,,,
+14,Mint,12,22,,,,
+195,Herbaceous Wetlands,23,23,,,,
 87,Wetlands,23,23,,,,
-24,Winter Wheat,2,2,,,,
 190,Woody Wetlands,23,23,,,,
+131,Barren,24,24,,,,
+65,Barren,24,24,,,,
+81,Clouds/No Data,24,24,,,,
+88,Nonag/Undefined,24,24,,,,
+112,Perennial Ice/Snow ,24,24,,,,
+123,Developed/Med Intensity,17,25,,,,
+82,Developed,17,26,,,,
+122,Developed/Low Intensity,17,26,,,,
+121,Developed/Open Space,17,27,,,,
+92,Aquaculture,24,28,,,,
+111,Open Water,24,28,,,,
+83,Water,24,28,,,,
