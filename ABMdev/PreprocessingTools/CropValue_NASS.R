@@ -17,7 +17,7 @@ nass_url <- "http://quickstats.nass.usda.gov"
 
 my_group_desc <-"CROPS"
 # query start year 1975, 1990, 2005, 
-my_year <- "2005"
+my_year <- "2010"
 
 
 ###--------------------------------------#
@@ -51,9 +51,9 @@ us_ops_raw_data <- pmap_dfr(list_raw_us_ops, rbind)
 # Subset Data based on highest value crops
 #####
 categories<-c("AREA HARVESTED", "PRICE RECEIVED", "YIELD")
-agg_level<-c("STATE", "NATIONAL", "AGRICULTURAL DISTRICT", "COUNTY")
+agg_level<-c("STATE", "NATIONAL", "AGRICULTURAL DISTRICT")
 ref_period<-c("YEAR", "MARKETING YEAR")
-district<-c("SOUTHWEST", "EAST", "SOUTH CENTRAl")
+district<-c("SOUTHWEST", "EAST", "SOUTH CENTRAL", "", "NORTH")
 sales<- function(raw_data){
   out <- raw_data %>%
   #filter to specific data

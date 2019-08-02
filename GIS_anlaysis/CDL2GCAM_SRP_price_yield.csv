@@ -6,8 +6,8 @@ CDL_id,CDL_name,GCAM_id,SRP_GCAM_id,Price_Unit,Price,Yeild_Unit,Yeild
 92,Aquaculture,24,24,NA,NA,NA,NA
 207,Asparagus,12,12,$ / CWT,114,CWT / ACRE,29
 21,Barley,7,7,$ / BU,4.12,BU / ACRE,91.32
-131,Barren,24,24,NA,NA,NA,NA
 65,Barren,24,24,NA,NA,NA,NA
+131,Barren,24,24,NA,NA,NA,NA
 242,Blueberries,12,12,NA,NA,NA,NA
 214,Broccoli,12,12,NA,NA,NA,NA
 39,Buckwheat,7,7,NA,NA,NA,NA
@@ -105,8 +105,8 @@ CDL_id,CDL_name,GCAM_id,SRP_GCAM_id,Price_Unit,Price,Yeild_Unit,Yeild
 3,Rice,3,12,NA,NA,NA,NA
 27,Rye,7,7,$ / BU,5.18,BU / ACRE,27.7
 33,Safflower,5,5,$ /CWT,17.2,CWT / ACRE,13.2
-152,Shrubland,21,21,NA,NA,NA,NA
 64,Shrubland,21,21,NA,NA,NA,NA
+152,Shrubland,21,21,NA,NA,NA,NA
 59,Sod/Grass Seed,12,14,$ / ACRE,4933,ACRE,1
 4,Sorghum,7,7,$ / CWT,8.96,CWT / ACRE,40.26
 5,Soybeans,5,5,$ / BU,11.3,BU / AC,43.5
