@@ -1,0 +1,133 @@
+CDL_id,CDL_name,GCAM_id,SRP_GCAM_id,Price_Unit,Price,Yield_Unit,Yield
+1,Corn,1,1,$ / BU,5.27,BU / ACRE,190
+237,Dbl Crop Barley/Corn,1,1,NA,NA,NA,NA
+241,Dbl Crop Corn/Soybeans,1,1,NA,NA,NA,NA
+13,Pop or Orn Corn,1,1,NA,NA,NA,NA
+12,Sweet Corn,1,1,NA,NA,NA,NA
+230,Dbl Crop Lettuce/Durum Wht,2,2,NA,NA,NA,NA
+225,Dbl Crop WinWht/Corn,2,2,NA,NA,NA,NA
+238,Dbl Crop WinWht/Cotton,2,2,NA,NA,NA,NA
+26,Dbl Crop WinWht/Soybeans,2,2,NA,NA,NA,NA
+22,Durum Wheat,2,2, $ / BU,6.62,BU /AC,61
+23,Spring Wheat,2,2,$ / BU,6.33,BU / AC,79
+24,Winter Wheat,2,2,$ / BU,5.68,BU/ACRE,82
+3,Rice,3,12,NA,NA,NA,NA
+206,Carrots,4,4,NA,NA,NA,NA
+43,Potatoes,4,4,$ / CWT ,8.1,CWT / ACRE,407.47
+246,Radishes,4,4,$ / CWT ,38.9,CWT / ACRE,92
+46,Sweet Potatoes,4,4,$ / CWT,19.8,CWT / ACRE,204
+247,Turnips,4,4,NA,NA,NA,NA
+38,Camelina,5,5,NA,NA,NA,NA
+31,Canola,5,5,$ / CWT,18.7,CWT / ACRE,18
+239,Dbl Crop Soybeans/Cotton,5,5,NA,NA,NA,NA
+32,Flaxseed,5,5,$/BU,12.2,BU /AC,21.7
+211,Olives,5,5,$ / TON,664,TONS / ACRE,5.72
+10,Peanuts,5,5,NA,NA,NA,NA
+34,Rape Seed,5,5,$ / CWT ,23.4,CWT / ACRE,18.9
+33,Safflower,5,5,$ /CWT,17.2,CWT / ACRE,13.2
+5,Soybeans,5,5,$ / BU,11.3,BU / AC,43.5
+6,Sunflower,5,5,$ / CWT,23.3,CWT / ACRE,14.6
+41,Sugarbeets,6,6,$ / TON,57.3,TONS / ACRE,33.54
+45,Sugarcane,6,6,NA,NA,NA,NA
+21,Barley,7,7,$ / BU,4.12,BU / ACRE,91.32
+39,Buckwheat,7,7,NA,NA,NA,NA
+235,Dbl Crop Barley/Sorghum,7,7,NA,NA,NA,NA
+254,Dbl Crop Barley/Soybeans,7,7,NA,NA,NA,NA
+234,Dbl Crop Durum Wht/Sorghum,7,7,NA,NA,NA,NA
+233,Dbl Crop Lettuce/Barley,7,7,NA,NA,NA,NA
+226,Dbl Crop Oats/Corn,7,7,NA,NA,NA,NA
+240,Dbl Crop Soybeans/Oats,7,7,NA,NA,NA,NA
+236,Dbl Crop WinWht/Sorghum,7,7,NA,NA,NA,NA
+29,Millet,7,7,$ / BU,4.54,BU / ACRE,31.8
+28,Oats,7,7,$ / BU,2,BU / ACRE,81
+25,Other Small Grains,7,7,NA,NA,NA,NA
+27,Rye,7,7,$ / BU,5.18,BU / ACRE,27.7
+4,Sorghum,7,7,$ / CWT,8.96,CWT / ACRE,40.26
+30,Speltz,7,7,NA,NA,NA,NA
+205,Triticale,7,7,NA,NA,NA,NA
+2,Cotton,8,12,NA,NA,NA,NA
+36,Alfalfa,10,10,$ / TON,127,TONS / ACRE,3.99
+57,Herbs,10,10,NA,NA,NA,NA
+60,Switchgrass,11,12,NA,NA,NA,NA
+75,Almonds,12,12,NA,NA,NA,NA
+68,Apples,12,18, $ / LB,0.23,LB / ACRE,23100
+223,Apricots,12,18,$ / TON,722,TONS / ACRE,5.46
+207,Asparagus,12,12,$ / CWT,114,CWT / ACRE,29
+242,Blueberries,12,12,NA,NA,NA,NA
+214,Broccoli,12,12,NA,NA,NA,NA
+243,Cabbage,12,12,NA,NA,NA,NA
+55,Caneberries,12,12,NA,NA,NA,NA
+209,Cantaloupes,12,12,NA,NA,NA,NA
+244,Cauliflower,12,12,NA,NA,NA,NA
+245,Celery,12,12,NA,NA,NA,NA
+66,Cherries,12,18,$ / TON,2230,TONS /ACRE,2.11
+51,Chick Peas,12,3,NA,NA,NA,NA
+70,Christmas Trees,12,12,NA,NA,NA,NA
+72,Citrus,12,12,NA,NA,NA,NA
+58,Clover/Wildflowers,12,25,NA,NA,NA,NA
+250,Cranberries,12,12,$ / BARREL,43.9,BARRELS / ACRE,176.8
+50,Cucumbers,12,12,NA,NA,NA,NA
+231,Dbl Crop Lettuce/Cantaloupe,12,12,NA,NA,NA,NA
+232,Dbl Crop Lettuce/Cotton,12,12,NA,NA,NA,NA
+42,Dry Beans,12,3,$ / CWT,27.2,CWT / AC,19
+248,Eggplants,12,12,NA,NA,NA,NA
+208,Garlic,12,12,$ / CWT,71.1,CWT / AC,164
+249,Gourds,12,12,NA,NA,NA,NA
+69,Grapes,12,20,$ / TON,542,TONS /ACRE,7.47
+219,Greens,12,12,NA,NA,NA,NA
+213,Honeydew Melons,12,12,NA,NA,NA,NA
+56,Hops,12,16,$ / LB,3.89,LB / ACRE,2129
+52,Lentils,12,12,$ / CWT,27.9,CWT / AC,9.5
+227,Lettuce,12,12,$ / CWT,19.46,CWT / ACRE,307.7
+14,Mint,12,22,$ / LB,17.35,LB / ACRE,108
+47,Misc Vegs & Fruits,12,12,NA,NA,NA,NA
+35,Mustard,12,12,$ / CWT,25.9,CWT / AC,8.7
+218,Nectarines,12,18,$ / TON,553,TONS / ACRE,9.22
+49,Onions,12,8,$ / CWT,8.7,CWT / ACRE,760
+212,Oranges,12,12,NA,NA,NA,NA
+44,Other Crops,12,12,NA,NA,NA,NA
+71,Other Tree Crops,12,12,NA,NA,NA,NA
+67,Peaches,12,18,$ / TON,908,TONS / ACRE,5.69
+77,Pears,12,18,$ / TON,476,TONS / ACRE,14.5
+53,Peas,12,11,$ / CWT ,22.87,CWT / ACRE,13.5
+74,Pecans,12,12,NA,NA,NA,NA
+216,Peppers,12,12,$ / CWT,34.45,CWT / ACRE,255.5
+204,Pistachios,12,12,NA,NA,NA,NA
+220,Plums,12,18,$ / TON,555,TONS /ACRE,5.92
+217,Pomegranates,12,12,NA,NA,NA,NA
+210,Prunes,12,18,NA,NA,NA,NA
+229,Pumpkins,12,12,$ / CWT ,11,CWT / ACRE,222
+59,Sod/Grass Seed,12,14,$ / ACRE,4933,ACRE,1
+222,Squash,12,12,$ / CWT,30.4,CWT / ACRE,153
+221,Strawberries,12,12,NA,NA,NA,NA
+11,Tobacco,12,12,NA,NA,NA,NA
+54,Tomatoes,12,12,NA,NA,NA,NA
+224,Vetch,12,12,NA,NA,NA,NA
+76,Walnuts,12,12,NA,NA,NA,NA
+48,Watermelons,12,12,NA,NA,NA,NA
+61,Fallow/Idle Cropland,13,13,NA,NA,NA,NA
+176,Grassland/Pasture,15,15,NA,NA,NA,NA
+37,Other Hay/Non Alfalfa,15,9,$ / TON,94,TONS / ACRE,2.1
+62,Pasture/Grass,15,15,NA,NA,NA,NA
+82,Developed,17,26,NA,NA,NA,NA
+124,Developed/High Intensity,17,17,NA,NA,NA,NA
+122,Developed/Low Intensity,17,26,NA,NA,NA,NA
+123,Developed/Med Intensity,17,25,NA,NA,NA,NA
+121,Developed/Open Space,17,27,NA,NA,NA,NA
+141,Deciduous Forest,19,19,NA,NA,NA,NA
+142,Evergreen Forest,19,19,NA,NA,NA,NA
+63,Forest,19,19,NA,NA,NA,NA
+143,Mixed Forest,19,19,NA,NA,NA,NA
+152,Shrubland,21,21,NA,NA,NA,NA
+64,Shrubland,21,21,NA,NA,NA,NA
+195,Herbaceous Wetlands,23,23,NA,NA,NA,NA
+87,Wetlands,23,23,NA,NA,NA,NA
+190,Woody Wetlands,23,23,NA,NA,NA,NA
+92,Aquaculture,24,24,NA,NA,NA,NA
+131,Barren,24,24,NA,NA,NA,NA
+65,Barren,24,24,NA,NA,NA,NA
+81,Clouds/No Data,24,24,NA,NA,NA,NA
+88,Nonag/Undefined,24,24,NA,NA,NA,NA
+111,Open Water,24,28,NA,NA,NA,NA
+112,Perennial Ice/Snow ,24,24,NA,NA,NA,NA
+83,Water,24,28,NA,NA,NA,NA

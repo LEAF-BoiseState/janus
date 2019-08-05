@@ -11,23 +11,22 @@
 22,Durum Wheat,2,2,10,FodderHerb,10,FodderHerb
 23,Spring Wheat,2,2,11,Biomass,11,Peas
 24,Winter Wheat,2,2,12,MiscCrop,12,MiscCrop
-51,Chick Peas,12,3,13,OtherArableLand,13,OtherArableLand
-42,Dry Beans,12,3,14,PalmFruit,14,Sod / Grass Seeds
-206,Carrots,4,4,15,Pasture,15,Pasture
-43,Potatoes,4,4,16,UnmanagedPasture,16,Hops
-246,Radishes,4,4,17,UrbanLand,17,UrbanLand - High Intensity
-46,Sweet Potatoes,4,4,18,Willow,18,Stone/Pome Fruit
-247,Turnips,4,4,19,Forest,19,Forest
-38,Camelina,5,5,20,UnmanagedForest,20,Grapes
-31,Canola,5,5,21,Shrubland,21,Shrubland
-239,Dbl Crop Soybeans/Cotton,5,5,22,Grassland,22,Mint
-32,Flaxseed,5,5,23,Tundra,23,Wetlands
-35,Mustard,5,5,24,RockIceDesert,24,RockIceDesert
-211,Olives,5,5,,,25,UrbanLand - Med Intensity
-10,Peanuts,5,5,,,26,UrbanLand - Low Intensity
-34,Rape Seed,5,5,,,27,UrbanLand - Open Space
-33,Safflower,5,5,,,28,Water
-5,Soybeans,5,5,,,,
+3,Rice,3,12,13,OtherArableLand,13,OtherArableLand
+206,Carrots,4,4,14,PalmFruit,14,Sod / Grass Seeds
+43,Potatoes,4,4,15,Pasture,15,Pasture
+246,Radishes,4,4,16,UnmanagedPasture,16,Hops
+46,Sweet Potatoes,4,4,17,UrbanLand,17,UrbanLand - High Intensity
+247,Turnips,4,4,18,Willow,18,Stone/Pome Fruit
+38,Camelina,5,5,19,Forest,19,Forest
+31,Canola,5,5,20,UnmanagedForest,20,Grapes
+239,Dbl Crop Soybeans/Cotton,5,5,21,Shrubland,21,Shrubland
+32,Flaxseed,5,5,22,Grassland,22,Mint
+35,Mustard,5,5,23,Tundra,23,Wetlands
+211,Olives,5,5,24,RockIceDesert,24,RockIceDesert
+10,Peanuts,5,5,,,25,UrbanLand - Med Intensity
+34,Rape Seed,5,5,,,26,UrbanLand - Low Intensity
+33,Safflower,5,5,,,27,UrbanLand - Open Space
+5,Soybeans,5,5,,,28,Water
 6,Sunflower,5,5,,,,
 41,Sugarbeets,6,6,,,,
 45,Sugarcane,6,6,,,,
@@ -47,11 +46,14 @@
 4,Sorghum,7,7,,,,
 30,Speltz,7,7,,,,
 205,Triticale,7,7,,,,
-49,Onions,12,8,,,,
-37,Other Hay/Non Alfalfa,15,9,,,,
+2,Cotton,8,12,,,,
 36,Alfalfa,10,10,,,,
 57,Herbs,10,10,,,,
 224,Vetch,10,10,,,,
+60,Switchgrass,11,12,,,,
+51,Chick Peas,12,3,,,,
+42,Dry Beans,12,3,,,,
+49,Onions,12,8,,,,
 53,Peas,12,11,,,,
 75,Almonds,12,12,,,,
 207,Asparagus,12,12,,,,
@@ -65,7 +67,6 @@
 70,Christmas Trees,12,12,,,,
 72,Citrus,12,12,,,,
 58,Clover/Wildflowers,12,12,,,,
-2,Cotton,8,12,,,,
 250,Cranberries,12,12,,,,
 50,Cucumbers,12,12,,,,
 231,Dbl Crop Lettuce/Cantaloupe,12,12,,,,
@@ -86,20 +87,14 @@
 204,Pistachios,12,12,,,,
 217,Pomegranates,12,12,,,,
 229,Pumpkins,12,12,,,,
-3,Rice,3,12,,,,
 222,Squash,12,12,,,,
 221,Strawberries,12,12,,,,
-60,Switchgrass,11,12,,,,
 11,Tobacco,12,12,,,,
 54,Tomatoes,12,12,,,,
 76,Walnuts,12,12,,,,
 48,Watermelons,12,12,,,,
-61,Fallow/Idle Cropland,13,13,,,,
 59,Sod/Grass Seed,12,14,,,,
-176,Grassland/Pasture,15,15,,,,
-62,Pasture/Grass,15,15,,,,
 56,Hops,12,16,,,,
-124,Developed/High Intensity,17,17,,,,
 68,Apples,12,18,,,,
 223,Apricots,12,18,,,,
 66,Cherries,12,18,,,,
@@ -108,14 +103,23 @@
 77,Pears,12,18,,,,
 220,Plums,12,18,,,,
 210,Prunes,12,18,,,,
+69,Grapes,12,20,,,,
+14,Mint,12,22,,,,
+61,Fallow/Idle Cropland,13,13,,,,
+37,Other Hay/Non Alfalfa,15,9,,,,
+176,Grassland/Pasture,15,15,,,,
+62,Pasture/Grass,15,15,,,,
+124,Developed/High Intensity,17,17,,,,
+123,Developed/Med Intensity,17,25,,,,
+82,Developed,17,26,,,,
+122,Developed/Low Intensity,17,26,,,,
+121,Developed/Open Space,17,27,,,,
 141,Deciduous Forest,19,19,,,,
 142,Evergreen Forest,19,19,,,,
 63,Forest,19,19,,,,
 143,Mixed Forest,19,19,,,,
-69,Grapes,12,20,,,,
 152,Shrubland,21,21,,,,
 64,Shrubland,21,21,,,,
-14,Mint,12,22,,,,
 195,Herbaceous Wetlands,23,23,,,,
 87,Wetlands,23,23,,,,
 190,Woody Wetlands,23,23,,,,
@@ -124,10 +128,6 @@
 81,Clouds/No Data,24,24,,,,
 88,Nonag/Undefined,24,24,,,,
 112,Perennial Ice/Snow ,24,24,,,,
-123,Developed/Med Intensity,17,25,,,,
-82,Developed,17,26,,,,
-122,Developed/Low Intensity,17,26,,,,
-121,Developed/Open Space,17,27,,,,
 92,Aquaculture,24,28,,,,
 111,Open Water,24,28,,,,
 83,Water,24,28,,,,
