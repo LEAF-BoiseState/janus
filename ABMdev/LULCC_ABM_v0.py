@@ -59,17 +59,38 @@ dist2city=minDistCity(lc)
 
 Ny, Nx = lc[0].shape
 Nt = 50
-Nc = 6 #need to denote from lc which IDs are crops to be decided on
 
+#---------------------------------------
+#  Initialize Crops
+#---------------------------------------
+Nc = 6 #there are actually 17, need random profit profiles for each of these 
+CropIDs = np.arange(Nc).reshape((Nc,1)) + 1
+CropID_all = np.zeros((Nt,Ny,Nx))
+CropID_all[0,:,:] = lc
 
-#setup grid space for agent locations
+#---------------------------------------
+#  Initialize Profits
+#---------------------------------------
+Profit_ant = np.zeros((Nt,Ny,Nx))
+Profit_act = np.zeros((Nt,Ny,Nx))
+
+Profit_ant[0,:,:] = 30000.0 + np.random.normal(loc=0.0,scale=1000.0,size=(1,Nx,Ny))
+Profit_act[0,:,:] = Profit_ant[0,:,:]
+
+P = [] # A list of numpy arrays that will be Nt x Nc
+for i in np.arange(Ny):
+    for j in np.arange(Nx):
+        P.append(cd.GeneratePrices(Nt))
+
+#---------------------------------------
+#  Initialize Agents
+#---------------------------------------
 AgentArray = np.empty((Ny,Nx),dtype='U10')
 dFASM = np.empty((Ny,Nx), dtype=object) #domain 
 
 for i in np.arange(Ny):
 	for j in np.arange(Nx):
 		dFASM[i][j] = cell.dCellClass()
-
 
 #Update so each of these inital values randomly selected from NASS distributions
 #Initialize farmer
@@ -78,20 +99,6 @@ nFields=1
 AreaFields=np.array([10])
 LandStatus=0
 density=2
-
-#---------------------------------------
-#  Initialize Profits
-#---------------------------------------
-Profit_ant = np.zeros((Nt,Nx,Ny))
-Profit_act = np.zeros((Nt,Nx,Ny))
-
-Profit_ant[0,:,:] = 30000.0 + np.random.normal(loc=0.0,scale=1000.0,size=(1,Nx,Ny))
-Profit_act[0,:,:] = Profit_ant[0,:,:]
-
-P = [] # A list of numpy arrays that will be Nt x 6 crops
-for i in np.arange(Nx):
-    for j in np.arange(Ny):
-        P.append(cd.GeneratePrices(Nt))
 
 #---------------------------------------
 #  assign agents on the landscape 
