@@ -60,6 +60,15 @@ dist2city=minDistCity(lc)
 Ny, Nx = lc[0].shape
 Nt = 50
 
+#set agent switching parameters
+a_ra = 4.5
+b_ra = 1.0
+
+fmin = 1.0
+fmax = 1.5
+f0 = 1.2
+n = 100
+
 #---------------------------------------
 #  Initialize Crops
 #---------------------------------------
@@ -125,13 +134,41 @@ for i in np.arange(Ny):
 #---------------------------------------
 #loop through decision process
 #---------------------------------------
+for i in np.arange(1,Nt):
+    for j in np.arange(Nx):
+        for k in np.arange(Ny):
+            
+            cell_coord = j*Ny + k
+            
+            Profit_ant_ij = Profit_ant[i-1,j,k]
+            Profit_p      = P[cell_coord][i,:].reshape((Nc,1))
+    
+            # Existing Crop ID
+            CurCropChoice = CropID_all[i-1,j,k]
+            CurCropChoice_ind = CurCropChoice.astype('int') - 1
+            
+            #Crop Decider
+            CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_ant_ij, CropIDs, \
+                Profit_p, rule=True)
+            
+            # Check if return  values indicate the farmer shouldn't switch
+            #seems like this could either be part of the above function or a new one?
+            if(CropChoice==-1) and (ProfitChoice==-1):
+                CropID_all[i,j,k] = CropID_all[i-1,j,k]
+                Profit_ant[i,j,k] = P[j][i,CurCropChoice_ind]
+                Profit_act[i,j,k] = Profit_ant[i,j,k] + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1))
+            else: #switch to the new crop
+                CropID_all[i,j,k] = CropChoice
+                Profit_ant[i,j,k] = ProfitChoice
+                Profit_act[i,j,k] = Profit_ant[i,j,k] + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1))
 
+            
+            
+            
 #Update AgentArray 
 #where in the model does the code denote that the agent goes from farmer to urban or visa versa
      #dFASM[i][j].SwapAgent('aFarmer','aUrban',fromIndex,AgentArray)
-     
-     
-it=0 #this is the iteration in the loop (e.g. i/j)     
+        
 temp_lc= lc #output of decision process
 
 #write landcover to array
