@@ -45,8 +45,9 @@ from geofxns import saveLC #do we need to import each function, or can we just l
 import Classes.aFarmer as farmer
 import Classes.dCellClass as cell
 import Classes.aUrban as urban
+import CropFuncs.CropDecider as cd
 
-userPath='/Users/kendrakaiser/Documents/GitRepos/'
+userPath='/Users/kek25/Documents/GitRepos/'
 DataPath= userPath+'IM3-BoiseState/'
 
 #load extent
@@ -56,15 +57,17 @@ lc=np.load(DataPath + 'ABMdev/Data/gcam_1km_2010_AdaCanyon.npy')
 #initalize minimum distance to city
 dist2city=minDistCity(lc)
 
-nRows, nCols = lc[0].shape
-Nt=20
+Ny, Nx = lc[0].shape
+Nt = 50
+Nc = 6 #need to denote from lc which IDs are crops to be decided on
+
 
 #setup grid space for agent locations
-AgentArray = np.empty((nRows,nCols),dtype='U10')
-dFASM = np.empty((nRows,nCols), dtype=object) #domain 
+AgentArray = np.empty((Ny,Nx),dtype='U10')
+dFASM = np.empty((Ny,Nx), dtype=object) #domain 
 
-for i in np.arange(nRows):
-	for j in np.arange(nCols):
+for i in np.arange(Ny):
+	for j in np.arange(Nx):
 		dFASM[i][j] = cell.dCellClass()
 
 
@@ -75,6 +78,20 @@ nFields=1
 AreaFields=np.array([10])
 LandStatus=0
 density=2
+
+#---------------------------------------
+#  Initialize Profits
+#---------------------------------------
+Profit_ant = np.zeros((Nt,Nx,Ny))
+Profit_act = np.zeros((Nt,Nx,Ny))
+
+Profit_ant[0,:,:] = 30000.0 + np.random.normal(loc=0.0,scale=1000.0,size=(1,Nx,Ny))
+Profit_act[0,:,:] = Profit_ant[0,:,:]
+
+P = [] # A list of numpy arrays that will be Nt x 6 crops
+for i in np.arange(Nx):
+    for j in np.arange(Ny):
+        P.append(cd.GeneratePrices(Nt))
 
 #---------------------------------------
 #  assign agents on the landscape 
@@ -89,8 +106,8 @@ AgentArray[np.logical_or(lc[0] == 19, lc[0] == 15)] = 'empty' #forest, pasture
 #place agent structures onto landscape and define attributes -> this is SLOW
 #---------------------------------------
 
-for i in np.arange(nRows):
- 	for j in np.arange(nCols):
+for i in np.arange(Ny):
+ 	for j in np.arange(Nx):
          if(AgentArray[i][j]=='aFarmer'):
              NewAgent = farmer.aFarmer(AgeInit, nFields, AreaFields, LandStatus, dist2city[i][j])
              dFASM[i][j].AddAgent(AgentArray[i][j], NewAgent)
@@ -121,41 +138,38 @@ saveLC(temp_lc, 2010, it, DataPath)
 #update distance to city for new landcover
 dist2city=minDistCity(temp_lc)
        
-for i in np.arange(nRows):
- 	for j in np.arange(nCols):
+for i in np.arange(Ny):
+ 	for j in np.arange(Nx):
          if(AgentArray[i][j]=='aFarmer'):            
              dFASM[i][j].FarmAgents[0].UpdateAge()
              dFASM[i][j].FarmAgents[0].UpdateDist2city(dist2city[i][j])
       
         
-<<<<<<< HEAD
-myF1 = farmer(AgeInit, DistFromCityInit, OnFIInit, OffFIInit, 1) #where does farmer() come from??
-myF2 = farmer(AgeInit, DistFromCityInit, OnFIInit, OffFIInit, 2)
 
-for t in np.arange(Nt,dtype=int):
+#myF1 = farmer(AgeInit, DistFromCityInit, OnFIInit, OffFIInit, 1) #where does farmer() come from??
+#myF2 = farmer(AgeInit, DistFromCityInit, OnFIInit, OffFIInit, 2)
+
+#for t in np.arange(Nt,dtype=int):
     
 
-    DeltaDistToCity = ((-0.1 - -0.2)*np.random.random() - 0.2)    
-    OnFI_gr = 1.0 + OnFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)    
-    OffFI_gr = 1.0 + OffFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)
+   # DeltaDistToCity = ((-0.1 - -0.2)*np.random.random() - 0.2)    
+   #OnFI_gr = 1.0 + OnFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)    
+    #OffFI_gr = 1.0 + OffFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)
 
-    myF1.UpdateAge()
-    myF1.UpdateDistFromCity(DeltaDistToCity) # change this based on minDist coverage
-    myF1.UpdateOnFarmIncome(scale=OnFI_gr) #how does this work if the OnFI_gr comes after?
-    myF1.UpdateOffFarmIncome(scale=OffFI_gr)
+    #myF1.UpdateAge()
+    #myF1.UpdateDistFromCity(DeltaDistToCity) # change this based on minDist coverage
+    #myF1.UpdateOnFarmIncome(scale=OnFI_gr) #how does this work if the OnFI_gr comes after?
+    #myF1.UpdateOffFarmIncome(scale=OffFI_gr)
 
-    DeltaDistToCity = ((-0.1 - -0.2)*np.random.random() - 0.2)    
-    OnFI_gr = 1.0 + OnFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)    
-    OffFI_gr = 1.0 + OffFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)
+    #DeltaDistToCity = ((-0.1 - -0.2)*np.random.random() - 0.2)    
+    #OnFI_gr = 1.0 + OnFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)    
+    #OffFI_gr = 1.0 + OffFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)
     
-    myF2.UpdateAge()
-    myF2.UpdateDistFromCity(DeltaDistToCity)
-    if(t==10):
-        myF2.UpdateOnFarmIncome(loc=20000)        
-    else:
-        myF2.UpdateOnFarmIncome(scale=OnFI_gr)
-    myF2.UpdateOffFarmIncome(scale=OffFI_gr)
-=======
-            
-        
->>>>>>> refs/remotes/origin/master
+    #myF2.UpdateAge()
+    #myF2.UpdateDistFromCity(DeltaDistToCity)
+    #if(t==10):
+     #   myF2.UpdateOnFarmIncome(loc=20000)        
+    #else:
+     #   myF2.UpdateOnFarmIncome(scale=OnFI_gr)
+    #myF2.UpdateOffFarmIncome(scale=OffFI_gr)
+
