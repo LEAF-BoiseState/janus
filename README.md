@@ -63,7 +63,7 @@ CreateFASMdomain
      - Compute statistics at the beginning of time (i.e., update neighborhood stats for farmers, urban areas, etc.)
      - Get any new global info needed (i.e., value of crops)
      - Have all farmers decide on their crop choice for next year
-     - Switch to new crops, update npy.
+    
      
      >>> FUTURE VERSION 
         - Compute happiness metric based on urbanness, global crop price
@@ -78,7 +78,11 @@ CreateFASMdomain
      > Add new urban types for next year
      > Add new exurban types for next year
 
-# 3. Save output
+# 3. Update Variables
+   - Switch to new crops, update npy.
+   - Update agent ages
+
+# 4. Save output
    - Aggregate statistics through time (csv or NetCDF)
    - Spatial land use patterns through time (NetCDF)
 
