@@ -13,14 +13,14 @@ Zonal Stats calculates the Shannon Diversity Index of 30m CDL data within each 1
 ## Spatial Initialization
 
 ## getGISdata 
-functions getGISextent, getGCAM, 
+functions: getGISextent, getGCAM, 
 To add: pull physiographic information, re-grid, save
 
 ## geofxs
 *will be further populated to preform various statistical analysis
 
 minDistCity - takes a np array of SRP GCAM categories, returns np array of distances to closest city cell
-added saveLC - save the landcover of a given year to a labeled npy file 
+saveLC - save the landcover of a given year to a labeled npy file 
 
 
 # ABM Development
@@ -53,18 +53,17 @@ CreateFASMdomain
   - Load spatial maps
   - Initialize crops
   - Initialize profits
-  - Initialize agents -- there are multiple steps here, how to streamline w functions?
+  - Initialize agents
   - Create any temporary, derived spatial domains (e.g. distance to city)
   -? Create storage containers for LULCC simulations (NaNs outside active domain?)
-  - Create any exogenous agent types needed (e.g., regulators, global markets)
+  -? Create any exogenous agent types needed (e.g., regulators, global markets)
 
 # 2. Simulation loop
   - Loop through time
      - Compute statistics at the beginning of time (i.e., update neighborhood stats for farmers, urban areas, etc.)
      - Get any new global info needed (i.e., value of crops)
      - Have all farmers decide on their crop choice for next year
-     - Switch to new crops, update npy.
-     
+    
      >>> FUTURE VERSION 
         - Compute happiness metric based on urbanness, global crop price
         - Unhappy agents:
@@ -78,7 +77,11 @@ CreateFASMdomain
      > Add new urban types for next year
      > Add new exurban types for next year
 
-# 3. Save output
+# 3. Update Variables
+   - Switch to new crops, update npy.
+   - Update agent ages
+
+# 4. Save output
    - Aggregate statistics through time (csv or NetCDF)
    - Spatial land use patterns through time (NetCDF)
 
