@@ -78,49 +78,19 @@ AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city)
 dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx)
 
 #---------------------------------------
-# 2. loop through decision process - how to change into function?
+# 2. loop through decision process 
 #---------------------------------------
 
+CropID_all, Profit_ant, Profit_act = cd.MakeDecision(Nt, Ny, Nx, Nc, CropID_all, Profits, Profit_ant, Profit_act, a_ra, b_ra, fmin, fmax, n, CropIDs)
+"one unit test would be to confirm that non-ag stayed the same and that all of the ag did not stay the same"        
+#need to pull out the parts that dont rely on the loop and put the decision inside of it, that way relevant info can be updated between timesteps; 
 
-for i in np.arange(1,Nt):
-    for j in np.arange(Nx):
-        for k in np.arange(Ny):
-    
-            # Existing Crop ID
-            CurCropChoice = CropID_all[i-1,j,k]
-            CurCropChoice_ind = CurCropChoice.astype('int') - 1
-            #assess current and future profit of that given crop
-            if (CurCropChoice_ind <= 6):
-                Profit_ant_temp = Profits[i-1, CurCropChoice_ind]#last years profit
-                Profit_p   = Profits[i,:] #this years  expected profit
-                Profit_p = Profit_p.reshape(Nc,1)
-            else: 
-                Profit_ant_temp = 0
-                Profit_p = np.zeros((Nc,1))
-            
-            #Crop Decider
-            CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_ant_temp, CropIDs, \
-                Profit_p, rule=True)
-            
-            # Check if return  values indicate the farmer shouldn't switch
-            #seems like this could either be part of the above function or a new one?
-            if(CropChoice==-1) and (ProfitChoice==-1):
-                CropID_all[i,j,k] = CropID_all[i-1,j,k]
-                Profit_ant[i,j,k] = Profit_ant_temp
-                Profit_act[i,j,k] = Profit_ant[i,j,k] + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1)) #this years actual profit
-            else: #switch to the new crop
-                CropID_all[i,j,k] = CropChoice
-                Profit_ant[i,j,k] = ProfitChoice
-                Profit_act[i,j,k] = Profit_ant[i,j,k] + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1))
-
-            
-lc_new= CropID_all
 #---------------------------------------
 # 3. update variables 
 #---------------------------------------
 
-#update distance to city from output of decision process
-dist2city=minDistCity(lc_new)
+#update distance to city from output of decision process - IF we were incorperating the urban agent then this would happen in each time step
+#dist2city=minDistCity(lc_new)
      
   #Update AgentArray 
 #where in the model does the code denote that the agent goes from farmer to urban or visa versa
