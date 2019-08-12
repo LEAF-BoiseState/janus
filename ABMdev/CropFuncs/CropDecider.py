@@ -167,11 +167,47 @@ def GeneratePrices(Nt):
 
 #=============================================================================#
 #                                                                             #
-# MakeDecision: Attempt at putting all of choice parts into one function
-#               VERY SLOW - this could be parallalized
-#                                                                             #
+# AssessProfit and Make Choice: seperates the differenct components           #
+#                               into functions                                #
 #=============================================================================#
 
+def AssessProfit(CropID_all, Profits, i, j, k, Nc):
+     # Existing Crop ID
+     CurCropChoice = CropID_all[i-1,j,k]
+     CurCropChoice_ind = CurCropChoice.astype('int') - 1
+     #assess current and future profit of that given crop
+     if (CurCropChoice_ind < 6): #change this to be a vector of possible cropIDs
+         Profit_ant_temp = Profits[i-1, CurCropChoice_ind]#last years profit
+         Profit_p   = Profits[i,:] #this years  expected profit
+         Profit_p = Profit_p.reshape(Nc,1)
+     else: 
+        Profit_ant_temp = 0
+        Profit_p = np.zeros((Nc,1))
+        
+     return(Profit_ant_temp, Profit_p)
+
+
+def MakeChoice(CropID_all, Profit_ant_temp, Profit_ant, CropChoice, ProfitChoice, Profit_act, i,j,k):
+    # Check if return  values indicate the farmer shouldn't switch
+    #seems like this could either be part of the above function or a new one?
+    if(CropChoice==-1) and (ProfitChoice==-1):
+        CropID_all[i,j,k] = CropID_all[i-1,j,k]
+        Profit_ant[i,j,k] = Profit_ant_temp
+        Profit_act[i,j,k] = Profit_ant[i,j,k] + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1)) #this years actual profit
+    else: #switch to the new crop
+        CropID_all[i,j,k] = CropChoice
+        Profit_ant[i,j,k] = ProfitChoice
+        Profit_act[i,j,k] = Profit_ant[i,j,k] + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1))
+    return(CropID_all, Profit_ant, Profit_act)
+    
+    
+ #=============================================================================#
+#                                                                             #
+# MakeDecision: All of choice parts into one function
+#               VERY SLOW - this could be parallalized
+#                                                                             #
+#=============================================================================#   
+    
 def MakeDecision(Nt, Ny, Nx, Nc, CropID_all, Profits, Profit_ant, Profit_act, a_ra, b_ra, fmin, fmax, n, CropIDs):
     for i in np.arange(1,Nt):
         for j in np.arange(Ny):

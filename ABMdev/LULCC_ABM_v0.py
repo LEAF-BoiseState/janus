@@ -81,7 +81,20 @@ dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx)
 # 2. loop through decision process 
 #---------------------------------------
 
-CropID_all, Profit_ant, Profit_act = cd.MakeDecision(Nt, Ny, Nx, Nc, CropID_all, Profits, Profit_ant, Profit_act, a_ra, b_ra, fmin, fmax, n, CropIDs)
+for i in np.arange(1,Nt):
+    
+    for j in np.arange(Ny):
+        for k in np.arange(Nx):
+            #Assess Profit
+            Profit_ant_temp, Profit_p = cd.AssessProfit(CropID_all, Profits, i, j, k, Nc)
+            #Decide on Crop
+            CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_ant_temp, CropIDs, \
+                                                      Profit_p, rule=True)
+            CropID_all, Profit_ant, Profit_act = cd.MakeChoice(CropID_all, Profit_ant_temp, Profit_ant, CropChoice, ProfitChoice, Profit_act, i,j,k)
+ 
+ 
+ 
+#CropID_all, Profit_ant, Profit_act = cd.MakeDecision(Nt, Ny, Nx, Nc, CropID_all, Profits, Profit_ant, Profit_act, a_ra, b_ra, fmin, fmax, n, CropIDs)
 "one unit test would be to confirm that non-ag stayed the same and that all of the ag did not stay the same"        
 #need to pull out the parts that dont rely on the loop and put the decision inside of it, that way relevant info can be updated between timesteps; 
 
