@@ -32,9 +32,9 @@ n = 100
 # 1. Preprocessing
 #---------------------------------------
 #load extent
-extent=gp.read_file(DataPath + 'ABMdev/Data/extent_1km_AdaCanyon.shp')
+extent=gp.read_file(DataPath + 'ABMdev/Data/extent_3km_AdaCanyon.shp')
 #load inital landcover
-lc=np.load(DataPath + 'ABMdev/Data/gcam_1km_2010_AdaCanyon.npy')
+lc=np.load(DataPath + 'ABMdev/Data/gcam_3km_2010_AdaCanyon.npy')
 #initalize minimum distance to city
 dist2city=minDistCity(lc)
 
@@ -44,8 +44,10 @@ Nt = 10
 #---------------------------------------
 #  Initialize Crops
 #---------------------------------------
-Nc = 6 #there are actually 17, need random profit profiles for each of these 
-CropIDs = np.arange(Nc).reshape((Nc,1)) + 1
+Nc = 4 #there are actually 17 when the 1km is run, need random profit profiles for each of these 
+CropIDs =np.array([1,2,3,10])
+CropIDs= CropIDs.reshape((Nc,1))
+#CropIDs=np.arange(Nc).reshape((Nc,1)) + 1
 CropID_all = np.zeros((Nt,Ny,Nx))
 CropID_all[0,:,:] = lc
 
@@ -60,6 +62,7 @@ Profit_act[0,:,:] = Profit_ant[0,:,:]
 
 Profits = [] # A list of numpy arrays that will be Nt x Nc 
 Profits = cd.GeneratePrices(Nt)
+Profits = Profits[:, 0:Nc]
 
 #---------------------------------------
 #  Initialize Agents
@@ -86,7 +89,7 @@ for i in np.arange(1,Nt):
     for j in np.arange(Ny):
         for k in np.arange(Nx):
             #Assess Profit
-            Profit_ant_temp, Profit_p = cd.AssessProfit(CropID_all, Profits, i, j, k, Nc)
+            Profit_ant_temp, Profit_p = cd.AssessProfit(CropID_all, Profits, i, j, k, Nc, CropIDs)
             #Decide on Crop
             CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_ant_temp, CropIDs, \
                                                       Profit_p, rule=True)
