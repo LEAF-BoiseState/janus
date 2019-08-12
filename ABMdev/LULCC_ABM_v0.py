@@ -10,9 +10,6 @@ import geopandas as gp
 import numpy as np
 from geofxns import minDistCity #slow
 from geofxns import saveLC #do we need to import each function, or can we just load all of them?
-import Classes.aFarmer as farmer
-import Classes.dCellClass as cell
-import Classes.aUrban as urban
 import CropFuncs.CropDecider as cd
 import InitializeAgentsDomain as init
 
@@ -43,6 +40,7 @@ dist2city=minDistCity(lc)
 
 Ny, Nx = lc[0].shape
 Nt = 10
+
 #---------------------------------------
 #  Initialize Crops
 #---------------------------------------
@@ -68,7 +66,7 @@ for i in np.arange(Ny):
 #---------------------------------------
 #  Initialize Agents
 #---------------------------------------
-#Update so each of these inital values randomly selected from NASS distributions
+#Update so each of these inital values are randomly selected from NASS distributions
 AgentData = {
         "AgeInit" : int(45.0),
         "nFields" : 1,
@@ -77,12 +75,12 @@ AgentData = {
         "density" : 2,
         }
 
-AgentArray, dFASM = init.InitializeDomain(Ny,Nx)
-AgentArray = init.PlaceAgents(AgentArray, lc, dist2city)
+dFASM = init.InitializeDomain(Ny, Nx)
+AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city)
 dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx)
 
 #---------------------------------------
-#loop through decision process - change into function?
+# 2. loop through decision process - how to change into function?
 #---------------------------------------
 
 
@@ -115,57 +113,29 @@ for i in np.arange(1,Nt):
                 Profit_act[i,j,k] = Profit_ant[i,j,k] + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1))
 
             
-         #update distance to city   
-            
-#Update AgentArray 
+lc_new= CropID_all
+#---------------------------------------
+# 3. update variables 
+#---------------------------------------
+
+#update distance to city from output of decision process
+dist2city=minDistCity(lc_new)
+     
+  #Update AgentArray 
 #where in the model does the code denote that the agent goes from farmer to urban or visa versa
      #dFASM[i][j].SwapAgent('aFarmer','aUrban',fromIndex,AgentArray)
-        
-temp_lc= lc #output of decision process
-
-#write landcover to array - sub w Jons work
-saveLC(temp_lc, 2010, it, DataPath)
-           
-
-#---------------------------------------
-#update statistics  
-#---------------------------------------
-
-#update distance to city for new landcover
-dist2city=minDistCity(temp_lc)
-       
+     
 for i in np.arange(Ny):
  	for j in np.arange(Nx):
          if(AgentArray[i][j]=='aFarmer'):            
              dFASM[i][j].FarmAgents[0].UpdateAge()
              dFASM[i][j].FarmAgents[0].UpdateDist2city(dist2city[i][j])
       
-        
-
-#myF1 = farmer(AgeInit, DistFromCityInit, OnFIInit, OffFIInit, 1) #where does farmer() come from??
-#myF2 = farmer(AgeInit, DistFromCityInit, OnFIInit, OffFIInit, 2)
-
-#for t in np.arange(Nt,dtype=int):
-    
-
-   # DeltaDistToCity = ((-0.1 - -0.2)*np.random.random() - 0.2)    
-   #OnFI_gr = 1.0 + OnFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)    
-    #OffFI_gr = 1.0 + OffFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)
-
-    #myF1.UpdateAge()
-    #myF1.UpdateDistFromCity(DeltaDistToCity) # change this based on minDist coverage
-    #myF1.UpdateOnFarmIncome(scale=OnFI_gr) #how does this work if the OnFI_gr comes after?
-    #myF1.UpdateOffFarmIncome(scale=OffFI_gr)
-
-    #DeltaDistToCity = ((-0.1 - -0.2)*np.random.random() - 0.2)    
-    #OnFI_gr = 1.0 + OnFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)    
-    #OffFI_gr = 1.0 + OffFI_agr*((2.0 - -1.0)*np.random.random() + -1.0)
-    
-    #myF2.UpdateAge()
-    #myF2.UpdateDistFromCity(DeltaDistToCity)
-    #if(t==10):
-     #   myF2.UpdateOnFarmIncome(loc=20000)        
-    #else:
-     #   myF2.UpdateOnFarmIncome(scale=OnFI_gr)
-    #myF2.UpdateOffFarmIncome(scale=OffFI_gr)
+#---------------------------------------
+# 4. Save Output
+#---------------------------------------
+      
+#write landcover to array - sub w Jons work
+#saveLC(temp_lc, 2010, it, DataPath)
+           
 
