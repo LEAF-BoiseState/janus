@@ -35,22 +35,16 @@ def PlaceAgents(AgentArray, lc, dist2city):
 # place agent structures onto landscape and define attributes -> this is SLOW
 #---------------------------------------
 #Update so each of these inital values randomly selected from NASS distributions
-#Initialize farmer
-AgeInit = int(45.0)
-nFields=1
-AreaFields=np.array([10])
-LandStatus=0
-density=2
 
 def InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx):
 
     for i in np.arange(Ny):
         for j in np.arange(Nx):
             if(AgentArray[i][j]=='aFarmer'):
-                 NewAgent = farmer.aFarmer(AgeInit, nFields, AreaFields, LandStatus, dist2city[i][j])
+                 NewAgent = farmer.aFarmer(AgentData["AgeInit"], AgentData["nFields"], AgentData["AreaFields"], AgentData["LandStatus"], dist2city[i][j])
                  dFASM[i][j].AddAgent(AgentArray[i][j], NewAgent)
             if(AgentArray[i][j] =='aUrban'):
-                NewAgent = urban.aUrban(density)
+                NewAgent = urban.aUrban(AgentData["density"])
                 dFASM[i][j].AddAgent(AgentArray[i][j], NewAgent)
     return(dFASM)
              
