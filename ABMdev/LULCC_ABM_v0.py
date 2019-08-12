@@ -58,10 +58,8 @@ Profit_act = np.zeros((Nt,Ny,Nx))
 Profit_ant[0,:,:] = 30000.0 + np.random.normal(loc=0.0,scale=1000.0,size=(1,Ny,Nx))
 Profit_act[0,:,:] = Profit_ant[0,:,:]
 
-P = [] # A list of numpy arrays that will be Nt x Nc
-for i in np.arange(Ny):
-    for j in np.arange(Nx):
-        P.append(cd.GeneratePrices(Nt)) #slow
+Profits = [] # A list of numpy arrays that will be Nt x Nc 
+Profits = cd.GeneratePrices(Nt)
 
 #---------------------------------------
 #  Initialize Agents
@@ -87,26 +85,29 @@ dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx)
 for i in np.arange(1,Nt):
     for j in np.arange(Nx):
         for k in np.arange(Ny):
-            
-            cell_coord = j*Ny + k
-            
-            Profit_ant_ij = Profit_ant[i-1,j,k]
-            Profit_p      = P[cell_coord][i,:].reshape((Nc,1))
     
             # Existing Crop ID
             CurCropChoice = CropID_all[i-1,j,k]
             CurCropChoice_ind = CurCropChoice.astype('int') - 1
+            #assess current and future profit of that given crop
+            if (CurCropChoice_ind <= 6):
+                Profit_ant_temp = Profits[i-1, CurCropChoice_ind]#last years profit
+                Profit_p   = Profits[i,:] #this years  expected profit
+                Profit_p = Profit_p.reshape(Nc,1)
+            else: 
+                Profit_ant_temp = 0
+                Profit_p = np.zeros((Nc,1))
             
             #Crop Decider
-            CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_ant_ij, CropIDs, \
+            CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_ant_temp, CropIDs, \
                 Profit_p, rule=True)
             
             # Check if return  values indicate the farmer shouldn't switch
             #seems like this could either be part of the above function or a new one?
             if(CropChoice==-1) and (ProfitChoice==-1):
                 CropID_all[i,j,k] = CropID_all[i-1,j,k]
-                Profit_ant[i,j,k] = P[j][i,CurCropChoice_ind]
-                Profit_act[i,j,k] = Profit_ant[i,j,k] + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1))
+                Profit_ant[i,j,k] = Profit_ant_temp
+                Profit_act[i,j,k] = Profit_ant[i,j,k] + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1)) #this years actual profit
             else: #switch to the new crop
                 CropID_all[i,j,k] = CropChoice
                 Profit_ant[i,j,k] = ProfitChoice
