@@ -36,7 +36,7 @@ def PlaceAgents(Ny,Nx, lc, dist2city):
 # place agent structures onto landscape and define attributes -> this is SLOW
 #---------------------------------------
 #Update so each of these inital values randomly selected from NASS distributions
-
+#another way to call this re: dFASM?
 def InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx):
 
     for i in np.arange(Ny):
