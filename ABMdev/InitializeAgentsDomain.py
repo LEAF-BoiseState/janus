@@ -11,19 +11,20 @@ import Classes.dCellClass as cell
 import Classes.aUrban as urban
 
 def InitializeDomain(Ny,Nx):
-    "Initialize domain and agent array"
-    AgentArray = np.empty((Ny,Nx),dtype='U10')
+    "Initialize domain"
+    
     dFASM = np.empty((Ny,Nx), dtype=object) #domain 
 
     for i in np.arange(Ny):
         for j in np.arange(Nx):
             dFASM[i][j] = cell.dCellClass()
-            
-    return (AgentArray, dFASM)
+        #whats a unit test for this??"
+    return (dFASM)
 
-def PlaceAgents(AgentArray, lc, dist2city):
+def PlaceAgents(Ny,Nx, lc, dist2city):
     "Assign agents on the landscape"
- 
+    AgentArray = np.empty((Ny,Nx),dtype='U10')
+    
     AgentArray[np.logical_and(lc[0] > 0, lc[0] <28)] = 'aFarmer'
     AgentArray[np.logical_or(lc[0] == 28, lc[0] == 23)] ='water' 
     AgentArray[dist2city == 0] = 'aUrban'
