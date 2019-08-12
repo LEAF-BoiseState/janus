@@ -19,7 +19,7 @@ To add: pull physiographic information, re-grid, save
 ## geofxs
 *will be further populated to preform various statistical analysis
 
-minDistCity - takes a np array of SRP GCAM categories, returns np arry of distances to closest city cell
+minDistCity - takes a np array of SRP GCAM categories, returns np array of distances to closest city cell
 added saveLC - save the landcover of a given year to a labeled npy file 
 
 
@@ -37,10 +37,14 @@ CreateFASMdomain
 # LULCC ABM V.0
 
 # 0. Declare some key variables
-  -? Name of spatial domain map with LULCC classes   
+  -? Name of spatial domain map with LULCC classes 
+  
   -? Name of spatial domain map with active/inactive cells (e.g., national forests, etc.)
+  
   -? Name of spatial domain map of urban expansion areas
+  
   -? Name of spatial domain map of any ag attributes needed (e.g., type of ag - leased etc.)
+  
   - Number of simulation years or time steps  - done
   - Output interval - done
   - Output base name
@@ -56,10 +60,10 @@ CreateFASMdomain
 
 # 2. Simulation loop
   - Loop through time
-     > Do any needed statistics at the beginning of time (i.e., update neighborhood stats for farmers, urban areas, etc.)
-     > Get any new global info needed (i.e., value of crops)
-     > Have all farmers decide on their crop choice for next year
-     > Switch to new crops, update npy.
+     - Compute statistics at the beginning of time (i.e., update neighborhood stats for farmers, urban areas, etc.)
+     - Get any new global info needed (i.e., value of crops)
+     - Have all farmers decide on their crop choice for next year
+     - Switch to new crops, update npy.
      
      >>> FUTURE VERSION 
         - Compute happiness metric based on urbanness, global crop price
