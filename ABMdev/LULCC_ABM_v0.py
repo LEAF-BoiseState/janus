@@ -12,6 +12,7 @@ from geofxns import minDistCity #slow
 from geofxns import saveLC #do we need to import each function, or can we just load all of them?
 import CropFuncs.CropDecider as cd
 import InitializeAgentsDomain as init
+import PostProcessing.FigureFuncs as ppf
 
 userPath='/Users/kek25/Documents/GitRepos/'
 DataPath= userPath+'IM3-BoiseState/'
@@ -39,7 +40,7 @@ lc=np.load(DataPath + 'ABMdev/Data/gcam_3km_2010_AdaCanyon.npy')
 dist2city=minDistCity(lc)
 
 Ny, Nx = lc[0].shape
-Nt = 10
+Nt = 50
 
 #---------------------------------------
 #  Initialize Crops
@@ -96,8 +97,9 @@ for i in np.arange(1,Nt):
             CropID_all, Profit_ant, Profit_act = cd.MakeChoice(CropID_all, Profit_ant_temp, Profit_ant, \
                                                                CropChoice, ProfitChoice, Profit_act, i,j,k)
  
- 
- #is there a way to not have to define i,j,k in the function input variables?
+
+ppf.CreateAnimation(CropID_all, Nt)
+#is there a way to not have to define i,j,k in the function input variables?
 #CropID_all, Profit_ant, Profit_act = cd.MakeDecision(Nt, Ny, Nx, Nc, CropID_all, Profits, Profit_ant, Profit_act, a_ra, b_ra, fmin, fmax, n, CropIDs)
 "one unit test would be to confirm that non-ag stayed the same and that all of the ag did not stay the same"        
 #need to pull out the parts that dont rely on the loop and put the decision inside of it, that way relevant info can be updated between timesteps; 
