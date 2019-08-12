@@ -174,7 +174,7 @@ def GeneratePrices(Nt):
 def AssessProfit(CropID_all, Profits, i, j, k, Nc):
      # Existing Crop ID
      CurCropChoice = CropID_all[i-1,j,k]
-     CurCropChoice_ind = CurCropChoice.astype('int') - 1
+     CurCropChoice_ind = CurCropChoice.astype('int') #- 1
      #assess current and future profit of that given crop
      if (CurCropChoice_ind < 6): #change this to be a vector of possible cropIDs
          Profit_ant_temp = Profits[i-1, CurCropChoice_ind]#last years profit
