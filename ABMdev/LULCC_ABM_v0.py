@@ -46,7 +46,7 @@ Nt = 50
 #  Initialize Crops
 #---------------------------------------
 Nc = 4 #there are actually 17 when the 1km is run, need random profit profiles for each of these 
-CropIDs =np.array([1,2,3,10]) # need to make this automatic depending on which crops show up 
+CropIDs =np.array([1,2,3,10]) # need to make this automatic depending on which crops show up (which of AllCropIDs == np.unique(lc))
 CropIDs= CropIDs.reshape((Nc,1))
 #CropIDs=np.arange(Nc).reshape((Nc,1)) + 1
 CropID_all = np.zeros((Nt,Ny,Nx))

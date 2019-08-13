@@ -41,9 +41,8 @@ def dCdT(CropID_all, Nt):
    # plt.show()
    
    
-# stackplot of crops over time
-   
-#automate this to use whichever crops arein CropIDs
+#stackplot of crops over time
+#automate stackplot naming conventions
 def CropPerc(CropID_all, CropIDs, Nt, Nc):
     ag=59 #need to automate what the total area in crops is - this will be a unit test when urban isnt changing
     #np.any(CropID_all == CropIDs)
@@ -74,4 +73,4 @@ def CropPerc(CropID_all, CropIDs, Nt, Nc):
     ax.set_xlabel('Time [yr]')  
   
     #plt.savefig('Exp3_plot1.png',dpi=300,facecolor='w', edgecolor='w', 
-                bbox_inches='tight')
+              #  bbox_inches='tight')
