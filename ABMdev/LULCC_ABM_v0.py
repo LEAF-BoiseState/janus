@@ -64,9 +64,9 @@ Profit_act[0,:,:] = Profit_ant[0,:,:]
 Profits = [] # A list of numpy arrays that will be Nt x Nc 
 Profits = cd.GeneratePrices(Nt)
 Profits = Profits[:, 0:Nc]
-
+#Profits = Profits[:, 2:6] The choice of crop profits will completely drive the outcome ... how do we use that?
 #---------------------------------------
-#  Initialize Agents
+#  Initialize Agents Stub (e.g. not getting used)
 #---------------------------------------
 #Update so each of these inital values are randomly selected from NASS distributions
 AgentData = {
@@ -76,7 +76,7 @@ AgentData = {
         "LandStatus" : 0,
         "density" : 2,
         }
-
+#hwe need to be able to associate alpha/beta parameters with each agent. 
 dFASM = init.InitializeDomain(Ny, Nx)
 AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city)
 dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx)
@@ -97,8 +97,8 @@ for i in np.arange(1,Nt):
             CropID_all, Profit_ant, Profit_act = cd.MakeChoice(CropID_all, Profit_ant_temp, Profit_ant, \
                                                                CropChoice, ProfitChoice, Profit_act, i,j,k)
  
-
-ppf.CreateAnimation(CropID_all, Nt)
+ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)
+#ppf.CreateAnimation(CropID_all, Nt)
 #is there a way to not have to define i,j,k in the function input variables?
 #CropID_all, Profit_ant, Profit_act = cd.MakeDecision(Nt, Ny, Nx, Nc, CropID_all, Profits, Profit_ant, Profit_act, a_ra, b_ra, fmin, fmax, n, CropIDs)
 "one unit test would be to confirm that non-ag stayed the same and that all of the ag did not stay the same"        

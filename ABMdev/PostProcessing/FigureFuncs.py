@@ -31,11 +31,11 @@ def dCdT(CropID_all, Nt):
     for t in np.arange(Nt):
         unique_elements, counts_elements = np.unique(CropID_all[t], return_counts=True)
         #this isn't working .. need to come up with a better way to do this
-        loc=np.where(unique_elementsToat == unique_elements)
+      #  loc=np.where(unique_elementsToat == unique_elements)
         counts[:, t] = counts_elements
         
-    fig = plt.figure(figsize=(12,12))
-    for c in np.arange(len(CtopIDs)):
+    #fig = plt.figure(figsize=(12,12))
+    #for c in np.arange(len(CtopIDs)):
         
         #plt.plot(np.arange(Nt)), count)
    # plt.show()
@@ -44,31 +44,34 @@ def dCdT(CropID_all, Nt):
 # stackplot of crops over time
    
 #automate this to use whichever crops arein CropIDs
-Percent_Crop1 = np.sum((CropID_all==1),axis=1)/Ne*100.0
-Percent_Crop2 = np.sum((CropID_all==2),axis=1)/Ne*100.0
-Percent_Crop3 = np.sum((CropID_all==3),axis=1)/Ne*100.0
-Percent_Crop4 = np.sum((CropID_all==4),axis=1)/Ne*100.0
-Percent_Crop5 = np.sum((CropID_all==5),axis=1)/Ne*100.0
-Percent_Crop6 = np.sum((CropID_all==6),axis=1)/Ne*100.0
+def CropPerc(CropID_all, CropIDs, Nt, Nc):
+    ag=59 #need to automate what the total area in crops is - this will be a unit test when urban isnt changing
+    #np.any(CropID_all == CropIDs)
+    names = []
+    percentages=np.zeros((Nc, Nt))
+    for c in np.arange(Nc):
+        name='percentages['+str(c)+',:]'
+        names.append(name)
+        for t in np.arange(Nt):
+            CropIx=CropIDs[c]
+            percentages[c,t]=np.sum((CropID_all[t,:,:] == CropIx))/ag*100.0
+            
+    t = np.arange(Nt)
+    plt.rcParams.update({'font.size': 16})
+    fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(12,12))
+    
+    ax.stackplot(t,percentages[0,:], percentages[1,:], percentages[2,:], percentages[3,:], colors=['#bfe1f5','#d3edab','#eda566',
+                 '#4AFFCE'], labels=['Corn','Wheat','Beans',
+                 'Alfalfa']) #,'#3A8A00','#005C94'
 
-t = np.arange(Nt)
-
-plt.rcParams.update({'font.size': 16})
-
-fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(12,12))
-ax.stackplot(t,Percent_Crop1,Percent_Crop2,Percent_Crop3,Percent_Crop4,
-             Percent_Crop5,Percent_Crop6, colors=['#bfe1f5','#d3edab','#eda566',
-             '#4AFFCE','#3A8A00','#005C94'], labels=['Crop 1','Crop 2','Crop 3',
-             'Crop 4','Crop 5','Crop 6'])
-
-ax.set_xlim([0,Nt-1])
-ax.set_ylim([0,100])
-ax.grid()
-ax.legend(loc='lower left')
-
-ax.set_ylabel('Percent Crop Choice')  
-ax.set_ylabel('Percent Crop Choice')
-ax.set_xlabel('Time [yr]')  
+    ax.set_xlim([0,Nt-1])
+    ax.set_ylim([0,100])
+    ax.grid()
+    ax.legend(loc='lower left')
+    
+    ax.set_ylabel('Percent Crop Choice')  
+    ax.set_ylabel('Percent Crop Choice')
+    ax.set_xlabel('Time [yr]')  
   
-plt.savefig('Exp3_plot1.png',dpi=300,facecolor='w', edgecolor='w', 
-             bbox_inches='tight')
+    plt.savefig('Exp3_plot1.png',dpi=300,facecolor='w', edgecolor='w', 
+                bbox_inches='tight')
