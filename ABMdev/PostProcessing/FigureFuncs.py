@@ -23,3 +23,19 @@ def CreateAnimation(CropID_all, Nt):
                                 repeat_delay=1000)
 
     ani.save('CropID_vs_Time.gif')
+
+#plot the change in landcover over time    
+def dCdT(CropID_all, Nt):
+    unique_elementsToat, counts_elementsToat = np.unique(CropID_all, return_counts=True)
+    counts = np.zeros((len(unique_elementsToat), Nt))
+    for t in np.arange(Nt):
+        unique_elements, counts_elements = np.unique(CropID_all[t], return_counts=True)
+        #this isn't working .. need to come up with a better way to do this
+        loc=np.where(unique_elementsToat == unique_elements)
+        counts[:, t] = counts_elements
+        
+    fig = plt.figure(figsize=(12,12))
+    for c in np.arange(len(CtopIDs)):
+        
+        #plt.plot(np.arange(Nt)), count)
+   # plt.show()
