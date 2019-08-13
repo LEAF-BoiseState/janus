@@ -73,5 +73,5 @@ def CropPerc(CropID_all, CropIDs, Nt, Nc):
     ax.set_ylabel('Percent Crop Choice')
     ax.set_xlabel('Time [yr]')  
   
-    plt.savefig('Exp3_plot1.png',dpi=300,facecolor='w', edgecolor='w', 
+    #plt.savefig('Exp3_plot1.png',dpi=300,facecolor='w', edgecolor='w', 
                 bbox_inches='tight')
