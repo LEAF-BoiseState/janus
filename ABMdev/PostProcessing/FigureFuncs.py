@@ -24,7 +24,7 @@ def CreateAnimation(CropID_all, Nt):
 
     ani.save('CropID_vs_Time.gif')
 
-#plot the change in landcover over time    
+#line plot showing the change in landcover over time    
 def dCdT(CropID_all, Nt):
     unique_elementsToat, counts_elementsToat = np.unique(CropID_all, return_counts=True)
     counts = np.zeros((len(unique_elementsToat), Nt))
@@ -39,3 +39,36 @@ def dCdT(CropID_all, Nt):
         
         #plt.plot(np.arange(Nt)), count)
    # plt.show()
+   
+   
+# stackplot of crops over time
+   
+#automate this to use whichever crops arein CropIDs
+Percent_Crop1 = np.sum((CropID_all==1),axis=1)/Ne*100.0
+Percent_Crop2 = np.sum((CropID_all==2),axis=1)/Ne*100.0
+Percent_Crop3 = np.sum((CropID_all==3),axis=1)/Ne*100.0
+Percent_Crop4 = np.sum((CropID_all==4),axis=1)/Ne*100.0
+Percent_Crop5 = np.sum((CropID_all==5),axis=1)/Ne*100.0
+Percent_Crop6 = np.sum((CropID_all==6),axis=1)/Ne*100.0
+
+t = np.arange(Nt)
+
+plt.rcParams.update({'font.size': 16})
+
+fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(12,12))
+ax.stackplot(t,Percent_Crop1,Percent_Crop2,Percent_Crop3,Percent_Crop4,
+             Percent_Crop5,Percent_Crop6, colors=['#bfe1f5','#d3edab','#eda566',
+             '#4AFFCE','#3A8A00','#005C94'], labels=['Crop 1','Crop 2','Crop 3',
+             'Crop 4','Crop 5','Crop 6'])
+
+ax.set_xlim([0,Nt-1])
+ax.set_ylim([0,100])
+ax.grid()
+ax.legend(loc='lower left')
+
+ax.set_ylabel('Percent Crop Choice')  
+ax.set_ylabel('Percent Crop Choice')
+ax.set_xlabel('Time [yr]')  
+  
+plt.savefig('Exp3_plot1.png',dpi=300,facecolor='w', edgecolor='w', 
+             bbox_inches='tight')
