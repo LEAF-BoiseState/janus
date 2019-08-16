@@ -34,7 +34,7 @@ def Decide(alpha,beta,fmin,fmax,n,profit,profit_p):
         
         prob_switch = np.interp(profit_p,x,fx)
         
-        if(np.random.rand(1) < prob_switch):
+        if(np.random.rand(1) < prob_switch): #need to send it seed in the unit test
             return 1 # Switch
         else:
             return 0 # Do not switch
