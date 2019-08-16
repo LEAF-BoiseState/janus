@@ -50,7 +50,7 @@ CropIDs =np.array([1,2,3,10]) # need to make this automatic depending on which c
 CropIDs= CropIDs.reshape((Nc,1))
 #CropIDs=np.arange(Nc).reshape((Nc,1)) + 1
 CropID_all = np.zeros((Nt,Ny,Nx))
-CropID_all[0,:,:] = lc
+CropID_all[0,:,:] = lc #this will be added into the cell class
 
 #---------------------------------------
 #  Initialize Profits
@@ -78,8 +78,8 @@ AgentData = {
         }
 #hwe need to be able to associate alpha/beta parameters with each agent. 
 dFASM = init.InitializeDomain(Ny, Nx)
-AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city)
-dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx)
+AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city) 
+dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx) #this will be done in the agent facotry
 
 #---------------------------------------
 # 2. loop through decision process 
