@@ -20,10 +20,12 @@ DataPath= userPath+'IM3-BoiseState/'
 #---------------------------------------
 # 0. Declare Variables
 #---------------------------------------
-#set agent switching parameters
+#set agent switching parameters 
+"these need to be agent attributes"
 a_ra = 4.5
 b_ra = 1.0
 
+"thid goes with the initilization"
 fmin = 1.0
 fmax = 1.5
 f0 = 1.2
@@ -71,8 +73,8 @@ Profits = Profits[:, 0:Nc]
 #Update so each of these inital values are randomly selected from NASS distributions
 AgentData = {
         "AgeInit" : int(45.0),
-        "nFields" : 1,
-        "AreaFields" : np.array([10]),
+        "nFields" : 1, "remove"
+        "AreaFields" : np.array([10]), "remove"
         "LandStatus" : 0,
         "density" : 2,
         }
@@ -90,12 +92,12 @@ for i in np.arange(1,Nt):
     for j in np.arange(Ny):
         for k in np.arange(Nx):
             #Assess Profit
-            Profit_ant_temp, Profit_p = cd.AssessProfit(CropID_all, Profits, i, j, k, Nc, CropIDs)
+            Profit_ant_temp, Profit_p = cd.AssessProfit(CropID_all[i-1,j,k], Profits[i-1,:], Profits[i,:], Nc, CropIDs)
             #Decide on Crop
             CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_ant_temp, CropIDs, \
                                                       Profit_p, rule=True)
             CropID_all, Profit_ant, Profit_act = cd.MakeChoice(CropID_all, Profit_ant_temp, Profit_ant, \
-                                                               CropChoice, ProfitChoice, Profit_act, i,j,k)
+                                                               CropChoice, ProfitChoice, Profit_act, i,j,k) #"move these indicies into the input variables"
  
 ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)
 #ppf.CreateAnimation(CropID_all, Nt)
@@ -109,11 +111,11 @@ ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)
 #---------------------------------------
 
 #update distance to city from output of decision process - IF we were incorperating the urban agent then this would happen in each time step
-#dist2city=minDistCity(lc_new)
+#dist2city=minDistCity(lc_new) 
      
   #Update AgentArray 
 #where in the model does the code denote that the agent goes from farmer to urban or visa versa
-     #dFASM[i][j].SwapAgent('aFarmer','aUrban',fromIndex,AgentArray)
+     #dFASM[i][j].SwapAgent('aFarmer','aUrban',fromIndex,AgentArray) "switch for now"
      
 for i in np.arange(Ny):
  	for j in np.arange(Nx):
