@@ -79,6 +79,7 @@ AgentData = {
 #hwe need to be able to associate alpha/beta parameters with each agent. 
 dFASM = init.InitializeDomain(Ny, Nx)
 AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city)
+
 dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx)
 
 #---------------------------------------
