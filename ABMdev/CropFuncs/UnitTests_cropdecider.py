@@ -27,6 +27,21 @@ class CropDeciderTest(unittest.TestCase):
         
         self.assertEqual(x_known.all(), x_test.all())
         self.assertEqual(f_known.all(), f_test.all())
-
+        
+    def test_decide(self):
+        
+        alpha=2
+        beta=2
+        fmin=0
+        fmax=10
+        n=5
+        profit=1000
+        profit_p=1050
+        
+        ans = 0
+        ans_test = cd.Decide(alpha,beta,fmin,fmax,n,profit,profit_p)
+        
+        self.assertEqual(ans, ans_test)
+        
 if __name__ == '__main__':
     unittest.main()

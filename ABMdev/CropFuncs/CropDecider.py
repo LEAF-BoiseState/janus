@@ -34,7 +34,7 @@ def Decide(alpha,beta,fmin,fmax,n,profit,profit_p):
         
         prob_switch = np.interp(profit_p,x,fx)
         
-        if(np.random.rand(1) < prob_switch):
+        if(np.random.rand(1) < prob_switch): #need to send it seed in the unit test
             return 1 # Switch
         else:
             return 0 # Do not switch
@@ -171,15 +171,15 @@ def GeneratePrices(Nt):
 #                               into functions                                #
 #=============================================================================#
 
-def AssessProfit(CropID_all, Profits, i, j, k, Nc, CropIDs):
+def AssessProfit(Crop, Profits_cur, Profits_alt,  Nc, CropIDs):
      # Existing Crop ID
-     CurCropChoice = CropID_all[i-1,j,k]
+     CurCropChoice = Crop
      CurCropChoice_ind = CurCropChoice.astype('int') #- 1
      CropIx=np.where(CropIDs == CurCropChoice_ind)
      #assess current and future profit of that given crop
      if (np.isin(CurCropChoice_ind, CropIDs)): #change this to be a vector of possible cropIDs
-         Profit_ant_temp = Profits[i-1, CropIx[0][0]] #last years profit
-         Profit_p   = Profits[i,:] #this years  expected profit
+         Profit_ant_temp = Profits_cur[CropIx[0][0]] #last years profit
+         Profit_p   = Profits_alt[:] #this years  expected profit
          Profit_p = Profit_p.reshape(Nc,1)
      else: 
         Profit_ant_temp = 0
