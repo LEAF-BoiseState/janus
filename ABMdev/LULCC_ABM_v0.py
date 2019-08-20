@@ -78,7 +78,7 @@ AgentData = {
 #hwe need to be able to associate alpha/beta parameters with each agent. 
 dFASM = init.InitializeDomain(Ny, Nx)
 AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city) 
-dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx) #this will be done in the agent facotry
+dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx) #this will be done in the agent factory - which is great cause it aint working right now
 
 #---------------------------------------
 # 2. loop through decision process 
@@ -94,7 +94,7 @@ for i in np.arange(1,Nt):
             CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_last, CropIDs, \
                                                       Profit_pred, rule=True)
             CropID_all[i,j,k], Profit_ant[i,j,k], Profit_act[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, Profit_ant, \
-                                                               CropChoice, ProfitChoice, Profit_act, i,j,k) #"move these indicies into the input variables"
+                                                               CropChoice, ProfitChoice, Profit_act, i,j,k) 
  
 ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)
 #ppf.CreateAnimation(CropID_all, Nt)
