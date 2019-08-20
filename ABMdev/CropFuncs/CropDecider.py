@@ -187,7 +187,7 @@ def AssessProfit(Crop, Profits_cur, Profits_alt,  Nc, CropIDs):
      return(Profit_last, Profit_p)
 
 
-def MakeChoice(CropID_last, Profit_last, Profit_ant, CropChoice, ProfitChoice, Profit_act, i,j,k):
+def MakeChoice(CropID_last, Profit_last, Profit_ant, CropChoice, ProfitChoice, seed, seed_val):
     # Check if return  values indicate the farmer shouldn't switch
     #seems like this could either be part of the above function or a new one?
     if(CropChoice==-1) and (ProfitChoice==-1):
