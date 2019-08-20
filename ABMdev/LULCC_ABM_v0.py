@@ -20,11 +20,11 @@ DataPath= userPath+'IM3-BoiseState/'
 # 0. Declare Variables
 #---------------------------------------
 #set agent switching parameters 
-"these need to be agent attributes"
+#"these need to be agent attributes"
 a_ra = 4.5
 b_ra = 1.0
 
-"thid goes with the initilization"
+#"this goes with the initilization"
 fmin = 1.0
 fmax = 1.5
 f0 = 1.2
@@ -78,7 +78,7 @@ AgentData = {
 #hwe need to be able to associate alpha/beta parameters with each agent. 
 dFASM = init.InitializeDomain(Ny, Nx)
 AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city) 
-dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx) #this will be done in the agent factory - which is great cause it aint working right now
+#dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx) #this will be done in the agent factory - which is great cause it aint working right now
 
 #---------------------------------------
 # 2. loop through decision process 
@@ -94,13 +94,13 @@ for i in np.arange(1,Nt):
             CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_last, CropIDs, \
                                                       Profit_pred, rule=True)
             CropID_all[i,j,k], Profit_ant[i,j,k], Profit_act[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, Profit_ant, \
-                                                               CropChoice, ProfitChoice, seed = False) 
+                                                               CropChoice, ProfitChoice, seed = False, seed_val=0) #is there a way to set this up so you can pass a NULL value or no value when seed=False?
  
 ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)
 #ppf.CreateAnimation(CropID_all, Nt)
 #is there a way to not have to define i,j,k in the function input variables?
 #CropID_all, Profit_ant, Profit_act = cd.MakeDecision(Nt, Ny, Nx, Nc, CropID_all, Profits, Profit_ant, Profit_act, a_ra, b_ra, fmin, fmax, n, CropIDs)
-"one unit test would be to confirm that non-ag stayed the same and that all of the ag did not stay the same"        
+#"one unit test would be to confirm that non-ag stayed the same and that all of the ag did not stay the same"        
 #need to pull out the parts that dont rely on the loop and put the decision inside of it, that way relevant info can be updated between timesteps; 
 
 #---------------------------------------
