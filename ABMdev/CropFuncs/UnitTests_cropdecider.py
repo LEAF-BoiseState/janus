@@ -79,5 +79,7 @@ class CropDeciderTest(unittest.TestCase):
         self.assertEqual(CropChoice_test, CropChoice_known)
         self.assertEqual(ProfitChoice_test, ProfitChoice_known)
         
+    #def test_MakeChoice -- add this after chaning indicies in LULCC_ABM
+        
 if __name__ == '__main__':
     unittest.main()
