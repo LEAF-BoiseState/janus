@@ -92,11 +92,11 @@ for i in np.arange(1,Nt):
     for j in np.arange(Ny):
         for k in np.arange(Nx):
             #Assess Profit
-            Profit_ant_temp, Profit_p = cd.AssessProfit(CropID_all[i-1,j,k], Profits[i-1,:], Profits[i,:], Nc, CropIDs)
+            Profit_last, Profit_pred = cd.AssessProfit(CropID_all[i-1,j,k], Profits[i-1,:], Profits[i,:], Nc, CropIDs)
             #Decide on Crop
-            CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_ant_temp, CropIDs, \
-                                                      Profit_p, rule=True)
-            CropID_all, Profit_ant, Profit_act = cd.MakeChoice(CropID_all, Profit_ant_temp, Profit_ant, \
+            CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_last, CropIDs, \
+                                                      Profit_pred, rule=True)
+            CropID_all[i,j,k], Profit_ant[i,j,k], Profit_act[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, Profit_ant, \
                                                                CropChoice, ProfitChoice, Profit_act, i,j,k) #"move these indicies into the input variables"
  
 ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)

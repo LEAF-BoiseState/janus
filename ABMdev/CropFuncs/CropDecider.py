@@ -177,28 +177,28 @@ def AssessProfit(Crop, Profits_cur, Profits_alt,  Nc, CropIDs):
      CropIx=np.where(CropIDs == CurCropChoice_ind)
      #assess current and future profit of that given crop
      if (np.isin(CurCropChoice_ind, CropIDs)): #change this to be a vector of possible cropIDs
-         Profit_ant_temp = Profits_cur[CropIx[0][0]] #last years profit
+         Profit_last = Profits_cur[CropIx[0][0]] #last years profit
          Profit_p   = Profits_alt[:] #this years  expected profit
          Profit_p = Profit_p.reshape(Nc,1)
      else: 
-        Profit_ant_temp = 0
+        Profit_last = 0
         Profit_p = np.zeros((Nc,1))
         
-     return(Profit_ant_temp, Profit_p)
+     return(Profit_last, Profit_p)
 
 
-def MakeChoice(CropID_all, Profit_ant_temp, Profit_ant, CropChoice, ProfitChoice, Profit_act, i,j,k):
+def MakeChoice(CropID_last, Profit_last, Profit_ant, CropChoice, ProfitChoice, Profit_act, i,j,k):
     # Check if return  values indicate the farmer shouldn't switch
     #seems like this could either be part of the above function or a new one?
     if(CropChoice==-1) and (ProfitChoice==-1):
-        CropID_all[i,j,k] = CropID_all[i-1,j,k]
-        Profit_ant[i,j,k] = Profit_ant_temp
-        Profit_act[i,j,k] = Profit_ant[i,j,k] + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1)) #this years actual profit
+        CropID_next = CropID_last
+        Profit_ant = Profit_last
+        Profit_act = Profit_last + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1)) #this years actual profit
     else: #switch to the new crop
-        CropID_all[i,j,k] = CropChoice
-        Profit_ant[i,j,k] = ProfitChoice
-        Profit_act[i,j,k] = Profit_ant[i,j,k] + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1))
-    return(CropID_all, Profit_ant, Profit_act)
+        CropID_next = CropChoice
+        Profit_ant = ProfitChoice
+        Profit_act= Profit_ant + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1))
+    return(CropID_next, Profit_ant, Profit_act)
     
     
  #=============================================================================#
