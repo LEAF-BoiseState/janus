@@ -30,6 +30,7 @@ fmax = 1.5
 f0 = 1.2
 n = 100
 
+cd.DefineSeed(5)
 #---------------------------------------
 # 1. Preprocessing
 #---------------------------------------
@@ -84,6 +85,7 @@ AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city)
 # 2. loop through decision process 
 #---------------------------------------
 
+
 for i in np.arange(1,Nt):
     
     for j in np.arange(Ny):
@@ -94,7 +96,7 @@ for i in np.arange(1,Nt):
             CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_last, CropIDs, \
                                                       Profit_pred, rule=True)
             CropID_all[i,j,k], Profit_ant[i,j,k], Profit_act[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, Profit_ant, \
-                                                               CropChoice, ProfitChoice, seed = False, seed_val=0) #is there a way to set this up so you can pass a NULL value or no value when seed=False?
+                                                               CropChoice, ProfitChoice, seed = False) #is there a way to set this up so you can pass a NULL value or no value when seed=False?
  
 ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)
 #ppf.CreateAnimation(CropID_all, Nt)

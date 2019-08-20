@@ -8,6 +8,11 @@ Created on Tue Jul  9 12:12:43 2019
 import numpy as np
 import scipy.special as sp
 
+def DefineSeed(seed):
+    global seed_val
+    seed_val=seed
+    return
+
 # Not sure if this is needed if we can get scipy to return the value of the 
 # CDF
 def SwitchingProbCurve(alpha,beta,fmin,fmax,n,profit):
@@ -187,9 +192,15 @@ def AssessProfit(Crop, Profits_cur, Profits_alt,  Nc, CropIDs):
      return(Profit_last, Profit_p)
 
 
-def MakeChoice(CropID_last, Profit_last, Profit_ant, CropChoice, ProfitChoice, seed_val, seed = False):
+def MakeChoice(CropID_last, Profit_last, Profit_ant, CropChoice, ProfitChoice, seed = False):
     
     if (seed == True):
+        
+        try:
+            seed_val
+        except NameError:
+            print("Random seed needs to be initialized using the CropDecider.DefineSeed() Function")
+        
         np.random.seed(seed_val)
     
     # Check if return  values indicate the farmer shouldn't switch
