@@ -173,8 +173,7 @@ def GeneratePrices(Nt):
 
 def AssessProfit(Crop, Profits_cur, Profits_alt,  Nc, CropIDs):
      # Existing Crop ID
-     CurCropChoice = Crop
-     CurCropChoice_ind = CurCropChoice.astype('int') #- 1
+     CurCropChoice_ind = Crop.astype('int') #- 1
      CropIx=np.where(CropIDs == CurCropChoice_ind)
      #assess current and future profit of that given crop
      if (np.isin(CurCropChoice_ind, CropIDs)): #change this to be a vector of possible cropIDs
