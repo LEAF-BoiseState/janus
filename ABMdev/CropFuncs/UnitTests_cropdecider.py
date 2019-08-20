@@ -79,7 +79,23 @@ class CropDeciderTest(unittest.TestCase):
         self.assertEqual(CropChoice_test, CropChoice_known)
         self.assertEqual(ProfitChoice_test, ProfitChoice_known)
         
-    #def test_MakeChoice -- add this after chaning indicies in LULCC_ABM
+    def test_MakeChoice(self):
+        CropID_all=np.float64(15)
+        Profit_last=0
+        Profit_ant=np.float64(0)
+        CropChoice=-1
+        ProfitChoice=-1
+        seed_val=5
+ 
+        CropID_all_known=np.float(15.0)
+        Profit_ant_known=0
+        Profit_act_known =np.array([[[441.22748689]]])
+        
+        CropID_all_test, Profit_ant_test, Profit_act_test  = cd.MakeChoice(CropID_all, Profit_last, Profit_ant, CropChoice, ProfitChoice, seed_val, seed=True)
+        
+        self.assertEqual(CropID_all_known, CropID_all_test)
+        self.assertEqual(Profit_ant_known, Profit_ant_test)
+        self.assertEqual(Profit_act_known.astype('int'), Profit_act_test.astype('int'))
         
 if __name__ == '__main__':
     unittest.main()

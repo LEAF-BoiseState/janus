@@ -94,7 +94,7 @@ for i in np.arange(1,Nt):
             CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_last, CropIDs, \
                                                       Profit_pred, rule=True)
             CropID_all[i,j,k], Profit_ant[i,j,k], Profit_act[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, Profit_ant, \
-                                                               CropChoice, ProfitChoice, Profit_act, i,j,k) 
+                                                               CropChoice, ProfitChoice, seed = False) 
  
 ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)
 #ppf.CreateAnimation(CropID_all, Nt)
