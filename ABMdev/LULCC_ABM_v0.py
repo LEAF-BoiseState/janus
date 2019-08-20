@@ -9,7 +9,6 @@ Agent Based Model of Land Use and Land Cover Change
 import geopandas as gp
 import numpy as np
 from geofxns import minDistCity #slow
-from geofxns import saveLC #do we need to import each function, or can we just load all of them?
 import CropFuncs.CropDecider as cd
 import InitializeAgentsDomain as init
 import PostProcessing.FigureFuncs as ppf
@@ -73,8 +72,6 @@ Profits = Profits[:, 0:Nc]
 #Update so each of these inital values are randomly selected from NASS distributions
 AgentData = {
         "AgeInit" : int(45.0),
-        "nFields" : 1, "remove"
-        "AreaFields" : np.array([10]), "remove"
         "LandStatus" : 0,
         "density" : 2,
         }
