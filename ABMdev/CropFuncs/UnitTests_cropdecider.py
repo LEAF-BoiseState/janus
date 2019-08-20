@@ -45,8 +45,8 @@ class CropDeciderTest(unittest.TestCase):
         
     def test_assessProfit(self):
         Crop = np.float64(15)
-        Profits_cur =np.array([33335.2449421, 15559.69682002, 27343.12786372, 12477.52250041])
-        Profits_alt = np.array([31114.72448459, 15964.57267595, 27966.71739119, 14310.4472603 ])
+        Profits_cur =np.array([33335, 15559, 27343, 12477])
+        Profits_alt = np.array([31114, 15964, 27966, 14310])
         Nc= 4
         CropIDs =np.array([1,2,3,10])
         

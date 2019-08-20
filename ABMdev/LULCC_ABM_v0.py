@@ -14,7 +14,7 @@ import CropFuncs.CropDecider as cd
 import InitializeAgentsDomain as init
 import PostProcessing.FigureFuncs as ppf
 
-userPath='/Users/kek25/Documents/GitRepos/'
+userPath='/Users/kendrakaiser/Documents/GitRepos/'
 DataPath= userPath+'IM3-BoiseState/'
 
 #---------------------------------------
@@ -80,14 +80,8 @@ AgentData = {
         }
 #hwe need to be able to associate alpha/beta parameters with each agent. 
 dFASM = init.InitializeDomain(Ny, Nx)
-<<<<<<< HEAD
-AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city)
-
-dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx)
-=======
 AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city) 
 dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx) #this will be done in the agent facotry
->>>>>>> e01dc8596d8cbecb94090c8a3abae88998bc53e5
 
 #---------------------------------------
 # 2. loop through decision process 
