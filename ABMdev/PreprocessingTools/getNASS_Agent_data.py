@@ -37,17 +37,16 @@ def cleanup(value):
 def getAges(YR):
     q = api.query()
     q.filter('commodity_desc', 'OPERATORS').filter('state_alpha', 'ID').filter('year', YR).filter('class_desc', age_cat)
-    age_dat=q.execute()
-    age_dF=pd.DataFrame(age_dat)
+    age_dF=pd.DataFrame(q.execute())
     age_dF['Value']=age_dF['Value'].apply(cleanup) 
     
-    ages=pd.DataFrame(0, index=np.arange(len(age_dat)), columns=('category', 'operators'))
-    ages['category']=age_cat
+    ages=pd.DataFrame(0, index=np.arange(len(age_dF)), columns=('category', 'operators'))
+    ages['category']=age_cat.copy()
      
     
-    for i in range(len(age_dat)):
+    for i in range(len(age_dF)):
         vals =age_dF[(age_dF['class_desc'] == ages['category'][i])]
-        ages['operators'][i]=vals['Value'] #warning: trying to be set on a copy of a slice from a DataFrame
+        ages['operators'][i]=int(vals['Value']) #warning: trying to be set on a copy of a slice from a DataFrame
     return(ages)
     
 
@@ -70,9 +69,9 @@ def getTenureArea(countyList, YR): #this returns a warning bc of the way it is b
     
     for i in range(len(cat)):
         sub=dataF[(dataF['domaincat_desc'] == farms['category'][i]) & (dataF['unit_desc'] == 'ACRES')]
-        farms['acres'][i] = sub['Value']
+        farms['acres'][i] = sum(sub['Value'])
         sub2=dataF[(dataF['domaincat_desc'] == farms['category'][i]) & (dataF['unit_desc'] == 'OPERATIONS')]
-        farms['operations'][i] = sub2['Value']
+        farms['operations'][i] =sum(sub2['Value'])
 
     return(farms)
 
