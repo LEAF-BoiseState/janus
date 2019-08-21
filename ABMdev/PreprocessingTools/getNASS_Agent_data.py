@@ -45,8 +45,8 @@ def getAges(YR):
      
     
     for i in range(len(age_dF)):
-        vals =age_dF[(age_dF['class_desc'] == ages['category'][i])]
-        ages['operators'][i]=int(vals['Value']) #warning: trying to be set on a copy of a slice from a DataFrame
+        vals =age_dF[(age_dF['class_desc'] == ages.loc[i,'category'])] #state level aggregation
+        ages.loc[i,'operators']=int(vals['Value'])
     return(ages)
     
 
@@ -57,7 +57,7 @@ countyList='ADA'
 countyList=counties
 
 
-def getTenureArea(countyList, YR): #this returns a warning bc of the way it is being sliced
+def getTenureArea(countyList, YR): #countly level aggregation, can change to report each county ...
     q = api.query()
     q.filter('commodity_desc', 'FARM OPERATIONS').filter('state_alpha', 'ID').filter('year', YR).filter('domain_desc', variables).filter('county_name', countyList)
     data=q.execute()
@@ -68,10 +68,10 @@ def getTenureArea(countyList, YR): #this returns a warning bc of the way it is b
     farms['category']= cat
     
     for i in range(len(cat)):
-        sub=dataF[(dataF['domaincat_desc'] == farms['category'][i]) & (dataF['unit_desc'] == 'ACRES')]
-        farms['acres'][i] = sum(sub['Value'])
+        sub=dataF[(dataF['domaincat_desc'] == farms.loc[i,'category']) & (dataF['unit_desc'] == 'ACRES')]
+        farms.loc[i,'acres']= sum(sub['Value']) #acres
         sub2=dataF[(dataF['domaincat_desc'] == farms['category'][i]) & (dataF['unit_desc'] == 'OPERATIONS')]
-        farms['operations'][i] =sum(sub2['Value'])
+        farms.loc[i,'operations'] =sum(sub2['Value']) #operations
 
     return(farms)
 
