@@ -38,9 +38,16 @@ def getAges(YR):
     q = api.query()
     q.filter('commodity_desc', 'OPERATORS').filter('state_alpha', 'ID').filter('year', YR).filter('class_desc', age_cat)
     age_dat=q.execute()
-    ages=[0]*len(age_dat)
+    age_dF=pd.DataFrame(age_dat)
+    age_dF['Value']=age_dF['Value'].apply(cleanup) 
+    
+    ages=pd.DataFrame(0, index=np.arange(len(age_dat)), columns=('category', 'operators'))
+    ages['category']=age_cat
+     
+    
     for i in range(len(age_dat)):
-        ages[i]=cleanup(age_dat[i]['Value'])
+        vals =age_dF[(age_dF['class_desc'] == ages['category'][i])]
+        ages['operators'][i]=vals['Value'] #warning: trying to be set on a copy of a slice from a DataFrame
     return(ages)
     
 
