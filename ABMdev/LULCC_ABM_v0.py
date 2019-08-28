@@ -32,7 +32,7 @@ f0 = 1.2
 n = 100
 
 #---------------------------------------
-# 1. Preprocessing
+# 1. Initialize Landscape and Domain
 #---------------------------------------
 #load extent
 extent=gp.read_file(DataPath + 'ABMdev/Data/extent_3km_AdaCanyon.shp')
@@ -44,6 +44,7 @@ dist2city=minDistCity(lc)
 Ny, Nx = lc[0].shape
 Nt = 50
 
+dFASM = init.InitializeDomain(Ny, Nx) #rename dFASm
 #---------------------------------------
 #  Initialize Crops
 #---------------------------------------
@@ -78,8 +79,7 @@ AgentData = {
         "LandStatus" : 0,
         "density" : 2,
         }
-#hwe need to be able to associate alpha/beta parameters with each agent. 
-dFASM = init.InitializeDomain(Ny, Nx)
+#we need to be able to associate alpha/beta parameters with each agent. 
 AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city) 
 dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx) #this will be done in the agent facotry
 
