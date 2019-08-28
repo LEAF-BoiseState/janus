@@ -50,7 +50,7 @@ def Decide(alpha,beta,fmin,fmax,n,profit,profit_p):
 #                                                                             #
 #=============================================================================#
 def DecideN(alpha, beta, fmin, fmax, n, profit, vec_crops, 
-            vec_profit_p, rule=True):
+            vec_profit_p, rule=True): 
 
     # Key assumptions: the vector of crop IDs and anticipated profits associated
     # with each crop must both be N x 1 column vectors. Error trap this below:
@@ -66,7 +66,7 @@ def DecideN(alpha, beta, fmin, fmax, n, profit, vec_crops,
     for i in np.arange(AccRej.size):
         # Use the `Decide` function above to choose whether or not the crop is
         # viable
-        AccRej[i] = Decide(alpha,beta,fmin,fmax,n,profit,vec_profit_p[i])
+        AccRej[i] = Decide(alpha,beta,fmin,fmax,n,profit,vec_profit_p[i]) #is fmin/fmax setting bounds on range of additional profit?
 
     # Find the Crop IDs and associated profits that were returned as "viable" 
     # based on the "Decide" function (that is, Decide came back as "yes" == 1)
