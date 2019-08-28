@@ -12,7 +12,7 @@ import traceback
 
 class aFarmer:
     
-    def __init__(self, Age, nFields, AreaFields, LandStatus, Dist2city):
+    def __init__(self, Age, nFields, AreaFields, LandStatus, Dist2city, alpha, beta):
         
         self.Age = Age          # Initial age of the farmer in years
         
@@ -42,7 +42,9 @@ class aFarmer:
             exit(1)
             
         self.Dist2city = Dist2city
-            
+        self.alpha =alpha
+        self.beta = beta
+        
     def UpdateAge(self):
         self.Age += 1
     def UpdateDist2city(self, newDist):
