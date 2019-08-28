@@ -42,7 +42,7 @@ class aFarmer:
             exit(1)
             
         self.Dist2city = Dist2city
-        self.alpha =alpha
+        self.alpha =alpha #write asserts that require the value to be between 0/1 ?
         self.beta = beta
         
     def UpdateAge(self):
