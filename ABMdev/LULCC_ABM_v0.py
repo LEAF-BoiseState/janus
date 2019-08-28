@@ -20,8 +20,8 @@ DataPath= userPath+'IM3-BoiseState/'
 #---------------------------------------
 # 0. Declare Variables
 #---------------------------------------
-#set agent switching parameters 
-"these need to be agent attributes"
+#set agent attributes: switching parameters 
+"These should 
 a_ra = 4.5
 b_ra = 1.0
 
@@ -78,6 +78,8 @@ AgentData = {
         "AreaFields" : np.array([10]), "remove"
         "LandStatus" : 0,
         "density" : 2,
+        "alpha": a_ra,
+        "beta": b_ra
         }
 #we need to be able to associate alpha/beta parameters with each agent. 
 AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city) 
@@ -94,6 +96,7 @@ for i in np.arange(1,Nt):
             #Assess Profit
             Profit_ant_temp, Profit_p = cd.AssessProfit(CropID_all[i-1,j,k], Profits[i-1,:], Profits[i,:], Nc, CropIDs)
             #Decide on Crop
+            "this needs to call alpha/beta from the agent in that cell"
             CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_ant_temp, CropIDs, \
                                                       Profit_p, rule=True)
             CropID_all, Profit_ant, Profit_act = cd.MakeChoice(CropID_all, Profit_ant_temp, Profit_ant, \
