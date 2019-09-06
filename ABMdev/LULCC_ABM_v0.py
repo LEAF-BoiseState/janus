@@ -21,11 +21,11 @@ DataPath= userPath+'IM3-BoiseState/'
 # 0. Declare Variables
 #---------------------------------------
 #set agent attributes: switching parameters 
-"These should 
+"These should be pulled from a distribution"
 a_ra = 4.5
 b_ra = 1.0
 
-"thid goes with the initilization"
+#Max and min .... total Profit, percent profit?
 fmin = 1.0
 fmax = 1.5
 f0 = 1.2
