@@ -9,12 +9,11 @@ Agent Based Model of Land Use and Land Cover Change
 import geopandas as gp
 import numpy as np
 from geofxns import minDistCity #slow
-from geofxns import saveLC #do we need to import each function, or can we just load all of them?
 import CropFuncs.CropDecider as cd
 import InitializeAgentsDomain as init
 import PostProcessing.FigureFuncs as ppf
 
-userPath='/Users/kek25/Documents/GitRepos/'
+userPath='/Users/kendrakaiser/Documents/GitRepos/'
 DataPath= userPath+'IM3-BoiseState/'
 
 #---------------------------------------
@@ -26,11 +25,18 @@ a_ra = 4.5
 b_ra = 1.0
 
 #Max and min .... total Profit, percent profit?
+#set agent switching parameters 
+#"these need to be agent attributes"
+a_ra = 4.5
+b_ra = 1.0
+
+#"this goes with the initilization"
 fmin = 1.0
 fmax = 1.5
 f0 = 1.2
 n = 100
 
+cd.DefineSeed(5)
 #---------------------------------------
 # 1. Initialize Landscape and Domain
 #---------------------------------------
@@ -74,8 +80,6 @@ Profits = Profits[:, 0:Nc]
 #Update so each of these inital values are randomly selected from NASS distributions
 AgentData = {
         "AgeInit" : int(45.0),
-        "nFields" : 1, "remove"
-        "AreaFields" : np.array([10]), "remove"
         "LandStatus" : 0,
         "density" : 2,
         "alpha": a_ra,
@@ -83,30 +87,34 @@ AgentData = {
         }
 #we need to be able to associate alpha/beta parameters with each agent. 
 AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city) 
-dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx) #this will be done in the agent facotry
+#dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx) #this will be done in the agent factory - which is great cause it aint working right now
 
 #---------------------------------------
 # 2. loop through decision process 
 #---------------------------------------
+
 
 for i in np.arange(1,Nt):
     
     for j in np.arange(Ny):
         for k in np.arange(Nx):
             #Assess Profit
-            Profit_ant_temp, Profit_p = cd.AssessProfit(CropID_all[i-1,j,k], Profits[i-1,:], Profits[i,:], Nc, CropIDs)
+            Profit_last, Profit_pred = cd.AssessProfit(CropID_all[i-1,j,k], Profits[i-1,:], Profits[i,:], Nc, CropIDs)
             #Decide on Crop
             "this needs to call alpha/beta from the agent in that cell"
             CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_ant_temp, CropIDs, \
                                                       Profit_p, rule=True)
             CropID_all, Profit_ant, Profit_act = cd.MakeChoice(CropID_all, Profit_ant_temp, Profit_ant, \
                                                                CropChoice, ProfitChoice, Profit_act, i,j,k) #"move these indicies into the input variables"
+            CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_last, CropIDs, \
+                                                      Profit_pred, rule=True)
+            CropID_all[i,j,k], Profit_ant[i,j,k], Profit_act[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, Profit_ant, \
+                                                               CropChoice, ProfitChoice, seed = False) #is there a way to set this up so you can pass a NULL value or no value when seed=False?
  
 ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)
 #ppf.CreateAnimation(CropID_all, Nt)
-#is there a way to not have to define i,j,k in the function input variables?
 #CropID_all, Profit_ant, Profit_act = cd.MakeDecision(Nt, Ny, Nx, Nc, CropID_all, Profits, Profit_ant, Profit_act, a_ra, b_ra, fmin, fmax, n, CropIDs)
-"one unit test would be to confirm that non-ag stayed the same and that all of the ag did not stay the same"        
+#"one unit test would be to confirm that non-ag stayed the same and that all of the ag did not stay the same"        
 #need to pull out the parts that dont rely on the loop and put the decision inside of it, that way relevant info can be updated between timesteps; 
 
 #---------------------------------------

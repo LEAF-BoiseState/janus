@@ -8,6 +8,11 @@ Created on Tue Jul  9 12:12:43 2019
 import numpy as np
 import scipy.special as sp
 
+def DefineSeed(seed):
+    global seed_val
+    seed_val=seed
+    return
+
 # Not sure if this is needed if we can get scipy to return the value of the 
 # CDF
 def SwitchingProbCurve(alpha,beta,fmin,fmax,n,profit):
@@ -173,71 +178,39 @@ def GeneratePrices(Nt):
 
 def AssessProfit(Crop, Profits_cur, Profits_alt,  Nc, CropIDs):
      # Existing Crop ID
-     CurCropChoice = Crop
-     CurCropChoice_ind = CurCropChoice.astype('int') #- 1
+     CurCropChoice_ind = Crop.astype('int') #- 1
      CropIx=np.where(CropIDs == CurCropChoice_ind)
      #assess current and future profit of that given crop
      if (np.isin(CurCropChoice_ind, CropIDs)): #change this to be a vector of possible cropIDs
-         Profit_ant_temp = Profits_cur[CropIx[0][0]] #last years profit
+         Profit_last = Profits_cur[CropIx[0][0]] #last years profit
          Profit_p   = Profits_alt[:] #this years  expected profit
          Profit_p = Profit_p.reshape(Nc,1)
      else: 
-        Profit_ant_temp = 0
+        Profit_last = 0
         Profit_p = np.zeros((Nc,1))
         
-     return(Profit_ant_temp, Profit_p)
+     return(Profit_last, Profit_p)
 
 
-def MakeChoice(CropID_all, Profit_ant_temp, Profit_ant, CropChoice, ProfitChoice, Profit_act, i,j,k):
+def MakeChoice(CropID_last, Profit_last, Profit_ant, CropChoice, ProfitChoice, seed = False):
+    
+    if (seed == True):
+        
+        try:
+            seed_val
+        except NameError:
+            print("Random seed needs to be initialized using the CropDecider.DefineSeed() Function")
+        
+        np.random.seed(seed_val)
+    
     # Check if return  values indicate the farmer shouldn't switch
-    #seems like this could either be part of the above function or a new one?
     if(CropChoice==-1) and (ProfitChoice==-1):
-        CropID_all[i,j,k] = CropID_all[i-1,j,k]
-        Profit_ant[i,j,k] = Profit_ant_temp
-        Profit_act[i,j,k] = Profit_ant[i,j,k] + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1)) #this years actual profit
+        CropID_next = CropID_last
+        Profit_ant = Profit_last
+        Profit_act = Profit_ant + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1)) #this years actual profit
     else: #switch to the new crop
-        CropID_all[i,j,k] = CropChoice
-        Profit_ant[i,j,k] = ProfitChoice
-        Profit_act[i,j,k] = Profit_ant[i,j,k] + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1))
-    return(CropID_all, Profit_ant, Profit_act)
+        CropID_next = CropChoice
+        Profit_ant = ProfitChoice
+        Profit_act= Profit_ant + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1))
+    return(CropID_next, Profit_ant, Profit_act)
     
-    
- #=============================================================================#
-#                                                                             #
-# MakeDecision: All of choice parts into one function
-#               VERY SLOW - this could be parallalized
-#                                                                             #
-#=============================================================================#   
-    
-def MakeDecision(Nt, Ny, Nx, Nc, CropID_all, Profits, Profit_ant, Profit_act, a_ra, b_ra, fmin, fmax, n, CropIDs):
-    for i in np.arange(1,Nt):
-        for j in np.arange(Ny):
-            for k in np.arange(Nx):
-                # Existing Crop ID
-                CurCropChoice = CropID_all[i-1,j,k]
-                CurCropChoice_ind = CurCropChoice.astype('int') - 1
-                #assess current and future profit of that given crop
-                if (CurCropChoice_ind < 6): #change this to be a vector of possible cropIDs
-                    Profit_ant_temp = Profits[i-1, CurCropChoice_ind]#last years profit
-                    Profit_p   = Profits[i,:] #this years  expected profit
-                    Profit_p = Profit_p.reshape(Nc,1)
-                else: 
-                    Profit_ant_temp = 0
-                    Profit_p = np.zeros((Nc,1))
-            
-                #Crop Decider
-                CropChoice, ProfitChoice = DecideN(a_ra, b_ra, fmin, fmax, n, Profit_ant_temp, CropIDs, \
-                                                      Profit_p, rule=True)
-            
-                # Check if return  values indicate the farmer shouldn't switch
-                #seems like this could either be part of the above function or a new one?
-                if(CropChoice==-1) and (ProfitChoice==-1):
-                    CropID_all[i,j,k] = CropID_all[i-1,j,k]
-                    Profit_ant[i,j,k] = Profit_ant_temp
-                    Profit_act[i,j,k] = Profit_ant[i,j,k] + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1)) #this years actual profit
-                else: #switch to the new crop
-                    CropID_all[i,j,k] = CropChoice
-                    Profit_ant[i,j,k] = ProfitChoice
-                    Profit_act[i,j,k] = Profit_ant[i,j,k] + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1))
-                    
-    return(CropID_all, Profit_ant, Profit_act)
