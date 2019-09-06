@@ -58,7 +58,7 @@ def getGCAM(countyList, year, scale): #returns a numpy array
     return(out_img)
 
 
-#tryin to figureout hoew to turn the shapefile with two counties into a raster   
+#trying to turn the shapefile with two counties into a raster   
 def countyID(countyList, lc):
     
     extent_shp=counties_shp['geometry'].loc[countyList]#this is a geoseries, figuerout how to save the value that can go into the raster
