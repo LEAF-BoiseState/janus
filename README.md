@@ -6,8 +6,6 @@ Order of operations
 1. cdl2gcam - converts from cdl categories to GCAM SRP categories using a csv lookup, calculates area wieghted price and yeild based on 2010 NASS values (CDL2GCAM_SRP_price_yield.csv)
 2. Aggregate GCAM grids - currently set to aggregate from 30m to 3km using the mode
 
-Zonal Stats calculates the Shannon Diversity Index of 30m CDL data within each 1km/3km grid cell
-
 ## Spatial Initialization
 
 ## geofxns
@@ -31,7 +29,6 @@ dCell- (d = domain) - pixel with geographic information about terrain, and which
 
 ## Crop functions:
 ReadCropCycle - this allows for multiple crops to be planted in a year, requires crop specific information for planting/growing/harvesting. This could call in CropModule for details on prices etc. We should rename the latter to be more clear
-
 
 # LULCC ABM V.0
 
@@ -65,3 +62,6 @@ ReadCropCycle - this allows for multiple crops to be planted in a year, requires
    - Aggregate statistics through time
    - Spatial land use patterns through time 
 
+## Post Processing
+
+Zonal Stats calculates the Shannon Diversity Index of 30m CDL data within each 1km/3km grid cell
