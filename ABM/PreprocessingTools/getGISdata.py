@@ -21,11 +21,12 @@ GCAMpath='~Data/GCAM_SRP/'
 
 countyList=['Ada', 'Canyon']  
 year=2010
-scale=3000
+scale_m=3000
+scale_str='3km'
 
+extent_poly=gf.getGISextent(countyList, scale_str)
 
-extent_poly=gf.getGISextent(countyList, '3km')
-gcam_init=gf.getGCAM(countyList, year, scale)
+gcam_init=gf.getGCAM(countyList, year, scale_m)
 
 extent_poly.to_file(DataPath+'extent_3km_AdaCanyon.shp')
 np.save(GCAMpath+'gcam_3km_2010_AdaCanyon.npy', gcam_init) #not sure if this one needs to be changed ...
