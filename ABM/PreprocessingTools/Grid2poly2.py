@@ -15,10 +15,10 @@ from shapely.geometry import Polygon, MultiPolygon
 from fiona.crs import from_epsg
 
 #=============================================================================#
-# Set working  directories and inout files                                    #
+# Set working  directories and input files                                    #
 #=============================================================================#
 
-GCAM_ReadDir = ''
+GCAM_ReadDir = '~Data/'
 GCAM_ReadFile_1km = 'gcam_2010_srb_1000_utm11N.tiff'
 
 OutFileName = 'SRB_poly_1km.shp'
