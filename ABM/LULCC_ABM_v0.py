@@ -19,6 +19,7 @@ DataPath= userPath+'IM3-BoiseState/Data/'
 #---------------------------------------
 # 0. Declare Variables
 #---------------------------------------
+Nt = 50
 #set agent attributes: switching parameters 
 "These should be pulled from a distribution"
 a_ra = 4.5
@@ -42,7 +43,6 @@ lc=np.load(DataPath + 'gcam_3km_2010_AdaCanyon.npy')
 dist2city=gf.minDistCity(lc)
 
 Ny, Nx = lc[0].shape
-Nt = 50
 
 dFASM = init.InitializeDomain(Ny, Nx) #rename dFASm
 #---------------------------------------
