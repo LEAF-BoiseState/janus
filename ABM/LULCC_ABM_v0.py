@@ -8,7 +8,7 @@ Agent Based Model of Land Use and Land Cover Change
 #---------------------------------------
 import geopandas as gp
 import numpy as np
-from geofxns import minDistCity #slow
+import PreprocessingTools.geofxns as gf
 import CropFuncs.CropDecider as cd
 import InitializeAgentsDomain as init
 import PostProcessing.FigureFuncs as ppf
@@ -39,7 +39,7 @@ extent=gp.read_file(DataPath + 'extent_3km_AdaCanyon.shp')
 #load inital landcover
 lc=np.load(DataPath + 'gcam_3km_2010_AdaCanyon.npy')
 #initalize minimum distance to city
-dist2city=minDistCity(lc)
+dist2city=gf.minDistCity(lc)
 
 Ny, Nx = lc[0].shape
 Nt = 50
