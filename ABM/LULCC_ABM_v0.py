@@ -13,8 +13,8 @@ import CropFuncs.CropDecider as cd
 import InitializeAgentsDomain as init
 import PostProcessing.FigureFuncs as ppf
 
-userPath='/Users/kendrakaiser/Documents/GitRepos/'
-DataPath= userPath+'IM3-BoiseState/'
+userPath='~/Documents/GitRepos/'
+DataPath= userPath+'IM3-BoiseState/Data/'
 
 #---------------------------------------
 # 0. Declare Variables
@@ -35,9 +35,9 @@ cd.DefineSeed(5)
 # 1. Initialize Landscape and Domain
 #---------------------------------------
 #load extent
-extent=gp.read_file(DataPath + 'ABMdev/Data/extent_3km_AdaCanyon.shp')
+extent=gp.read_file(DataPath + 'extent_3km_AdaCanyon.shp')
 #load inital landcover
-lc=np.load(DataPath + 'ABMdev/Data/gcam_3km_2010_AdaCanyon.npy')
+lc=np.load(DataPath + 'gcam_3km_2010_AdaCanyon.npy')
 #initalize minimum distance to city
 dist2city=minDistCity(lc)
 
