@@ -41,7 +41,7 @@ def getGISextent(countyList, scale):
     elif scale == 1000:
         SRB_poly= gp.read_file(DataPath+'SRB_poly_1km.shp') 
     
-    #select two shapefiles, this returns geometry of the union - this no longer distinguishes two
+    #select two shapefiles, this returns geometry of the union - this no longer distinguishes two - see issue #1
     extent=counties_shp['geometry'].loc[countyList].unary_union #this is the row index, not the "COUNTY_ALL" index
     extent_poly=SRB_poly[SRB_poly.geometry.intersects(extent)]
     return(extent_poly)
