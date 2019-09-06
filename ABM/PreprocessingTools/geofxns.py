@@ -68,7 +68,6 @@ def grid2poly(grid_file, OutFileName):
     polyagg.to_file(filename=DataPath+OutFileName, driver="ESRI Shapefile")
 
 
-
 #----------------------------------------------------------------------------
 # Create a grid of the extent based on counties and scale of interest
 #----------------------------------------------------------------------------
