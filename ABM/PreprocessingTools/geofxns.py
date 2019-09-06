@@ -36,9 +36,9 @@ counties_shp=counties_shp.set_index('county')
 
 def getGISextent(countyList, scale):
     
-    if scale == '3km':
+    if scale == 3000:
         SRB_poly= gp.read_file(DataPath+'SRB_poly_3km.shp') 
-    elif scale == '1km':
+    elif scale == 1000:
         SRB_poly= gp.read_file(DataPath+'SRB_poly_1km.shp') 
     
     #select two shapefiles, this returns geometry of the union - this no longer distinguishes two
