@@ -25,12 +25,6 @@ a_ra = 4.5
 b_ra = 1.0
 
 #Max and min .... total Profit, percent profit?
-#set agent switching parameters 
-#"these need to be agent attributes"
-a_ra = 4.5
-b_ra = 1.0
-
-#"this goes with the initilization"
 fmin = 1.0
 fmax = 1.5
 f0 = 1.2
@@ -102,9 +96,9 @@ for i in np.arange(1,Nt):
             Profit_last, Profit_pred = cd.AssessProfit(CropID_all[i-1,j,k], Profits[i-1,:], Profits[i,:], Nc, CropIDs)
             #Decide on Crop
             "this needs to call alpha/beta from the agent in that cell"
-            CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_ant_temp, CropIDs, \
-                                                      Profit_p, rule=True)
-            CropID_all, Profit_ant, Profit_act = cd.MakeChoice(CropID_all, Profit_ant_temp, Profit_ant, \
+            CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_last, CropIDs, \
+                                                      Profit_pred, rule=True)
+            CropID_all, Profit_ant, Profit_act = cd.MakeChoice(CropID_all, Profit_last, Profit_pred, \
                                                                CropChoice, ProfitChoice, Profit_act, i,j,k) #"move these indicies into the input variables"
             CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_last, CropIDs, \
                                                       Profit_pred, rule=True)
