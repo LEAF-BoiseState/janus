@@ -64,7 +64,8 @@ class GCAM_DataStruct:
         self.gcam_grid = gcam_grid
         
 #=============================================================================#
-# FUNCTION DEFINITIONS    
+# FUNCTION DEFINITIONS  
+#=============================================================================#       
 def ReadArcGrid(CDL_struct):
     
     # Construct the full name of the CDL input ArcGrid file
@@ -184,7 +185,7 @@ np.savetxt("cdl_res.csv", CDL_stats, delimiter=",")
 np.savetxt("gcam_res.csv", GCAM_stats, delimiter=",")
 
 #=============================================================================#
-# 4. Calculate area weighted GCM Yields and Prices from CDL data - delete
+# 4. Calculate area weighted GCM Yields and Prices from CDL data -consider deleting
 #=============================================================================#
 base_area= CDL_stats[:,0]
 base_price = np.zeros((28))
