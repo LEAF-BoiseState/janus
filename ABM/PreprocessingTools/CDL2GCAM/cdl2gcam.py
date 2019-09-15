@@ -17,21 +17,15 @@ from osgeo import osr
 #=============================================================================#
 # PREAMBLE AND PATH DEFINITIONS
 #=============================================================================#
+#update these for the JORS release
+DataPath= '/Users/kek25/Dropbox/BSU/Python/IM3/CDL/'#THIS ISN"T RUNNING ON MY DESKTOP
+WritePath= '/Users/kek25/Dropbox/BSU/Python/IM3/'
 
-LejoDataPath  = '/Users/lejoflores/Dropbox/CDL/'
-LejoWritePath = '/Users/lejoflores/IM3-BoiseState/CDL_analysis/'
-
-kekDataPath= '/Users/kek25/Dropbox/BSU/Python/IM3/CDL/'#THIS ISN"T RUNNING ON MY DESKTOP
-kekWritePath= '/Users/kek25/Dropbox/BSU/Python/IM3/'
-
-CDL_GCAM_keyfile = kekDataPath + 'CDL2GCAM_SRP_price_yield.csv'
-#CDL_ReadDir   =  LejoDataPath 
-CDL_ReadDir  = kekDataPath
-GCAM_WriteDir = kekWritePath+'GCAM_SRP/'
-
+CDL_GCAM_keyfile =DataPath + 'CDL2GCAM_SRP_categories.csv'
+CDL_ReadDir  = DataPath
+GCAM_WriteDir = WritePath+'GCAM_SRP/'
 
 files = glob.glob(CDL_ReadDir+'cdl*.txt') 
-
 
 #=============================================================================#
 # CLASS DEFINITIONS    
@@ -139,7 +133,7 @@ def saveGCAMGrid(GCAM_struct):
 #=============================================================================#
 CDL2GCAM_key = pd.read_csv(CDL_GCAM_keyfile, sep=',')
 CDL_cat      = CDL2GCAM_key['CDL_id'].values
-GCAM_cat     = CDL2GCAM_key['SRP_GCAM_id'].values
+GCAM_cat     = CDL2GCAM_key['SRP_GCAM_id'].values #this can be set to GCAM_id for regular GCAM categories, or edit the original file to user defineted categories
 
 #=============================================================================#
 # 1. Initialize a list of CDL structures for analysis                         #
@@ -176,7 +170,7 @@ Parallel(n_jobs=6, verbose=10, backend='threading')(delayed(CDL2GCAM)(CDL_Data[i
 Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(saveGCAMGrid)(GCAM_Data[i]) \
          for i in np.arange(len(CDL_Data))) 
 #=============================================================================#
-# 3. Create Arrays of Results
+# 3. Create Arrays of Results - consider deleting
 #=============================================================================#
 f=len(files)
 CDL_stats  = np.zeros((132,f))
@@ -190,7 +184,7 @@ np.savetxt("cdl_res.csv", CDL_stats, delimiter=",")
 np.savetxt("gcam_res.csv", GCAM_stats, delimiter=",")
 
 #=============================================================================#
-# 4. Calculate area weighted GCM Yields and Prices from CDL data
+# 4. Calculate area weighted GCM Yields and Prices from CDL data - delete
 #=============================================================================#
 base_area= CDL_stats[:,0]
 base_price = np.zeros((28))
