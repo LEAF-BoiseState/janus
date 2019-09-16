@@ -11,6 +11,9 @@ import numpy as np
 import sys
 import csv
 
+NPRICE_FUNCTIONS = 3
+
+
 # 0. Get number of crops and number of timesteps from command line input
 # 1. Read in a csv file that contains columns corresponding to: (1) crop ID number, (2) crop name,
 #    (3) functional behavior, (4) parameters whose number depends on the specific functional 
@@ -49,28 +52,48 @@ csv_fp = csv.reader(fp)
 crop_names = []
 crop_ids   = []
 
+CropCount = 0
+
 for row in csv_fp:
     
+    CropCount += 1
+
     assert isinstance(row[0],str),'GenerateSyntheticPrices.py ERROR: Crop name not string'
     crop_names.append(row[0])
     
     assert int(row[1])>0,'GenerateSyntheticPrices.py ERROR: Negative crop ID number'
     crop_ids.append(int(row[1]))
     
+    assert int(row[2]>0), 'GenerateSyntheticPrices.py ERROR: Invalid price function behavior flag'
+    assert int(row[2]<(NPRICE_FUNCTIONS+1)), 'GenerateSyntheticPrices.py ERROR: Invalid price function behavior flag'
     
+    price_fxn_type = int(row[2])
+    
+    if(price_fxn_type==1): # Linear ramp (use for linearlly increasing, decreasing, constant prices)
+        assert len(row)==7,'GenerateSyntheticPrices.py ERROR: Incorrect number of parameters in row ' + str(CropCount)
+        
+        Pi       = float(row[3])
+        Pf       = float(row[4])
+        perturb  = int(row[5])
+        s_p      = float(row[6])
+    elif(price_fxn_type==2): # Step function (use for step increase or decrease in price)
+
+
+        
+    elif(price_fxn_type==3): # Sinusoidal fluctuation in price
+        
     
 
-CropCount = 0
 
-
-def GeneratePrice_linear(Nt,Pi,Pf,s_p):
+def GeneratePrice_linear(Nt,Pi,Pf,perturb,s_p):
     
-    P = np.linspace(Pi,Pf,num=Nt).reshape((Nt,1)) 
-    P += np.random.normal(loc=0.0, scale=s_p, size=(Nt,1))
+    P = np.linspace(Pi,Pf,num=Nt).reshape((Nt,1))
+    if(perturb==1):
+        P += np.random.normal(loc=0.0, scale=s_p, size=(Nt,1))
     
     return P
 
-def GeneratePrice_step(Nt,Pi,Pf,t_step,s_p):
+def GeneratePrice_step(Nt,Pi,Pf,t_step,perturb,s_p):
     
     assert t_step > 0.0, 'GenerateSyntheticPrices.py ERROR: Step price change time is less than 0.0'
     assert t_step < 1.0, 'GenerateSyntheticPrices.py ERROR: Step price change time is greeater than 1.0'
@@ -79,85 +102,22 @@ def GeneratePrice_step(Nt,Pi,Pf,t_step,s_p):
     P = np.zeros((Nt,1))
     P[0:(int(t_step*Nt))] = Pi
     P[(int(t_step*Nt)):]  = Pf
-    P += np.random.normal(loc=0.0, scale=s_p, size=(Nt,1))
+
+    if(perturb==1):
+        P += np.random.normal(loc=0.0, scale=s_p, size=(Nt,1))
 
     return P
 
-def GeneratePrice_periodic(Nt,Pmag,Pamp,t_p,s_p):
-    
-    
-
+def GeneratePrice_periodic(Nt,Pmag,Pamp,n_period,perturb,s_p):
     
 
-
-
-
-
-
-
-
-#
-#
-##=============================================================================#
-##                                                                             #
-## GeneratePrices: Generates 6 synthetic crop profits with different           #
-##                 behaviors. This function is largely for debugging purposes  #
-##                 to test new model test cases, etc.                          #
-##                                                                             #
-##=============================================================================#
-#
-#def GeneratePrices(Nt):
-#    
-#    # Crop 1 = Steadily increasing
-#    P1_i = 20000.0
-#    P1_f = 31000.0
-#    P1_s = 1000.0
-#
-#    P1 = (np.linspace(P1_i,P1_f,num=Nt).reshape((Nt,1)) + np.random.normal(loc=0.0, scale=P1_s, size=(Nt,1)))
-#    
-#    # Crop 2
-#    P2_i = 30000.0
-#    P2_f = 15000.0
-#    P2_s = 1000.0
-#    
-#    P2 = (np.linspace(P2_i,P2_f,num=Nt).reshape((Nt,1)) + np.random.normal(loc=0.0, scale=P2_s, size=(Nt,1)))
-#    
-#    # Crop 3 = Sinusoidal fluctuation
-#    P3_l = 28000.0
-#    P3_a = 5000.0
-#    P3_n = 2.0
-#    P3_s = 1000.0
-#    
-#    x3 = np.linspace(0.0, P3_n*2*np.pi, num=Nt).reshape((Nt,1))
-#    P3 = (P3_l + P3_a*np.sin(x3) + np.random.normal(loc=0.0, scale=P3_s, size=(Nt,1)))
-#    
-#    # Crop 4 = Step decrease
-#    P4_i = 31000.0
-#    P4_f = 14000.0
-#    P4_s = 1000.0
-#    
-#    P4 = np.zeros((Nt,1))
-#    P4[0:(int(P4.size/2))] = P4_i
-#    P4[(int(P4.size/2)):]  = P4_f
-#    P4 += np.random.normal(loc=0.0, scale=P4_s, size=(Nt,1))
-#    
-#    # Crop 5 = Step increase
-#    P5_i = 10000.0
-#    P5_f = 30000.0
-#    P5_s = 1000.0
-#
-#    P5 = np.zeros((Nt,1))
-#    P5[0:(int(P5.size/2))] = P5_i
-#    P5[(int(P5.size/2)):]  = P5_f
-#    P5 += np.random.normal(loc=0.0, scale=P5_s, size=(Nt,1))
-#    
-#    # Crop 6 = Constant with noise
-#    P6_l = 27000.0
-#    P6_s = 1000.0
-#
-#    P6 = (P6_l*np.ones((Nt,1)) + np.random.normal(loc=0.0, scale=P6_s, size=(Nt,1)))
-#
-#    P_matrix = np.column_stack((P1,P2,P3,P4,P5,P6))
+    x = np.linspace(0.0,n_period*2*np.pi, num=Nt).reshape((Nt,1))
+    P = Pmag + Pamp  * np.sin(x)
     
- #   return P_matrix
+    if(perturb==1):
+        P += np.random.normal(loc=0.0, scale=s_p, size=(Nt,1))
+      
+    return P
+
+
 
