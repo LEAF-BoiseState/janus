@@ -17,10 +17,10 @@ from osgeo import osr
 #=============================================================================#
 # PREAMBLE AND PATH DEFINITIONS
 #=============================================================================#
-DataPath= '~Data/CDL/'
-WritePath= '~Data/GCAM/'
+CDLPath= '../../Data/CDL/'
+GCAMPath= '../../Data/GCAM/'
 
-files = glob.glob(DataPath+'cdl*.txt') 
+files = glob.glob(CDLPath+'cdl*.txt') 
 
 #=============================================================================#
 # CLASS DEFINITIONS    
@@ -144,7 +144,7 @@ def c2g(CDL_GCAM_keyfile, conversionID):
         CDL_Data.append(CDL_DataStruct(cdl_path,cdl_infile))
 
         # Initialize GCAM data structures with paths and file names
-        gcam_path    = WritePath
+        gcam_path    = GCAMPath
         gcam_outfile = cdl_infile.replace('cdl','gcam')
         gcam_outfile = gcam_outfile.replace('txt','tiff')
         GCAM_Data.append(GCAM_DataStruct(gcam_path,gcam_outfile)) 
@@ -177,5 +177,5 @@ def c2g(CDL_GCAM_keyfile, conversionID):
     for i in np.arange(f):
         CDL_stats[:,i]= CDL_Data[i].cdl_stats
         GCAM_stats[:,i]= GCAM_Data[i].gcam_stats
-    np.savetxt(WritePath+"cdl_initial.csv", CDL_stats, delimiter=",")
-    np.savetxt(WritePath+"gcam_initial.csv", GCAM_stats, delimiter=",")
+    np.savetxt(GCAMPath+"cdl_initial.csv", CDL_stats, delimiter=",")
+    np.savetxt(GCAMPath+"gcam_initial.csv", GCAM_stats, delimiter=",")

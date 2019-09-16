@@ -22,10 +22,10 @@ from shapely.ops import cascaded_union
 import json
 
 #set paths
-DataPath='~Data/'
-GCAMpath='~Data/GCAM_SRP/'
+DataPath='../../Data/'
+GCAMpath='../../Data/GCAM_SRP/'
 
-counties_shp= gp.read_file('~Data/Counties/Counties_SRB_clip_SingleID.shp')
+counties_shp= gp.read_file(DataPath+'Counties/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
 
 #----------------------------------------------------------------------------
