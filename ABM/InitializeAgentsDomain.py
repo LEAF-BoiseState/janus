@@ -6,6 +6,7 @@ Created on Mon Aug 12 11:15:12 2019
 @author: kek25
 """
 import numpy as np
+import Classes.AgentFactory 
 import Classes.aFarmer as farmer
 import Classes.dCellClass as cell
 import Classes.aUrban as urban

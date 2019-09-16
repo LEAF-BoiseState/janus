@@ -9,9 +9,7 @@ Pre-process GIS data based on counties, base year, and resolution
 """
  
 import geofxns as gf
-import numpy as np
 import cdl2gcam as c2g
-import AggregateGCAMGrids as agg
 
 #set paths
 DataPath='../../Data/'
@@ -22,24 +20,26 @@ GCAMpath='../../Data/GCAM/'
 #------------------------------------------------------------------------
 
 countyList=['Ada', 'Canyon']  
-year=2010
 scale=3000 #scale of grid in meters
 
-#create the grid based on extent of counties and scale
-extent_poly=gf.getGISextent(countyList, scale)
+gf.grid2poly(grid_file, 'domain_poly_'+str(int(scale))+'.shp')
 
-#convert cdl data to GCAM categories of choice
-c2g.c2g(DataPath+'CDL2GCAM_SRP_categories.csv','SRP_GCAM_id') #works through here!!!
+extent=gf.getGISextent(countyList, scale)
+#save extent
+extent.to_file(DataPath+'extent_3km_AdaCanyon.shp')
+
+#convert cdl data to GCAM categories of choice, this will take a while depending on size of original dataset
+c2g.c2g(DataPath+'CDL2GCAM_SRP_categories.csv','SRP_GCAM_id') 
 
 #convert GCAM file to scale of interest
-agg.aggGCAM(scale, GCAMpath)
+c2g.aggGCAM(scale, GCAMpath)
 
-#select gcam data from inital year
-gcam_init=gf.getGCAM(countyList, year, scale)
+#if additional geospatial data are avialable and included in model they can be 
+#clipped and processed here using the extent file
 
-#save files
-extent_poly.to_file(DataPath+'extent_3km_AdaCanyon.shp')
-np.save(GCAMpath+'gcam_3km_2010_AdaCanyon.npy', gcam_init)
+
+
+
 
 
 

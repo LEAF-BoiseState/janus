@@ -11,20 +11,6 @@ import glob
 import os
 from joblib import Parallel, delayed
 
-
-#=============================================================================#
-
-AggRes = 3000.0 # In units of m 
-
-#=============================================================================#
-# Set master working  directories                                             #
-#=============================================================================#
-
-# Specific directories of where to find the data
-GCAM_Dir = '~/Data/GCAM/'
-
-GCAM_ReadFiles = glob.glob(GCAM_Dir +'gcam*srb.tiff')
-
 #=============================================================================#
 # FUNCTION DEFINITIONS    
 def AggregateGCAMGrid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
@@ -64,5 +50,10 @@ def AggregateGCAMGrid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
     return
 #                                                                             #
 #=============================================================================#
-Parallel(n_jobs=4, verbose=60, backend='threading')(delayed(AggregateGCAMGrid)(GCAM_Dir,os.path.basename(file),AggRes) \
-         for file in GCAM_ReadFiles)
+
+def aggGCAM(AggRes, GCAM_Dir):
+    
+    GCAM_ReadFiles = glob.glob(GCAM_Dir +'gcam*srb.tiff')
+
+    Parallel(n_jobs=4, verbose=60, backend='threading')(delayed(AggregateGCAMGrid)(GCAM_Dir,os.path.basename(file),AggRes) \
+             for file in GCAM_ReadFiles)

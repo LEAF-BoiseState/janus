@@ -35,10 +35,17 @@ cd.DefineSeed(5)
 #---------------------------------------
 # 1. Initialize Landscape and Domain
 #---------------------------------------
-#load extent
-extent=gp.read_file(DataPath + 'extent_3km_AdaCanyon.shp')
-#load inital landcover
-lc=np.load(DataPath + 'gcam_3km_2010_AdaCanyon.npy')
+
+countyList=['Ada', 'Canyon']  
+year=2010
+scale=3000 #scale of grid in meters
+
+#create the grid based on extent of counties and scale
+extent=gf.getGISextent(countyList, scale)
+
+#select initial gcam data from inital year 
+lc=gf.getGCAM(countyList, year, scale)
+
 #initalize minimum distance to city
 dist2city=gf.minDistCity(lc)
 

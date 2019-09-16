@@ -124,17 +124,18 @@ def saveGCAMGrid(GCAM_struct):
 
     return
 
+#Complilation of above functions to do conversion 
 def c2g(CDL_GCAM_keyfile, conversionID):
-    #=============================================================================#
-    # 0. Read in category data and create vectors                                 #
-    #=============================================================================#
+    #=========================================================================#
+    # 0. Read in category data and create vectors                             #
+    #=========================================================================#
     CDL2GCAM_key = pd.read_csv(CDL_GCAM_keyfile, sep=',')
     CDL_cat      = CDL2GCAM_key['CDL_id'].values
     GCAM_cat     = CDL2GCAM_key[conversionID].values #'SRP_GCAM_id' or set to GCAM_id for regular GCAM categories, or edit the original file to user defineted categories
 
-    #=============================================================================#
-    # 1. Initialize a list of CDL structures for analysis                         #
-    #=============================================================================#
+    #=========================================================================#
+    # 1. Initialize a list of CDL structures for analysis                     #
+    #=========================================================================#
     CDL_Data  = []
     GCAM_Data = []
     for file in files:
@@ -149,27 +150,27 @@ def c2g(CDL_GCAM_keyfile, conversionID):
         gcam_outfile = gcam_outfile.replace('txt','tiff')
         GCAM_Data.append(GCAM_DataStruct(gcam_path,gcam_outfile)) 
     
-    #=============================================================================#
-    # 2a. Read in all the CDL files and store data in CDL_DataStruct              #
-    #=============================================================================#
+    #=========================================================================#
+    # 2a. Read in all the CDL files and store data in CDL_DataStruct          #
+    #=========================================================================#
     Parallel(n_jobs=6, verbose=60, backend='threading')(delayed(ReadArcGrid)(CDL_Data[i]) \
              for i in np.arange(len(CDL_Data)))
 
-    #=============================================================================#
-    # 2b. Perform the CDL-GCAM category conversion                                #
-    #=============================================================================#
+    #=========================================================================#
+    # 2b. Perform the CDL-GCAM category conversion                            #
+    #=========================================================================#
     Parallel(n_jobs=6, verbose=10, backend='threading')(delayed(CDL2GCAM)(CDL_Data[i],CDL_cat,GCAM_Data[i],GCAM_cat) \
              for i in np.arange(len(CDL_Data))) 
 
-    #=============================================================================#
-    # 2c. Save recategorized GCAM grids to files                                  #
-    #=============================================================================#
+    #=========================================================================#
+    # 2c. Save recategorized GCAM grids to files                              #
+    #=========================================================================#
     Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(saveGCAMGrid)(GCAM_Data[i]) \
              for i in np.arange(len(CDL_Data))) 
 
-    #=============================================================================#
+    #=========================================================================#
     # 3. Create Arrays of Results
-    #=============================================================================#
+    #=========================================================================#
     f=len(files)
     CDL_stats  = np.zeros((132,f))
     GCAM_stats = np.zeros((28, f))
@@ -179,3 +180,53 @@ def c2g(CDL_GCAM_keyfile, conversionID):
         GCAM_stats[:,i]= GCAM_Data[i].gcam_stats
     np.savetxt(GCAMPath+"cdl_initial.csv", CDL_stats, delimiter=",")
     np.savetxt(GCAMPath+"gcam_initial.csv", GCAM_stats, delimiter=",")
+    
+#=============================================================================#
+# Aggregate to scale of interest
+#=============================================================================#
+    
+def AggregateGCAMGrid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
+    
+    # Open the GeoTiff based on the input path and file
+    src_ds = gdal.Open(GCAM_ReadWriteDir+GCAM_ReadFile)
+
+    # Create the name of the output file by modifying the input file
+    GCAM_WriteFile = GCAM_ReadFile.replace('domain','domain'+'_'+str(int(AggRes)))
+
+    # Get key info on the source dataset    
+    src_ncols = src_ds.RasterXSize
+    src_nrows = src_ds.RasterYSize
+    
+    src_geot = src_ds.GetGeoTransform()
+    src_proj = src_ds.GetProjection()
+    src_res  = src_ds.GetGeoTransform()[1]
+
+    agg_factor = AggRes / src_res
+
+    dst_ncols = (int)(src_ncols/agg_factor)
+    dst_nrows = (int)(src_nrows/agg_factor)
+
+    dst_driver = gdal.GetDriverByName('Gtiff')
+    dst_ds = dst_driver.Create(GCAM_ReadWriteDir+GCAM_WriteFile, dst_ncols, dst_nrows, 1, gdal.GDT_Float32)
+
+    dst_geot = (src_geot[0], src_geot[1]*agg_factor, src_geot[2], src_geot[3], src_geot[4], src_geot[5]*agg_factor)
+
+    dst_ds.SetGeoTransform(dst_geot)
+    dst_ds.SetProjection(src_proj)
+
+    gdal.ReprojectImage(src_ds, dst_ds, src_proj, src_proj, gdal.GRA_Mode)
+
+    src_ds = None
+    dst_ds = None
+
+    return
+
+#=============================================================================#
+# Run aggregation function in parallel
+#=============================================================================#
+
+def aggGCAM(AggRes, GCAM_Dir):
+    GCAM_ReadFiles = glob.glob(GCAM_Dir +'gcam*domain.tiff')
+    
+    Parallel(n_jobs=4, verbose=60, backend='threading')(delayed(AggregateGCAMGrid)(GCAM_Dir,os.path.basename(file),AggRes) \
+             for file in GCAM_ReadFiles)

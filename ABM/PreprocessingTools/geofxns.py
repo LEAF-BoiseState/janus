@@ -23,7 +23,7 @@ import json
 
 #set paths
 DataPath='../../Data/'
-GCAMpath='../../Data/GCAM_SRP/'
+GCAMpath='../../Data/GCAM/'
 
 counties_shp= gp.read_file(DataPath+'Counties/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
@@ -71,13 +71,14 @@ def grid2poly(grid_file, OutFileName):
 #----------------------------------------------------------------------------
 # Create a grid of the extent based on counties and scale of interest
 #----------------------------------------------------------------------------
-
+#this should technically come from the grid2poly fxn above
+    
 def getGISextent(countyList, scale):
     
     if scale == 3000:
-        SRB_poly= gp.read_file(DataPath+'SRB_poly_3km.shp') 
+        SRB_poly= gp.read_file(DataPath+'domain_poly_3000.shp') 
     elif scale == 1000:
-        SRB_poly= gp.read_file(DataPath+'SRB_poly_1km.shp') 
+        SRB_poly= gp.read_file(DataPath+'domain_poly_1000.shp') 
     
     #select two shapefiles, this returns geometry of the union - this no longer distinguishes two - see issue #1
     extent=counties_shp['geometry'].loc[countyList].unary_union #this is the row index, not the "COUNTY_ALL" index
