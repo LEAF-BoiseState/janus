@@ -90,6 +90,9 @@ def DecideN(alpha, beta, fmin, fmax, n, profit, vec_crops,
         ViableProfits = ViableProfits[ViableProfits==MaxProfit]
         rule = False # Switch rule to trick the algorithm into using the random option
     
+    
+    ### TO-DO: Right now, only rules choose crops based on profitability and/or 
+    ### randomness. In future, add rules to choose based on network behavior, etc.
     if(rule): # Return crop with largest profit
         CropChoice = MaxProfitCrop
         ProfitChoice = MaxProfit
