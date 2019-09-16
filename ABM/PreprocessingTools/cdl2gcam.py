@@ -20,8 +20,6 @@ from osgeo import osr
 DataPath= '~Data/CDL/'
 WritePath= '~Data/GCAM/'
 
-CDL_GCAM_keyfile =DataPath + 'CDL2GCAM_SRP_categories.csv'
-
 files = glob.glob(DataPath+'cdl*.txt') 
 
 #=============================================================================#
@@ -115,7 +113,7 @@ def saveGCAMGrid(GCAM_struct):
     gcam_gdal   = gcam_driver.Create(gcam_outfile, ncols, nrows, 1, gdal.GDT_Float32)
 
     proj = osr.SpatialReference()
-    proj.ImportFromEPSG(4326) # << NEEDED AS AN INTERMEDIATE BECAUSE NO INITIAL PROJECTION DEFINED <<
+    proj.ImportFromEPSG(4326) # Needed as an intermediate because no inital projection defined 
     gcam_gdal.SetProjection(proj.ExportToWkt())
     gcam_gdal.SetGeoTransform(GCAM_struct.gcam_geotransform)
     gcam_gdal.GetRasterBand(1).WriteArray(GCAM_struct.gcam_grid)
@@ -132,7 +130,7 @@ def c2g(CDL_GCAM_keyfile, conversionID):
     #=============================================================================#
     CDL2GCAM_key = pd.read_csv(CDL_GCAM_keyfile, sep=',')
     CDL_cat      = CDL2GCAM_key['CDL_id'].values
-    GCAM_cat     = CDL2GCAM_key[conversionID].values #'SRP_GCAM_id' this can be set to GCAM_id for regular GCAM categories, or edit the original file to user defineted categories
+    GCAM_cat     = CDL2GCAM_key[conversionID].values #'SRP_GCAM_id' or set to GCAM_id for regular GCAM categories, or edit the original file to user defineted categories
 
     #=============================================================================#
     # 1. Initialize a list of CDL structures for analysis                         #
@@ -170,7 +168,7 @@ def c2g(CDL_GCAM_keyfile, conversionID):
              for i in np.arange(len(CDL_Data))) 
 
     #=============================================================================#
-    # 3. Create Arrays of Results - consider deleting
+    # 3. Create Arrays of Results
     #=============================================================================#
     f=len(files)
     CDL_stats  = np.zeros((132,f))
