@@ -17,15 +17,12 @@ from osgeo import osr
 #=============================================================================#
 # PREAMBLE AND PATH DEFINITIONS
 #=============================================================================#
-#update these for the JORS release
-DataPath= '/Users/kek25/Dropbox/BSU/Python/IM3/CDL/'#THIS ISN"T RUNNING ON MY DESKTOP
-WritePath= '/Users/kek25/Dropbox/BSU/Python/IM3/'
+DataPath= '~Data/CDL/'
+WritePath= '~Data/GCAM/'
 
 CDL_GCAM_keyfile =DataPath + 'CDL2GCAM_SRP_categories.csv'
-CDL_ReadDir  = DataPath
-GCAM_WriteDir = WritePath+'GCAM_SRP/'
 
-files = glob.glob(CDL_ReadDir+'cdl*.txt') 
+files = glob.glob(DataPath+'cdl*.txt') 
 
 #=============================================================================#
 # CLASS DEFINITIONS    
@@ -129,78 +126,58 @@ def saveGCAMGrid(GCAM_struct):
 
     return
 
-#=============================================================================#
-# 0. Read in category data and create vectors                                 #
-#=============================================================================#
-CDL2GCAM_key = pd.read_csv(CDL_GCAM_keyfile, sep=',')
-CDL_cat      = CDL2GCAM_key['CDL_id'].values
-GCAM_cat     = CDL2GCAM_key['SRP_GCAM_id'].values #this can be set to GCAM_id for regular GCAM categories, or edit the original file to user defineted categories
+def c2g(CDL_GCAM_keyfile, conversionID):
+    #=============================================================================#
+    # 0. Read in category data and create vectors                                 #
+    #=============================================================================#
+    CDL2GCAM_key = pd.read_csv(CDL_GCAM_keyfile, sep=',')
+    CDL_cat      = CDL2GCAM_key['CDL_id'].values
+    GCAM_cat     = CDL2GCAM_key[conversionID].values #'SRP_GCAM_id' this can be set to GCAM_id for regular GCAM categories, or edit the original file to user defineted categories
 
-#=============================================================================#
-# 1. Initialize a list of CDL structures for analysis                         #
-#=============================================================================#
-CDL_Data  = []
-GCAM_Data = []
-for file in files:
-    # Initialize CDL data structures with paths and file names
-    cdl_path   = os.path.dirname(file)
-    cdl_infile = os.path.basename(file)
-    CDL_Data.append(CDL_DataStruct(cdl_path,cdl_infile))
+    #=============================================================================#
+    # 1. Initialize a list of CDL structures for analysis                         #
+    #=============================================================================#
+    CDL_Data  = []
+    GCAM_Data = []
+    for file in files:
+        # Initialize CDL data structures with paths and file names
+        cdl_path   = os.path.dirname(file)
+        cdl_infile = os.path.basename(file)
+        CDL_Data.append(CDL_DataStruct(cdl_path,cdl_infile))
 
-    # Initialize GCAM data structures with paths and file names
-    gcam_path    = GCAM_WriteDir
-    gcam_outfile = cdl_infile.replace('cdl','gcam')
-    gcam_outfile = gcam_outfile.replace('txt','tiff')
-    GCAM_Data.append(GCAM_DataStruct(gcam_path,gcam_outfile)) 
+        # Initialize GCAM data structures with paths and file names
+        gcam_path    = WritePath
+        gcam_outfile = cdl_infile.replace('cdl','gcam')
+        gcam_outfile = gcam_outfile.replace('txt','tiff')
+        GCAM_Data.append(GCAM_DataStruct(gcam_path,gcam_outfile)) 
     
-#=============================================================================#
-# 2a. Read in all the CDL files and store data in CDL_DataStruct              #
-#=============================================================================#
-Parallel(n_jobs=6, verbose=60, backend='threading')(delayed(ReadArcGrid)(CDL_Data[i]) \
-         for i in np.arange(len(CDL_Data)))
+    #=============================================================================#
+    # 2a. Read in all the CDL files and store data in CDL_DataStruct              #
+    #=============================================================================#
+    Parallel(n_jobs=6, verbose=60, backend='threading')(delayed(ReadArcGrid)(CDL_Data[i]) \
+             for i in np.arange(len(CDL_Data)))
 
-#=============================================================================#
-# 2b. Perform the CDL-GCAM category conversion                                #
-#=============================================================================#
-Parallel(n_jobs=6, verbose=10, backend='threading')(delayed(CDL2GCAM)(CDL_Data[i],CDL_cat,GCAM_Data[i],GCAM_cat) \
-         for i in np.arange(len(CDL_Data))) 
+    #=============================================================================#
+    # 2b. Perform the CDL-GCAM category conversion                                #
+    #=============================================================================#
+    Parallel(n_jobs=6, verbose=10, backend='threading')(delayed(CDL2GCAM)(CDL_Data[i],CDL_cat,GCAM_Data[i],GCAM_cat) \
+             for i in np.arange(len(CDL_Data))) 
 
-#=============================================================================#
-# 2c. Save recategorized GCAM grids to files                                  #
-#=============================================================================#
-Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(saveGCAMGrid)(GCAM_Data[i]) \
-         for i in np.arange(len(CDL_Data))) 
-#=============================================================================#
-# 3. Create Arrays of Results - consider deleting
-#=============================================================================#
-f=len(files)
-CDL_stats  = np.zeros((132,f))
-GCAM_stats = np.zeros((28, f))
+    #=============================================================================#
+    # 2c. Save recategorized GCAM grids to files                                  #
+    #=============================================================================#
+    Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(saveGCAMGrid)(GCAM_Data[i]) \
+             for i in np.arange(len(CDL_Data))) 
+
+    #=============================================================================#
+    # 3. Create Arrays of Results - consider deleting
+    #=============================================================================#
+    f=len(files)
+    CDL_stats  = np.zeros((132,f))
+    GCAM_stats = np.zeros((28, f))
     
-for i in np.arange(f):
-    CDL_stats[:,i]= CDL_Data[i].cdl_stats
-    GCAM_stats[:,i]= GCAM_Data[i].gcam_stats
-
-np.savetxt("cdl_res.csv", CDL_stats, delimiter=",")
-np.savetxt("gcam_res.csv", GCAM_stats, delimiter=",")
-
-#=============================================================================#
-# 4. Calculate area weighted GCM Yields and Prices from CDL data -consider deleting
-#=============================================================================#
-base_area= CDL_stats[:,0]
-base_price = np.zeros((28))
-base_yield = np.zeros((28))
-
-for i in np.arange(28):
-    price=CDL2GCAM_key['Price'][GCAM_cat == i+1]
-    price.astype(float)
-    tmp=base_area[GCAM_cat == i+1] 
-    area=sum(tmp[pd.notnull(price)])
-    perc = np.divide(tmp, area)
-    yieldV=CDL2GCAM_key['Yield'][GCAM_cat == i+1]
-    
-    base_price[i]=np.average(np.multiply(perc[pd.notnull(price)], price[pd.notnull(price)]))
-    base_yield[i]=np.average(np.multiply(perc[pd.notnull(price)], yieldV[pd.notnull(price)]))
-
-np.savetxt("base_price.csv", base_price, delimiter=",")
-np.savetxt("base_yield.csv",  base_yield, delimiter=",")
+    for i in np.arange(f):
+        CDL_stats[:,i]= CDL_Data[i].cdl_stats
+        GCAM_stats[:,i]= GCAM_Data[i].gcam_stats
+    np.savetxt(WritePath+"cdl_initial.csv", CDL_stats, delimiter=",")
+    np.savetxt(WritePath+"gcam_initial.csv", GCAM_stats, delimiter=",")
