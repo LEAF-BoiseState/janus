@@ -23,8 +23,9 @@ def InitializeDomain(Ny,Nx):
     return (dFASM)
 
 def PlaceAgents(Ny,Nx, lc, dist2city, key_file, cat_option):
-    "Assign agents on the landscape"
+    #assert that cat_option has to be a header in the csv doc
     AgentArray = np.empty((Ny,Nx),dtype='U10')
+    
     if cat_option =='SRB':
         agent_Cat=key_file['SRB_cat'][0:28]
         code=key_file['SRB_GCAM_id_list'][0:28]
@@ -37,18 +38,16 @@ def PlaceAgents(Ny,Nx, lc, dist2city, key_file, cat_option):
     water=np.array(code[agent_Cat == 'water']).astype(int)
     empty=np.array(code[agent_Cat == 'nat']).astype(int)
     
-    #still not working
-    lcc=pd.DataFrame(lc[0])
-    lcc.loc[lcc.isin(ag)]
-    
-    AgentArray[lc[0] == any(ag)] = 'aFarmer'
-    
-    
-    AgentArray[np.logical_or(lc[0] == 28, lc[0] == 23)] ='water' 
-    AgentArray[dist2city == 0] = 'aUrban'
-    AgentArray[np.logical_or(lc[0] == 24, lc[0] == 21)] = 'empty' #RockIceDesert, Shrubland
+    #this works, would be better without the for loops
+    for i in ag:
+        AgentArray[lc[0] == i] = 'aFarmer'
+    for i in water:
+        AgentArray[lc[0] == i] = 'water'
+    for i in urb:
+        AgentArray[lc[0] == i] = 'aUrban'
+    for i in empty:
+        AgentArray[lc[0] == i] = 'empty'
   
-
     return (AgentArray)
 #---------------------------------------
 # place agent structures onto landscape and define attributes -> this is SLOW
