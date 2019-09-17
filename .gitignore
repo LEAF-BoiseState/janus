@@ -2,6 +2,7 @@
 *.asc
 *.tiff
 .DS_Store
+/Data/*
 /GCAM_SRP/*.*
 /GCAM_SRP/**/*.*
 __pycache__/*
