@@ -1,8 +1,0 @@
-"","state_alpha","agg_level_desc","year","class_desc","unit_desc","value"
-"1","ID","STATE","2007","AGE 25 TO 34","OPERATORS",2745
-"2","ID","STATE","2007","AGE 35 TO 44","OPERATORS",5574
-"3","ID","STATE","2007","AGE 45 TO 54","OPERATORS",11270
-"4","ID","STATE","2007","AGE 55 TO 64","OPERATORS",10440
-"5","ID","STATE","2007","AGE 65 TO 74","OPERATORS",6091
-"6","ID","STATE","2007","AGE GE 75","OPERATORS",2821
-"7","ID","STATE","2007","AGE LT 25","OPERATORS",589
