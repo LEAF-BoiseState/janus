@@ -88,7 +88,7 @@ AgentData = {
         }
 
 #we need to be able to associate alpha/beta parameters with each agent. 
-AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city) 
+AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city, 'SRB') 
 domain = init.InitializeAgents(AgentArray, AgentData, domain, dist2city, Ny, Nx) 
 
 #---------------------------------------

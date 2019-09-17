@@ -9,6 +9,7 @@ import numpy as np
 import Classes.aFarmer as farmer
 import Classes.dCellClass as cell
 import Classes.aUrban as urban
+import pandas as pd 
 
 def InitializeDomain(Ny,Nx):
     "Initialize domain"
@@ -21,15 +22,32 @@ def InitializeDomain(Ny,Nx):
         #whats a unit test for this??"
     return (dFASM)
 
-def PlaceAgents(Ny,Nx, lc, dist2city):
+def PlaceAgents(Ny,Nx, lc, dist2city, key_file, cat_option):
     "Assign agents on the landscape"
     AgentArray = np.empty((Ny,Nx),dtype='U10')
+    if cat_option =='SRB':
+        agent_Cat=key_file['SRB_cat'][0:28]
+        code=key_file['SRB_GCAM_id_list'][0:28]
+    elif cat_option =='GCAM':
+        agent_Cat=key_file['GCAM_cat'][0:24]
+        code=key_file['GCAM_id_list'][0:24]
     
-    AgentArray[np.logical_and(lc[0] > 0, lc[0] <28)] = 'aFarmer'
+    ag=np.array(code[agent_Cat == 'ag']).astype(int)
+    urb=np.array(code[agent_Cat == 'urb']).astype(int)
+    water=np.array(code[agent_Cat == 'water']).astype(int)
+    empty=np.array(code[agent_Cat == 'nat']).astype(int)
+    
+    #still not working
+    lcc=pd.DataFrame(lc[0])
+    lcc.loc[lcc.isin(ag)]
+    
+    AgentArray[lc[0] == any(ag)] = 'aFarmer'
+    
+    
     AgentArray[np.logical_or(lc[0] == 28, lc[0] == 23)] ='water' 
     AgentArray[dist2city == 0] = 'aUrban'
     AgentArray[np.logical_or(lc[0] == 24, lc[0] == 21)] = 'empty' #RockIceDesert, Shrubland
-    AgentArray[np.logical_or(lc[0] == 19, lc[0] == 15)] = 'empty' #forest, pasture
+  
 
     return (AgentArray)
 #---------------------------------------

@@ -35,7 +35,7 @@ def getExtent(counties_shp, countyList, scale, DataPath):
     extent=counties_shp['geometry'].loc[countyList].unary_union #this is the row index, not the "COUNTY_ALL" index
     extent_poly=SRB_poly[SRB_poly.geometry.intersects(extent)]
     
-    extent.to_file(DataPath+'extent_'+str(int(scale))+'.shp')
+    extent_poly.to_file(DataPath+'extent_'+str(int(scale))+'.shp')
     return(extent_poly)
     
 #----------------------------------------------------------------------------

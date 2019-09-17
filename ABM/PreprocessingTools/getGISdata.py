@@ -8,19 +8,21 @@ Created on Mon Apr  8 21:55:00 2019
 Pre-process GIS data based on counties, base year, and resolution
 """
  
-import geofxns as gf
-import landcoverPreProcessingfxns as lc
+import PreprocessingTools.geofxns as gf
+import PreprocessingTools.landcoverPreProcessingfxns as lc
 import geopandas as gp
-import csv
-#set paths
-DataPath='../Data/'
-GCAMpath='.../Data/GCAM/'
+
+
+userPath='/Users/kek25/Documents/GitRepos/'
+DataPath= userPath+'IM3-BoiseState/Data/'
+GCAMpath=DataPath+'GCAM/'
 
 
 counties_shp= gp.read_file(DataPath+'Counties/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
 
-key_file=csv.reader(DataPath+'CDL2GCAM_SRP_categories.csv', delimiter=',')
+key_file= gp.read_file(DataPath+'CDL2GCAM_SRP_categories.csv', sep=',')
+
 
 #------------------------------------------------------------------------
 # Select, crop and save npy file of specific initialization year and scale
