@@ -5,4 +5,4 @@
 .DS_Store
 /GCAM_SRP/*.*
 /GCAM_SRP/**/*.*
-__pycache__/*
+*__pycache__/*
