@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from aUrban import aUrban
-from aFarmer import aFarmer
+from Classes.aUrban import aUrban
+from Classes.aFarmer import aFarmer
 
 class AgentFactory(object):
 

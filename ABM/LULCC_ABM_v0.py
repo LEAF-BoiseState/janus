@@ -6,14 +6,17 @@ Agent Based Model of Land Use and Land Cover Change
 #---------------------------------------
 #  Load Packages
 #---------------------------------------
-import geopandas as gp
 import numpy as np
+import os
+
+userPath='/Users/kek25/Documents/GitRepos/'
+os.chdir(userPath+'IM3-BoiseState/ABM')
+
 import PreprocessingTools.geofxns as gf
 import CropFuncs.CropDecider as cd
 import InitializeAgentsDomain as init
 import PostProcessing.FigureFuncs as ppf
 
-userPath='~/Documents/GitRepos/'
 DataPath= userPath+'IM3-BoiseState/Data/'
 
 #---------------------------------------
@@ -40,9 +43,6 @@ countyList=['Ada', 'Canyon']
 year=2010
 scale=3000 #scale of grid in meters
 
-#create the grid based on extent of counties and scale
-extent=gf.getGISextent(countyList, scale)
-
 #select initial gcam data from inital year 
 lc=gf.getGCAM(countyList, year, scale)
 
@@ -51,7 +51,7 @@ dist2city=gf.minDistCity(lc)
 
 Ny, Nx = lc[0].shape
 
-dFASM = init.InitializeDomain(Ny, Nx) #rename dFASm
+domain = init.InitializeDomain(Ny, Nx)
 #---------------------------------------
 #  Initialize Crops
 #---------------------------------------
@@ -86,9 +86,10 @@ AgentData = {
         "alpha": a_ra,
         "beta": b_ra
         }
+
 #we need to be able to associate alpha/beta parameters with each agent. 
 AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city) 
-#dFASM = init.InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx) #this will be done in the agent factory - which is great cause it aint working right now
+domain = init.InitializeAgents(AgentArray, AgentData, domain, dist2city, Ny, Nx) 
 
 #---------------------------------------
 # 2. loop through decision process 
@@ -127,13 +128,13 @@ ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)
      
   #Update AgentArray 
 #where in the model does the code denote that the agent goes from farmer to urban or visa versa
-     #dFASM[i][j].SwapAgent('aFarmer','aUrban',fromIndex,AgentArray) "switch for now"
+     #domain[i][j].SwapAgent('aFarmer','aUrban',fromIndex,AgentArray) "switch for now"
      
 for i in np.arange(Ny):
  	for j in np.arange(Nx):
          if(AgentArray[i][j]=='aFarmer'):            
-             dFASM[i][j].FarmAgents[0].UpdateAge()
-             dFASM[i][j].FarmAgents[0].UpdateDist2city(dist2city[i][j])
+             domain[i][j].FarmAgents[0].UpdateAge()
+             domain[i][j].FarmAgents[0].UpdateDist2city(dist2city[i][j])
       
 #---------------------------------------
 # 4. Save Output

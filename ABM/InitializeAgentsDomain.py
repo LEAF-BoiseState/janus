@@ -6,7 +6,6 @@ Created on Mon Aug 12 11:15:12 2019
 @author: kek25
 """
 import numpy as np
-import Classes.AgentFactory 
 import Classes.aFarmer as farmer
 import Classes.dCellClass as cell
 import Classes.aUrban as urban
@@ -43,7 +42,7 @@ def InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx):
     for i in np.arange(Ny):
         for j in np.arange(Nx):
             if(AgentArray[i][j]=='aFarmer'):
-                 NewAgent = farmer.aFarmer(AgentData["AgeInit"], AgentData["LandStatus"], dist2city[i][j])
+                 NewAgent = farmer.aFarmer(AgentData["AgeInit"], AgentData["LandStatus"], dist2city[i][j]) #this is passing actual agent data
                  dFASM[i][j].AddAgent(AgentArray[i][j], NewAgent)
             if(AgentArray[i][j] =='aUrban'):
                 NewAgent = urban.aUrban(AgentData["density"])
