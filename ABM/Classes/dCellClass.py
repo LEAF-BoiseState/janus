@@ -9,7 +9,8 @@ class dCellClass:
         self.perSand    = kwargs.get('perSand')
         self.perSilt    = kwargs.get('perSilt')
         self.perClay    = kwargs.get('perClay')
-        
+        self.nUrbAgent  = 0
+        self.nFarmAgent = 0
 
 
     #purpose: adds a new agent to a list
@@ -32,7 +33,7 @@ class dCellClass:
             # Check to see if there are currently no agents of this type in the cell. If true, 
 			# initialize an empty list to store at least one
             if (self.nFarmAgent==0):
-                self.FarmAgents = []
+                self.FarmerAgents = []
             
             self.nFarmAgent += 1
             self.FarmerAgents.append(agentStruct)
