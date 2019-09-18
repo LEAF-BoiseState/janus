@@ -52,11 +52,22 @@ def PlaceAgents(Ny,Nx, lc, key_file, cat_option):
 # place agent structures onto landscape and define attributes -> this is Not working
 #---------------------------------------
 #Update so each of these inital values randomly selected from NASS distributions
-def InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx):
+def InitializeAgents(AgentArray, dFASM, dist2city, tenure, ages, switch, Ny, Nx):
 
     for i in np.arange(Ny):
         for j in np.arange(Nx):
             #this is where the agent data pulls from distributions
+            #Update so each of these inital values are randomly selected from NASS distributions
+            k=np.random()
+            #randomly select 0/1 to determing if farmer is switching averse or tolerant from "switch" param set
+            AgentData = {
+                    "AgeInit" : int(45.0),
+                    "LandStatus" : 0,
+                    "density" : 2,
+                    "alpha": switch[k][1],
+                    "beta": switch[k][1],
+                    "nFields": 1
+            }
             
             if(AgentArray[i][j]=='aFarmer'):
                  NewAgent = farmer.aFarmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"], Dist2city=dist2city[i][j], nFields=AgentData['nFields'], alpha = AgentData['alpha'], beta = AgentData['beta']) #this is passing actual agent data

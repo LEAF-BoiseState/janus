@@ -29,14 +29,10 @@ key_file= gp.read_file(DataPath+'CDL2GCAM_SRP_categories.csv', sep=',')
 # 0. Declare Variables
 #---------------------------------------
 Nt = 50
-#set agent attributes: switching parameters 
-#risk averse
-a_ra = 4.5
-b_ra = 1.0
+#set agent attributes: list of switching parameters (alpha, beta)
+switch = [[4.5, 1.0], #switching averse
+          [0.5, 3.0]] #switching tolerant
 
-#ea? switching tolerant?
-a_ea = 0.5
-b_ea = 3.0
 
 #Max and min .... total Profit, percent profit?
 fmin = 1.0
@@ -90,25 +86,14 @@ Profits = Profits[:, 0:Nc]
 #---------------------------------------
 
 variables=["TENURE", "AREA OPERATED"]
-counties=['ADA', 'CANYON']
-YR=2007 #2007, 2012 are available 
+NASS_yr=2007 #2007, 2012 are available 
 
-tenure=getNASS.TenureArea(counties, 2007, variables)
-ages=getNASS.Ages(2007)
-
-#Update so each of these inital values are randomly selected from NASS distributions
-AgentData = {
-        "AgeInit" : int(45.0),
-        "LandStatus" : 0,
-        "density" : 2,
-        "alpha": a_ra,
-        "beta": b_ra,
-        "nFields": 1
-        }
+tenure=getNASS.TenureArea(countyList, NASS_yr, variables) #tenure from individual counties could also be used 
+ages=getNASS.Ages(NASS_yr)
 
 AgentArray = init.PlaceAgents(Ny, Nx, lc, key_file, 'SRB') 
 #this is where it breaks
-domain = init.InitializeAgents(AgentArray, AgentData, domain, dist2city, Ny, Nx) 
+domain = init.InitializeAgents(AgentArray, domain, dist2city, tenure, ages, switch, Ny, Nx) 
 
 #---------------------------------------
 # 2. loop through decision process 
