@@ -76,7 +76,7 @@ Profits = cd.GeneratePrices(Nt)
 Profits = Profits[:, 0:Nc]
 #Profits = Profits[:, 2:6] The choice of crop profits will completely drive the outcome ... how do we use that?
 #---------------------------------------
-#  Initialize Agents Stub (e.g. not getting used)
+#  Initialize Agents Stub
 #---------------------------------------
 #Update so each of these inital values are randomly selected from NASS distributions
 AgentData = {
@@ -87,8 +87,8 @@ AgentData = {
         "beta": b_ra
         }
 
-#we need to be able to associate alpha/beta parameters with each agent. 
 AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city, 'SRB') 
+#this is where it breaks
 domain = init.InitializeAgents(AgentArray, AgentData, domain, dist2city, Ny, Nx) 
 
 #---------------------------------------
