@@ -58,7 +58,7 @@ def InitializeAgents(AgentArray, AgentData, dFASM, dist2city, Ny, Nx):
     for i in np.arange(Ny):
         for j in np.arange(Nx):
             if(AgentArray[i][j]=='aFarmer'):
-                 NewAgent = farmer.aFarmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"], Dist2city=dist2city[i][j], nFields=1, AreaFields=3000) #this is passing actual agent data
+                 NewAgent = farmer.aFarmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"], Dist2city=dist2city[i][j], nFields=AgentData['nFields'], alpha = AgentData['alpha'], beta = AgentData['beta']) #this is passing actual agent data
                  dFASM[i][j].AddAgent(AgentArray[i][j], NewAgent)
             if(AgentArray[i][j] =='aUrban'):
                 NewAgent = urban.aUrban(AgentData["density"])

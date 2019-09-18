@@ -11,14 +11,17 @@ class dCellClass:
 		self.perSand    = kwargs.get('perSand')
 		self.perSilt    = kwargs.get('perSilt')
 		self.perClay    = kwargs.get('perClay')
-		self.agents = []
+
+        self.FarmerAgents = self.FarmerAgents
+        self.UrbanAgents = self.UrbanAgents
+
 
     #purpose: adds a new agent to a list
     #pre: agentStruct has been instantiated and is a valid agent type
     #post: agent has been added to an array
 	def AddAgent(self,agentStruct):
 		agentType = type(agentStruct).__name__
-		column = AgentFactory.getColumnIndex(agentType)
+		#column = AgentFactory.getColumnIndex(agentType)
 
 		if (agentType == "aUrban"):
 			self.UrbanAgents.append(agentStruct)
