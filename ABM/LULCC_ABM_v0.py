@@ -18,6 +18,12 @@ import InitializeAgentsDomain as init
 import PostProcessing.FigureFuncs as ppf
 
 DataPath= userPath+'IM3-BoiseState/Data/'
+GCAMpath=DataPath+'GCAM/'
+
+import geopandas as gp
+counties_shp= gp.read_file(DataPath+'Counties/Counties_SRB_clip_SingleID.shp')
+counties_shp=counties_shp.set_index('county')
+key_file= gp.read_file(DataPath+'CDL2GCAM_SRP_categories.csv', sep=',')
 
 #---------------------------------------
 # 0. Declare Variables
@@ -44,7 +50,7 @@ year=2010
 scale=3000 #scale of grid in meters
 
 #select initial gcam data from inital year 
-lc=gf.getGCAM(countyList, year, scale)
+lc=gf.getGCAM(counties_shp, countyList, year, scale, GCAMpath)
 
 #initalize minimum distance to city
 dist2city=gf.minDistCity(lc)
@@ -84,10 +90,11 @@ AgentData = {
         "LandStatus" : 0,
         "density" : 2,
         "alpha": a_ra,
-        "beta": b_ra
+        "beta": b_ra,
+        "nFields": 1
         }
 
-AgentArray = init.PlaceAgents(Ny, Nx, lc, dist2city, 'SRB') 
+AgentArray = init.PlaceAgents(Ny, Nx, lc, key_file, 'SRB') 
 #this is where it breaks
 domain = init.InitializeAgents(AgentArray, AgentData, domain, dist2city, Ny, Nx) 
 

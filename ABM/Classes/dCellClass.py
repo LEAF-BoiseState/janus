@@ -15,7 +15,7 @@ class dCellClass:
     #purpose: adds a new agent to a list
     #pre: agentStruct has been instantiated with init.Agents and is a valid agent type
     #post: agent has been added to an array
-    def AddAgent(self,agentStruct):
+    def AddAgent(self, agentStruct):
         agentType = type(agentStruct).__name__
 		#column = AgentFactory.getColumnIndex(agentType)
         
@@ -26,7 +26,7 @@ class dCellClass:
             		self.UrbanAgents = []
 
             self.nUrbAgent += 1
-            self.UrbanAgents.append(agentStruct) #i think this is whats not working
+            self.UrbanAgents.append(agentStruct)
 		
         if(agentType=="aFarmer"):
             # Check to see if there are currently no agents of this type in the cell. If true, 
