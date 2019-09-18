@@ -1,5 +1,3 @@
-from Classes.AgentFactory import AgentFactory
-
 class dCellClass:
 	def __init__(self,**kwargs):
 		self.Area       = kwargs.get('Area')
@@ -11,9 +9,7 @@ class dCellClass:
 		self.perSand    = kwargs.get('perSand')
 		self.perSilt    = kwargs.get('perSilt')
 		self.perClay    = kwargs.get('perClay')
-
-        self.FarmerAgents = self.FarmerAgents
-        self.UrbanAgents = self.UrbanAgents
+        
 
 
     #purpose: adds a new agent to a list
@@ -24,7 +20,7 @@ class dCellClass:
 		#column = AgentFactory.getColumnIndex(agentType)
 
 		if (agentType == "aUrban"):
-			self.UrbanAgents.append(agentStruct)
+			self.UrbanAgents.append(agentStruct) #i think this is whats not working
 		else:
 			self.FarmerAgents.append(agentStruct)
 
