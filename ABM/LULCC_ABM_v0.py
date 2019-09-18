@@ -30,9 +30,13 @@ key_file= gp.read_file(DataPath+'CDL2GCAM_SRP_categories.csv', sep=',')
 #---------------------------------------
 Nt = 50
 #set agent attributes: switching parameters 
-"These should be pulled from a distribution"
+#risk averse
 a_ra = 4.5
 b_ra = 1.0
+
+#ea? switching tolerant?
+a_ea = 0.5
+b_ea = 3.0
 
 #Max and min .... total Profit, percent profit?
 fmin = 1.0
