@@ -21,7 +21,7 @@ def cleanup(value):
         return 0
 
 #Only 2007 and 2012 for the state
-def getAges(YR,q):
+def Ages(YR,q):
     #prepare lists for data 
     age_cat=["AGE LT 25", "AGE 25 TO 34", "AGE 35 TO 44", "AGE 45 TO 54", "AGE 55 TO 64", "AGE 65 TO 74", "AGE GE 75"]
     
@@ -39,7 +39,7 @@ def getAges(YR,q):
         ages.loc[i,'operators']=int(vals['Value'])
     return(ages)
     
-def getTenureArea(countyList, YR, variables): #countly level aggregation, can change to report each county ...
+def TenureArea(countyList, YR, variables): #countly level aggregation, can change to report each county ...
     
     api = nass.NassApi("B5240598-2A7D-38EE-BF8D-816A27BEF504")
     q = api.query()

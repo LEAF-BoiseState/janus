@@ -16,7 +16,7 @@ import PreprocessingTools.geofxns as gf
 import CropFuncs.CropDecider as cd
 import InitializeAgentsDomain as init
 import PostProcessing.FigureFuncs as ppf
-
+import PreprocessingTools.getNASSAgentData as getNASS
 DataPath= userPath+'IM3-BoiseState/Data/'
 GCAMpath=DataPath+'GCAM/'
 
@@ -86,8 +86,16 @@ Profits = cd.GeneratePrices(Nt)
 Profits = Profits[:, 0:Nc]
 #Profits = Profits[:, 2:6] The choice of crop profits will completely drive the outcome ... how do we use that?
 #---------------------------------------
-#  Initialize Agents Stub
+#  Initialize Agents
 #---------------------------------------
+
+variables=["TENURE", "AREA OPERATED"]
+counties=['ADA', 'CANYON']
+YR=2007 #2007, 2012 are available 
+
+tenure=getNASS.TenureArea(counties, 2007, variables)
+ages=getNASS.Ages(2007)
+
 #Update so each of these inital values are randomly selected from NASS distributions
 AgentData = {
         "AgeInit" : int(45.0),
