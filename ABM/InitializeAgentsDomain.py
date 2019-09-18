@@ -52,28 +52,37 @@ def PlaceAgents(Ny,Nx, lc, key_file, cat_option):
 # place agent structures onto landscape and define attributes -> this is Not working
 #---------------------------------------
 #Update so each of these inital values randomly selected from NASS distributions
-def InitializeAgents(AgentArray, dFASM, dist2city, tenure, ages, switch, Ny, Nx):
+def InitializeAgents(AgentArray, dFASM, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc):
 
     for i in np.arange(Ny):
         for j in np.arange(Nx):
             #this is where the agent data pulls from distributions
             #Update so each of these inital values are randomly selected from NASS distributions
-            k=np.random()
-            #randomly select 0/1 to determing if farmer is switching averse or tolerant from "switch" param set
-            AgentData = {
-                    "AgeInit" : int(45.0),
-                    "LandStatus" : 0,
-                    "density" : 2,
-                    "alpha": switch[k][1],
-                    "beta": switch[k][1],
-                    "nFields": 1
-            }
+            k=np.random()#placeholder for randomly select 0/1 to determing if farmer is switching averse or tolerant from "switch" param set
+            tenStat = np.random(TenureCDF) #placeholder
+            age = np.random(AgeCDF)#placeholder
+         
             
             if(AgentArray[i][j]=='aFarmer'):
-                 NewAgent = farmer.aFarmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"], Dist2city=dist2city[i][j], nFields=AgentData['nFields'], alpha = AgentData['alpha'], beta = AgentData['beta']) #this is passing actual agent data
+                 AgentData = {
+                    "AgeInit" : int(age),
+                    "LandStatus" : tenStat,
+                    "Alpha": switch[k][1],
+                    "Beta": switch[k][1],
+                    "nFields": 1
+                }
+                
+                 NewAgent = farmer.aFarmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"], Dist2city=dist2city[i][j], nFields=AgentData['nFields'], alpha = AgentData['Alpha'], beta = AgentData['Beta']) #this is passing actual agent data
                  dFASM[i][j].AddAgent(NewAgent)
+                 
             if(AgentArray[i][j] =='aUrban'):
-                NewAgent = urban.aUrban(density=AgentData["density"])
+                d = lc[0][i][j] #pull the landcover category from the landcover, set this so it's 0 =low, 1=med, 2=high density
+        
+                AgentData = {
+                    "Density" : d,
+                }
+                NewAgent = urban.aUrban(density=AgentData["Density"])
                 dFASM[i][j].AddAgent(NewAgent)
+    
     return(dFASM)
              

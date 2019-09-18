@@ -63,3 +63,23 @@ def TenureArea(countyList, YR, variables): #countly level aggregation, can chang
         farms.loc[i,'operations'] =sum(sub2['Value']) #operations
 
     return(farms)
+ 
+import matplotlib.pyplot as plt
+
+def makeCDF(varArray):
+    if varArray == 'ages':
+        N = sum(varArray['operators'])
+        Z = np.array(varArray['operators'])
+    
+    # method 1
+    H,X1 = np.histogram( Z, bins = 6)
+    dx = X1[1] - X1[0]
+    F1 = np.cumsum(H)*dx
+    #method 2
+    X2 = np.sort(Z)
+    F2 = np.array(range(N))/float(N)
+    
+
+    plt.plot(X1[1:], F1)
+    plt.plot(X2, F2)
+    plt.show()

@@ -29,9 +29,9 @@ key_file= gp.read_file(DataPath+'CDL2GCAM_SRP_categories.csv', sep=',')
 # 0. Declare Variables
 #---------------------------------------
 Nt = 50
-#set agent attributes: list of switching parameters (alpha, beta)
-switch = [[4.5, 1.0], #switching averse
-          [0.5, 3.0]] #switching tolerant
+#set agent switching parameters (alpha, beta)
+switch = np.array([[4.5, 1.0], #switching averse
+                   [0.5, 3.0]]) #switching tolerant
 
 
 #Max and min .... total Profit, percent profit?
@@ -88,12 +88,14 @@ Profits = Profits[:, 0:Nc]
 variables=["TENURE", "AREA OPERATED"]
 NASS_yr=2007 #2007, 2012 are available 
 
-tenure=getNASS.TenureArea(countyList, NASS_yr, variables) #tenure from individual counties could also be used 
+tenure=getNASS.TenureArea(countyList, NASS_yr, variables) #tenure from individual counties can also be used 
 ages=getNASS.Ages(NASS_yr)
 
+AgeCDF=getNASS.makeCDF(ages)
+
 AgentArray = init.PlaceAgents(Ny, Nx, lc, key_file, 'SRB') 
-#this is where it breaks
-domain = init.InitializeAgents(AgentArray, domain, dist2city, tenure, ages, switch, Ny, Nx) 
+
+domain = init.InitializeAgents(AgentArray, domain, dist2city, tenure, ages, switch, Ny, Nx, lc) 
 
 #---------------------------------------
 # 2. loop through decision process 
@@ -104,18 +106,19 @@ for i in np.arange(1,Nt):
     
     for j in np.arange(Ny):
         for k in np.arange(Nx):
+            if domain[j,k].FarmerAgents: #will this work to test if exists?
             #Assess Profit
-            Profit_last, Profit_pred = cd.AssessProfit(CropID_all[i-1,j,k], Profits[i-1,:], Profits[i,:], Nc, CropIDs)
-            #Decide on Crop
-            "this needs to call alpha/beta from the agent in that cell"
-            CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_last, CropIDs, \
-                                                      Profit_pred, rule=True)
-            CropID_all, Profit_ant, Profit_act = cd.MakeChoice(CropID_all, Profit_last, Profit_pred, \
-                                                               CropChoice, ProfitChoice, Profit_act, i,j,k) #"move these indicies into the input variables"
-            CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_last, CropIDs, \
-                                                      Profit_pred, rule=True)
-            CropID_all[i,j,k], Profit_ant[i,j,k], Profit_act[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, Profit_ant, \
-                                                               CropChoice, ProfitChoice, seed = False) #is there a way to set this up so you can pass a NULL value or no value when seed=False?
+                Profit_last, Profit_pred = cd.AssessProfit(CropID_all[i-1,j,k], Profits[i-1,:], Profits[i,:], Nc, CropIDs)
+                #Decide on Crop
+                "this needs to call alpha/beta from the agent in that cell"
+                CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_last, CropIDs, \
+                                                          Profit_pred, rule=True)
+                CropID_all, Profit_ant, Profit_act = cd.MakeChoice(CropID_all, Profit_last, Profit_pred, \
+                                                                   CropChoice, ProfitChoice, Profit_act, i,j,k) #"move these indicies into the input variables"
+                CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_last, CropIDs, \
+                                                          Profit_pred, rule=True)
+                CropID_all[i,j,k], Profit_ant[i,j,k], Profit_act[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, Profit_ant, \
+                                                                   CropChoice, ProfitChoice, seed = False) #is there a way to set this up so you can pass a NULL value or no value when seed=False?
  
 ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)
 #ppf.CreateAnimation(CropID_all, Nt)
