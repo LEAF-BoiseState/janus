@@ -63,10 +63,3 @@ def getTenureArea(countyList, YR, variables): #countly level aggregation, can ch
         farms.loc[i,'operations'] =sum(sub2['Value']) #operations
 
     return(farms)
-
-
-import time 
-start= time.time()  
-    
-end = time.time()
-print(end-start)
