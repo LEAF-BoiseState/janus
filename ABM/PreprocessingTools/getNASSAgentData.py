@@ -63,18 +63,41 @@ def TenureArea(countyList, YR, variables): #countly level aggregation, can chang
 
     return(farms)
  
-def makeCDF(varArray):
-    if varArray == 'ages':
-        varArray['low'] =[18, 25, 35, 45, 55, 65, 75]
-        varArray['high'] =[25, 35, 45, 55, 65, 75, 86]
-        N = 50
+def makeAgeCDF(varArray):
+    
+    serFull=np.zeros(0)
+
+    varArray['low'] =[18, 25, 35, 45, 55, 65, 75]
+    varArray['high'] =[25, 35, 45, 55, 65, 75, 86]
         #create a full series of ages based on number in each category
-        serFull=np.zeros(0)
-        for i in np.arange(N):
-            ser=np.random.randint(varArray.low[i], high =varArray.high[i], size = varArray.operators[i])
-            serFull=np.append(serFull, ser)
+    for i in np.arange(7):
+        ser=np.random.randint(varArray.low[i], high =varArray.high[i], size = varArray.operators[i])
+        serFull=np.append(serFull, ser)
         
-        H,X1 = np.histogram(serFull, bins = 40, normed=True)
-        dx = X1[1] - X1[0]
-        F1 = np.cumsum(H)*dx
-        plt.plot(X1[1:], F1)
+    H,X1 = np.histogram(serFull, bins = 68, normed=True)
+    X2=np.floor(X1)
+    dx = X2[2] - X2[1]
+    F1 = np.cumsum(H)*dx
+    perc=np.column_stack((X2[1:],F1))
+    perc
+    
+    return(perc)
+ 
+def makeTenureCDF(varArray):
+    serFull=np.zeros(0)
+    
+
+    ser0= np.zeros(varArray['operations'][0])
+    ser1= np.ones(varArray['operations'][1])
+    ser2= np.ones(varArray['operations'][2]) +1
+    serFull=np.append(serFull, ser0)
+    serFull=np.append(serFull, ser1)
+    serFull=np.append(serFull, ser2)
+        
+    H,X1 = np.histogram(serFull, bins = 3, normed=True)
+    dx = X1[2] - X1[1]
+    F1 = np.cumsum(H)*dx #I think this is the one to return
+    perc=np.column_stack(([0,1,2], F1))        
+    return(perc)
+    
+#def setAgentParams - should move the param selection here and use it in the initAgent function

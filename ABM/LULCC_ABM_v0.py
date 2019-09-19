@@ -32,8 +32,8 @@ Nt = 50
 #set agent switching parameters (alpha, beta)
 switch = np.array([[4.5, 1.0], #switching averse
                    [0.5, 3.0]]) #switching tolerant
-
-
+#proportion of each switching type, lower than p is averse, higher is tolerant
+p=0.5 
 #Max and min .... total Profit, percent profit?
 fmin = 1.0
 fmax = 1.5
@@ -91,11 +91,12 @@ NASS_yr=2007 #2007, 2012 are available
 tenure=getNASS.TenureArea(countyList, NASS_yr, variables) #tenure from individual counties can also be used 
 ages=getNASS.Ages(NASS_yr)
 
-AgeCDF=getNASS.makeCDF(ages)
+AgeCDF=getNASS.makeAgeCDF(ages)
+TenureCDF=getNASS.makeTenureCDF(tenure)
 
 AgentArray = init.PlaceAgents(Ny, Nx, lc, key_file, 'SRB') 
 
-domain = init.InitializeAgents(AgentArray, domain, dist2city, tenure, ages, switch, Ny, Nx, lc) 
+domain = init.InitializeAgents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p) 
 
 #---------------------------------------
 # 2. loop through decision process 

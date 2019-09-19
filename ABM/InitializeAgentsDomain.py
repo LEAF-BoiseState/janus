@@ -52,20 +52,34 @@ def PlaceAgents(Ny,Nx, lc, key_file, cat_option):
 # place agent structures onto landscape and define attributes -> this is Not working
 #---------------------------------------
 #Update so each of these inital values randomly selected from NASS distributions
-def InitializeAgents(AgentArray, dFASM, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc):
-
+def InitializeAgents(AgentArray, dFASM, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p):
+     #this is where the agent data pulls from distributions
+            #Update so each of these inital values are randomly selected from NASS distributions
+   
     for i in np.arange(Ny):
         for j in np.arange(Nx):
-            #this is where the agent data pulls from distributions
-            #Update so each of these inital values are randomly selected from NASS distributions
-            k=np.random()#placeholder for randomly select 0/1 to determing if farmer is switching averse or tolerant from "switch" param set
-            tenStat = np.random(TenureCDF) #placeholder
-            age = np.random(AgeCDF)#placeholder
-         
+           
+            ss=np.random.random_sample()#placeholder for randomly select 0/1 to determing if farmer is switching averse or tolerant from "switch" param set
+            ts = np.random.random_sample() 
+            ageS = np.random.random_sample()
+            print(ageS)
+            
+            if ss >= p:
+                k= 0
+            else: k =1
+            
+            if ageS < AgeCDF[0][1]:
+                ageI = 18
+            else: ageT=np.where(AgeCDF[:,[1]] <= ageS)
+            
+            ageI=max(ageT[0]) #max() arg is an empty sequence -- what causes this?
+            
+            tt=np.where(TenureCDF[:,[1]] >= ts)
+            tenStat=min(tt[0])
             
             if(AgentArray[i][j]=='aFarmer'):
                  AgentData = {
-                    "AgeInit" : int(age),
+                    "AgeInit" : ageI,
                     "LandStatus" : tenStat,
                     "Alpha": switch[k][1],
                     "Beta": switch[k][1],
@@ -76,10 +90,10 @@ def InitializeAgents(AgentArray, dFASM, dist2city, TenureCDF, AgeCDF, switch, Ny
                  dFASM[i][j].AddAgent(NewAgent)
                  
             if(AgentArray[i][j] =='aUrban'):
-                d = lc[0][i][j] #pull the landcover category from the landcover, set this so it's 0 =low, 1=med, 2=high density
+                #d = lc[0][i][j] #pull the landcover category from the landcover, set this so it's 0 =low, 1=med, 2=high density
         
                 AgentData = {
-                    "Density" : d,
+                    "Density" : 0,
                 }
                 NewAgent = urban.aUrban(density=AgentData["Density"])
                 dFASM[i][j].AddAgent(NewAgent)
