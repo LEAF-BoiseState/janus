@@ -63,27 +63,18 @@ def TenureArea(countyList, YR, variables): #countly level aggregation, can chang
 
     return(farms)
  
-import matplotlib.pyplot as plt
-
 def makeCDF(varArray):
     if varArray == 'ages':
-        #
-        N = 7
-        FarmerS = sum(varArray['operators'])
-        F2 = np.array(range(N))/float(N)
-        cuml = np.cumsum(varArray['operators']) #cumulative sum of each category
-        cumlFrac = cuml/FarmerS #fraction of the cumulative of each category
-        MedAge= [22,30,40,50,60,70,80]
-
-        plt.plot(MedAge, cumlFrac) ##THIS IS THE ONE!
+        varArray['low'] =[18, 25, 35, 45, 55, 65, 75]
+        varArray['high'] =[25, 35, 45, 55, 65, 75, 86]
+        N = 50
+        #create a full series of ages based on number in each category
+        serFull=np.zeros(0)
+        for i in np.arange(N):
+            ser=np.random.randint(varArray.low[i], high =varArray.high[i], size = varArray.operators[i])
+            serFull=np.append(serFull, ser)
         
-        Z = np.array(varArray['operators'])
-        zz=ages.hist( cumulative = True ) #just the plot ... where the data?
-    # method 1
-    H,X1 = np.histogram( Z, bins = 6)
-    dx = X1[1] - X1[0]
-    F1 = np.cumsum(H)*dx
-    #method 2
-    X2 = np.sort(Z)
-    plt.plot(F3, F2)
-    plt.show()
+        H,X1 = np.histogram(serFull, bins = 40, normed=True)
+        dx = X1[1] - X1[0]
+        F1 = np.cumsum(H)*dx
+        plt.plot(X1[1:], F1)
