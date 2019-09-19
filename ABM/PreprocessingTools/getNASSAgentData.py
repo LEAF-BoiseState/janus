@@ -24,7 +24,6 @@ def cleanup(value):
 def Ages(YR,q):
     #prepare lists for data 
     age_cat=["AGE LT 25", "AGE 25 TO 34", "AGE 35 TO 44", "AGE 45 TO 54", "AGE 55 TO 64", "AGE 65 TO 74", "AGE GE 75"]
-    
     api = nass.NassApi("B5240598-2A7D-38EE-BF8D-816A27BEF504")
     q = api.query()
     q.filter('commodity_desc', 'OPERATORS').filter('state_alpha', 'ID').filter('year', YR).filter('class_desc', age_cat)
@@ -68,18 +67,23 @@ import matplotlib.pyplot as plt
 
 def makeCDF(varArray):
     if varArray == 'ages':
-        N = sum(varArray['operators'])
+        #
+        N = 7
+        FarmerS = sum(varArray['operators'])
+        F2 = np.array(range(N))/float(N)
+        cuml = np.cumsum(varArray['operators']) #cumulative sum of each category
+        cumlFrac = cuml/FarmerS #fraction of the cumulative of each category
+        MedAge= [22,30,40,50,60,70,80]
+
+        plt.plot(MedAge, cumlFrac) ##THIS IS THE ONE!
+        
         Z = np.array(varArray['operators'])
-    
+        zz=ages.hist( cumulative = True ) #just the plot ... where the data?
     # method 1
     H,X1 = np.histogram( Z, bins = 6)
     dx = X1[1] - X1[0]
     F1 = np.cumsum(H)*dx
     #method 2
     X2 = np.sort(Z)
-    F2 = np.array(range(N))/float(N)
-    
-
-    plt.plot(X1[1:], F1)
-    plt.plot(X2, F2)
+    plt.plot(F3, F2)
     plt.show()
