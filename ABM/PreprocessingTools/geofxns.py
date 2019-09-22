@@ -56,7 +56,7 @@ def getGCAM(counties_shp, countyList, year, scale, GCAMpath): #returns a numpy a
                  "height": out_img.shape[1],
                  "width": out_img.shape[2],
                  "transform": out_transform,
-                 "crs": pycrs.parse.from_epsg_code(epsg_code).to_proj4()}
+                 "crs": pycrs.parse.from_epsg_code(epsg_code).to_proj4()} #this doesnt work w.o internet connection
                         )
     return(out_img) 
 
