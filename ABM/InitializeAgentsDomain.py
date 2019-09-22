@@ -51,15 +51,13 @@ def PlaceAgents(Ny,Nx, lc, key_file, cat_option):
 #---------------------------------------
 # place agent structures onto landscape and define attributes -> this is Not working
 #---------------------------------------
-#Update so each of these inital values randomly selected from NASS distributions
 def InitializeAgents(AgentArray, dFASM, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p):
-     #this is where the agent data pulls from distributions
-            #Update so each of these inital values are randomly selected from NASS distributions
+     #agent data pulled from distributions
    
     for i in np.arange(Ny):
         for j in np.arange(Nx):
            
-            ss=np.random.random_sample()#placeholder for randomly select 0/1 to determing if farmer is switching averse or tolerant from "switch" param set
+            ss=np.random.random_sample()
             ts = np.random.random_sample() 
             ageS = np.random.random_sample()
             print(ageS)
@@ -70,9 +68,9 @@ def InitializeAgents(AgentArray, dFASM, dist2city, TenureCDF, AgeCDF, switch, Ny
             
             if ageS < AgeCDF[0][1]:
                 ageI = 18
-            else: ageT=np.where(AgeCDF[:,[1]] <= ageS)
-            
-            ageI=max(ageT[0]) #max() arg is an empty sequence -- what causes this?
+            else: 
+                ageT=np.where(AgeCDF[:,[1]] <= ageS)
+                ageI=max(ageT[0])
             
             tt=np.where(TenureCDF[:,[1]] >= ts)
             tenStat=min(tt[0])
@@ -90,10 +88,18 @@ def InitializeAgents(AgentArray, dFASM, dist2city, TenureCDF, AgeCDF, switch, Ny
                  dFASM[i][j].AddAgent(NewAgent)
                  
             if(AgentArray[i][j] =='aUrban'):
-                #d = lc[0][i][j] #pull the landcover category from the landcover, set this so it's 0 =low, 1=med, 2=high density
-        
+                lcD = lc[0][i][j] #pull the landcover category from the landcover, set this so it's 0 =open space, 1=low, 2=med, 3=high density
+                if lcD == 17:
+                    d=3
+                elif lcD == 25:
+                    d=2
+                elif lcD == 26:
+                    d=1
+                elif lcD == 27:
+                    d=0
+                
                 AgentData = {
-                    "Density" : 0,
+                    "Density" : d,
                 }
                 NewAgent = urban.aUrban(density=AgentData["Density"])
                 dFASM[i][j].AddAgent(NewAgent)
