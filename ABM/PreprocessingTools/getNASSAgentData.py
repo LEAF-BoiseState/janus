@@ -21,13 +21,13 @@ def cleanup(value):
         return 0
 
 #Only 2007 and 2012 for the state
-def Ages(YR,q):
+def Ages(YR):
     #prepare lists for data 
     age_cat=["AGE LT 25", "AGE 25 TO 34", "AGE 35 TO 44", "AGE 45 TO 54", "AGE 55 TO 64", "AGE 65 TO 74", "AGE GE 75"]
     api = nass.NassApi("B5240598-2A7D-38EE-BF8D-816A27BEF504")
     q = api.query()
     q.filter('commodity_desc', 'OPERATORS').filter('state_alpha', 'ID').filter('year', YR).filter('class_desc', age_cat)
-    age_dF=pd.DataFrame(q.execute())
+    age_dF=pd.DataFrame(q.execute()) #invalid JSON - internet or API issue?
     age_dF['Value']=age_dF['Value'].apply(cleanup) 
     
     ages=pd.DataFrame(0, index=np.arange(len(age_dF)), columns=('category', 'operators'))
