@@ -87,8 +87,8 @@ Profits = Profits[:, 0:Nc]
 
 variables=["TENURE", "AREA OPERATED"]
 NASS_yr=2007 #2007, 2012 are available 
-
-tenure=getNASS.TenureArea(countyList, NASS_yr, variables) #tenure from individual counties can also be used 
+NASS_countyList=['ADA', 'CANYON']  
+tenure=getNASS.TenureArea('ID', NASS_countyList, NASS_yr, variables) #tenure from individual counties can also be used 
 ages=getNASS.Ages(NASS_yr)
 
 AgeCDF=getNASS.makeAgeCDF(ages)
