@@ -87,9 +87,9 @@ Profits = Profits[:, 0:Nc]
 
 variables=["TENURE", "AREA OPERATED"]
 NASS_yr=2007 #2007, 2012 are available 
-NASS_countyList=['ADA', 'CANYON']  
+NASS_countyList=['ADA', 'CANYON']  #these have to be capitalized
 tenure=getNASS.TenureArea('ID', NASS_countyList, NASS_yr, variables) #tenure from individual counties can also be used 
-ages=getNASS.Ages(NASS_yr)
+ages=getNASS.Ages(NASS_yr, 'ID')
 
 AgeCDF=getNASS.makeAgeCDF(ages)
 TenureCDF=getNASS.makeTenureCDF(tenure)
@@ -107,17 +107,15 @@ for i in np.arange(1,Nt):
     
     for j in np.arange(Ny):
         for k in np.arange(Nx):
-            if domain[j,k].FarmerAgents: #will this work to test if exists?
-            #Assess Profit
-            
+            if domain[j,k].FarmerAgents:
+                #Assess Profit
                 Profit_last, Profit_pred = cd.AssessProfit(CropID_all[i-1,j,k], Profits[i-1,:], Profits[i,:], Nc, CropIDs)
                 #Decide on Crop
-                "this needs to call alpha/beta from the agent in that cell"
                 CropChoice, ProfitChoice = cd.DecideN(domain[j,k].FarmerAgents[0].alpha, domain[j,k].FarmerAgents[0].beta, fmin, fmax, n, Profit_last, CropIDs, \
                                                           Profit_pred, rule=True)
                 CropID_all, Profit_ant, Profit_act = cd.MakeChoice(CropID_all, Profit_last, Profit_pred, \
                                                                    CropChoice, ProfitChoice, Profit_act, i,j,k) #"move these indicies into the input variables"
-                CropChoice, ProfitChoice = cd.DecideN(a_ra, b_ra, fmin, fmax, n, Profit_last, CropIDs, \
+                CropChoice, ProfitChoice = cd.DecideN(domain[j,k].FarmerAgents[0].alpha, domain[j,k].FarmerAgents[0].beta, fmin, fmax, n, Profit_last, CropIDs, \
                                                           Profit_pred, rule=True)
                 CropID_all[i,j,k], Profit_ant[i,j,k], Profit_act[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, Profit_ant, \
                                                                    CropChoice, ProfitChoice, seed = False) #is there a way to set this up so you can pass a NULL value or no value when seed=False?
