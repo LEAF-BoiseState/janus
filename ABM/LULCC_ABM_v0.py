@@ -6,21 +6,23 @@ Agent Based Model of Land Use and Land Cover Change
 #---------------------------------------
 #  Load Packages
 #---------------------------------------
-import numpy as np
 import os
 
 userPath='/Users/kek25/Documents/GitRepos/'
 os.chdir(userPath+'IM3-BoiseState/ABM')
 
+import numpy as np
 import PreprocessingTools.geofxns as gf
 import CropFuncs.CropDecider as cd
 import InitializeAgentsDomain as init
 import PostProcessing.FigureFuncs as ppf
 import PreprocessingTools.getNASSAgentData as getNASS
+import geopandas as gp
+
 DataPath= userPath+'IM3-BoiseState/Data/'
 GCAMpath=DataPath+'GCAM/'
 
-import geopandas as gp
+
 counties_shp= gp.read_file(DataPath+'Counties/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
 key_file= gp.read_file(DataPath+'CDL2GCAM_SRP_categories.csv', sep=',')
@@ -34,6 +36,7 @@ switch = np.array([[4.5, 1.0], #switching averse
                    [0.5, 3.0]]) #switching tolerant
 #proportion of each switching type, lower than p is averse, higher is tolerant
 p=0.5 
+
 #Max and min .... total Profit, percent profit?
 fmin = 1.0
 fmax = 1.5
@@ -113,8 +116,8 @@ for i in np.arange(1,Nt):
                 #Decide on Crop
                 CropChoice, ProfitChoice = cd.DecideN(domain[j,k].FarmerAgents[0].alpha, domain[j,k].FarmerAgents[0].beta, fmin, fmax, n, Profit_last, CropIDs, \
                                                           Profit_pred, rule=True)
-                CropID_all, Profit_ant, Profit_act = cd.MakeChoice(CropID_all, Profit_last, Profit_pred, \
-                                                                   CropChoice, ProfitChoice, Profit_act, i,j,k) #"move these indicies into the input variables"
+                CropID_all, Profit_ant, Profit_act = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, Profit_pred, \
+                                                                   CropChoice, ProfitChoice, Profit_act) #"move these indicies into the input variables"
                 CropChoice, ProfitChoice = cd.DecideN(domain[j,k].FarmerAgents[0].alpha, domain[j,k].FarmerAgents[0].beta, fmin, fmax, n, Profit_last, CropIDs, \
                                                           Profit_pred, rule=True)
                 CropID_all[i,j,k], Profit_ant[i,j,k], Profit_act[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, Profit_ant, \
@@ -126,6 +129,7 @@ ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)
 #"one unit test would be to confirm that non-ag stayed the same and that all of the ag did not stay the same"        
 #need to pull out the parts that dont rely on the loop and put the decision inside of it, that way relevant info can be updated between timesteps; 
 
+FarmerAges = ppf.AgentAges(domain, AgentArray, Ny, Nx)
 #---------------------------------------
 # 3. update variables 
 #---------------------------------------

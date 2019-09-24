@@ -74,3 +74,12 @@ def CropPerc(CropID_all, CropIDs, Nt, Nc):
   
     #plt.savefig('Exp3_plot1.png',dpi=300,facecolor='w', edgecolor='w', 
               #  bbox_inches='tight')
+              
+def AgentAges(domain, AgentArray, Ny, Nx):
+    FarmerAges=[]
+    for i in np.arange(Ny):
+        for j in np.arange(Nx):
+            if(AgentArray[i,j]=='aFarmer'):  
+                FarmerAges=np.append(FarmerAges, domain[i,j].FarmerAgents[0].Age)
+                
+    plt.hist(FarmerAges)
