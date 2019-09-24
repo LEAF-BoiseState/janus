@@ -52,7 +52,7 @@ def PlaceAgents(Ny,Nx, lc, key_file, cat_option):
 #------------------------------------------------------------------------------
 # place agent structures onto landscape and define attributes 
 #------------------------------------------------------------------------------
-def InitializeAgents(AgentArray, dFASM, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p):
+def InitializeAgents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p):
      
    
     for i in np.arange(Ny):
@@ -62,12 +62,12 @@ def InitializeAgents(AgentArray, dFASM, dist2city, TenureCDF, AgeCDF, switch, Ny
                  
                  AgentData=getNASS.FarmerData(TenureCDF, AgeCDF, switch, p, dist2city[i][j])
                  NewAgent = farmer.aFarmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"], Dist2city=AgentData["Dist2city"], nFields=AgentData['nFields'], alpha = AgentData['Alpha'], beta = AgentData['Beta']) #this is passing actual agent data
-                 dFASM[i][j].AddAgent(NewAgent)
+                 domain[i][j].AddAgent(NewAgent)
                  
             if(AgentArray[i][j] =='aUrban'):
                 AgentData =getNASS.UrbanData(lc[0][i][j])
                 NewAgent = urban.aUrban(density=AgentData["Density"])
-                dFASM[i][j].AddAgent(NewAgent)
+                domain[i][j].AddAgent(NewAgent)
     
-    return(dFASM)
+    return(domain)
              
