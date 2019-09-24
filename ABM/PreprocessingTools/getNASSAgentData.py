@@ -13,7 +13,6 @@ import numpy as np
 
 
 api = nass.NassApi("B5240598-2A7D-38EE-BF8D-816A27BEF504")
-q = api.query()
     
 def cleanup(value):
     ''' Massage data into proper form '''
@@ -28,6 +27,7 @@ def cleanup(value):
 #------------------------------------------------------------------------------
 #Only 2007 and 2012 for the state
 def Ages(YR, state):
+    q = api.query()
     #prepare lists for data 
     age_cat=["AGE LT 25", "AGE 25 TO 34", "AGE 35 TO 44", "AGE 45 TO 54", "AGE 55 TO 64", "AGE 65 TO 74", "AGE GE 75"]
     q.filter('commodity_desc', 'OPERATORS').filter('state_alpha', state).filter('year', YR).filter('class_desc', age_cat)
@@ -43,10 +43,8 @@ def Ages(YR, state):
     return(ages)
     
 def TenureArea(state, countyList, NASS_yr, variables): #countly level aggregation, can change to report each county ...
-    
-    api = nass.NassApi("B5240598-2A7D-38EE-BF8D-816A27BEF504")
-    q = api.query() 
-    
+    q = api.query()
+
     q.filter('commodity_desc', 'FARM OPERATIONS').filter('state_alpha', state).filter('year', NASS_yr).filter('domain_desc', variables).filter('county_name', countyList)
     data=q.execute()
     dataF=pd.DataFrame(data)
