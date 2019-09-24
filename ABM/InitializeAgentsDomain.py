@@ -11,15 +11,14 @@ import Classes.dCellClass as cell
 import Classes.aUrban as urban
 
 def InitializeDomain(Ny,Nx):
-    "Initialize domain"
     
-    dFASM = np.empty((Ny,Nx), dtype=object) #domain 
+    domain = np.empty((Ny,Nx), dtype=object) 
 
     for i in np.arange(Ny):
         for j in np.arange(Nx):
-            dFASM[i][j] = cell.dCellClass()
+            domain[i][j] = cell.dCellClass()
         #whats a unit test for this??"
-    return (dFASM)
+    return (domain)
 
 def PlaceAgents(Ny,Nx, lc, key_file, cat_option):
     #assert that cat_option has to be a header in the csv doc
@@ -49,12 +48,14 @@ def PlaceAgents(Ny,Nx, lc, key_file, cat_option):
   
     return (AgentArray)
 
+#------------------------------------------------------------------------------
+# collect agent data from NASS distributions and place in dictionary
+#------------------------------------------------------------------------------
+
 def getFarmerData(TenureCDF, AgeCDF, switch, p, d2c):
-    #agent data pulled from distributions
     ss=np.random.random_sample()
     ts = np.random.random_sample() 
     ageS = np.random.random_sample()
-    #print(ageS)
             
     if ss >= p:
         k= 0
@@ -80,7 +81,7 @@ def getFarmerData(TenureCDF, AgeCDF, switch, p, d2c):
     return(AgentData)
 
 def getUrbanData(lc):
-      #pull the landcover category from the landcover, set this so it's 0 =open space, 1=low, 2=med, 3=high density
+      #pull the landcover category from lc, set this so it's 0 =open space, 1=low, 2=med, 3=high density
       #this needs to be set by user based on what their landcover classes are, e.g. denisty would not be a category with original GCAM cats
       if lc == 17:
           d=3
@@ -93,9 +94,9 @@ def getUrbanData(lc):
       AgentData = {"Density" : d}
       
       return(AgentData)
-#---------------------------------------
-# place agent structures onto landscape and define attributes -> this is Not working
-#---------------------------------------
+#------------------------------------------------------------------------------
+# place agent structures onto landscape and define attributes 
+#------------------------------------------------------------------------------
 def InitializeAgents(AgentArray, dFASM, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p):
      
    
