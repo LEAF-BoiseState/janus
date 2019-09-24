@@ -72,7 +72,7 @@ def getFarmerData(TenureCDF, AgeCDF, switch, p, d2c):
     AgentData = {
             "AgeInit" : ageI,
             "LandStatus" : tenStat,
-            "Alpha": switch[k][1],
+            "Alpha": switch[k][0],
             "Beta": switch[k][1],
             "nFields": 1,
             "Dist2city": d2c
