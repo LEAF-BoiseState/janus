@@ -113,12 +113,13 @@ def FarmerData(TenureCDF, AgeCDF, switch, p, d2c):
     ss=np.random.random_sample()
     ts = np.random.random_sample() 
     ageS = np.random.random_sample()
+    #print(ageS)
             
     if ss >= p:
         k= 0
     else: k =1
     
-    if ageS < AgeCDF[0][1]:
+    if ageS < AgeCDF[0,1]:
         ageI = 18
     else: 
         ageT=np.where(AgeCDF[:,[1]] <= ageS)
