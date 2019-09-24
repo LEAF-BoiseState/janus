@@ -81,6 +81,7 @@ def getFarmerData(TenureCDF, AgeCDF, switch, p, d2c):
 
 def getUrbanData(lc):
       #pull the landcover category from the landcover, set this so it's 0 =open space, 1=low, 2=med, 3=high density
+      #this needs to be set by user based on what their landcover classes are, e.g. denisty would not be a category with original GCAM cats
       if lc == 17:
           d=3
       elif lc == 25:
