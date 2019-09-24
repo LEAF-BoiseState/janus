@@ -23,11 +23,14 @@ def cleanup(value):
     except ValueError:
         return 0
 
+#------------------------------------------------------------------------------
+# run queries
+#------------------------------------------------------------------------------
 #Only 2007 and 2012 for the state
-def Ages(YR):
+def Ages(YR, state):
     #prepare lists for data 
     age_cat=["AGE LT 25", "AGE 25 TO 34", "AGE 35 TO 44", "AGE 45 TO 54", "AGE 55 TO 64", "AGE 65 TO 74", "AGE GE 75"]
-    q.filter('commodity_desc', 'OPERATORS').filter('state_alpha', 'ID').filter('year', YR).filter('class_desc', age_cat)
+    q.filter('commodity_desc', 'OPERATORS').filter('state_alpha', state).filter('year', YR).filter('class_desc', age_cat)
     age_dF=pd.DataFrame(q.execute()) 
     age_dF['Value']=age_dF['Value'].apply(cleanup) 
     
@@ -42,7 +45,7 @@ def Ages(YR):
 def TenureArea(state, countyList, NASS_yr, variables): #countly level aggregation, can change to report each county ...
     
     api = nass.NassApi("B5240598-2A7D-38EE-BF8D-816A27BEF504")
-    q = api.query()
+    q = api.query() 
     
     q.filter('commodity_desc', 'FARM OPERATIONS').filter('state_alpha', state).filter('year', NASS_yr).filter('domain_desc', variables).filter('county_name', countyList)
     data=q.execute()
@@ -64,7 +67,10 @@ def TenureArea(state, countyList, NASS_yr, variables): #countly level aggregatio
         farms.loc[i,'operations'] =sum(sub2['Value']) #operations
 
     return(farms)
- 
+
+#------------------------------------------------------------------------------
+# create distributions from NASS data
+#------------------------------------------------------------------------------
 def makeAgeCDF(varArray):
     
     serFull=np.zeros(0)
@@ -81,7 +87,6 @@ def makeAgeCDF(varArray):
     dx = X2[2] - X2[1]
     F1 = np.cumsum(H)*dx
     perc=np.column_stack((X2[1:],F1))
-    perc
     
     return(perc)
  
@@ -102,8 +107,52 @@ def makeTenureCDF(varArray):
     perc=np.column_stack(([0,1,2], F1))        
     return(perc)
     
-#def setAgentParams - should move the param selection here and use it in the initAgent function
 
+#------------------------------------------------------------------------------
+# collect agent data from NASS distributions and place in dictionary
+#------------------------------------------------------------------------------
+def FarmerData(TenureCDF, AgeCDF, switch, p, d2c):
+    ss=np.random.random_sample()
+    ts = np.random.random_sample() 
+    ageS = np.random.random_sample()
+            
+    if ss >= p:
+        k= 0
+    else: k =1
+    
+    if ageS < AgeCDF[0][1]:
+        ageI = 18
+    else: 
+        ageT=np.where(AgeCDF[:,[1]] <= ageS)
+        ageI=max(ageT[0])
+            
+    tt=np.where(TenureCDF[:,[1]] >= ts)
+    tenStat=min(tt[0])
+    
+    AgentData = {
+            "AgeInit" : ageI,
+            "LandStatus" : tenStat,
+            "Alpha": switch[k][0],
+            "Beta": switch[k][1],
+            "nFields": 1,
+            "Dist2city": d2c
+                }
+    return(AgentData)
+
+def UrbanData(lc):
+      #pull the landcover category from lc, set this so it's 0 =open space, 1=low, 2=med, 3=high density
+      #this needs to be set by user based on what their landcover classes are, e.g. denisty would not be a category with original GCAM cats
+      if lc == 17:
+          d=3
+      elif lc == 25:
+          d=2
+      elif lc == 26:
+          d=1
+      elif lc == 27:
+          d=0
+      AgentData = {"Density" : d}
+      
+      return(AgentData)
 
 
 
