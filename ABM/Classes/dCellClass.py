@@ -11,6 +11,8 @@ class dCellClass:
         self.perClay    = kwargs.get('perClay')
         self.nUrbAgent  = 0
         self.nFarmAgent = 0
+        self.UrbanAgents = []
+        self.FarmerAgents = []
 
 
     #purpose: adds a new agent to a list
@@ -21,20 +23,10 @@ class dCellClass:
 		#column = AgentFactory.getColumnIndex(agentType)
         
         if(agentType == "aUrban"):
-            # Check to see if there are currently no agents of this type in the cell. If true, 
-			# initialize an empty list to store at least one
-            if(self.nUrbAgent==0):
-            		self.UrbanAgents = []
-
             self.nUrbAgent += 1
             self.UrbanAgents.append(agentStruct)
 		
         if(agentType=="aFarmer"):
-            # Check to see if there are currently no agents of this type in the cell. If true, 
-			# initialize an empty list to store at least one
-            if (self.nFarmAgent==0):
-                self.FarmerAgents = []
-            
             self.nFarmAgent += 1
             self.FarmerAgents.append(agentStruct)
             
