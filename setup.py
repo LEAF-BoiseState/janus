@@ -1,13 +1,7 @@
-class VersionError(Exception):
-    def __init__(self, *args, **kwargs):
-        Exception.__init__(self, *args, **kwargs)
-
-
 try:
     from setuptools import setup, find_packages
 except ImportError:
-    print("Must have setuptools installed to run setup.py. Please install and try again.")
-    raise
+    raise("Must have `setuptools` installed to run setup.py. Please install and try again.")
 
 
 def readme():
