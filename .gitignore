@@ -1,9 +1,28 @@
 *.txt
 *.asc
 *.tiff
+
 /Data/*
-.DS_Store
 /GCAM_SRP/*.*
 /GCAM_SRP/**/*.*
-*.pyc
 *__pycache__/*
+
+# OS-specific files
+.DS_Store
+
+# python pyc files
+*.pyc
+
+# exclude .idea dir
+.idea
+
+# ignore .mat files
+*.mat
+
+# log files
+*.log
+
+# ignore build
+build
+dist
+xanthos.egg-info
