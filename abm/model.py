@@ -9,7 +9,7 @@ Agent Based Model of Land Use and Land Cover Change
 import os
 
 userPath='/Users/kek25/Documents/GitRepos/'
-os.chdir(userPath+'IM3-BoiseState/ABM')
+os.chdir(userPath+'IM3-BoiseState/abm')
 
 import numpy as np
 import PreprocessingTools.geofxns as gf
