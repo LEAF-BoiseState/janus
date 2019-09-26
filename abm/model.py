@@ -6,6 +6,7 @@ Agent Based Model of Land Use and Land Cover Change
 
 import numpy as np
 import geopandas as gp
+import yaml
 
 import abm.preprocessing.geofxns as gf
 import abm.crop_functions.CropDecider as crpdec
@@ -14,17 +15,28 @@ import abm.postprocessing.FigureFuncs as ppf
 import abm.preprocessing.getNASSAgentData as get_nass
 
 
-DataPath = 'IM3-BoiseState/Data/'
-GCAMpath = DataPath+'GCAM/'
+class Abm:
+
+    def __init__(self, config_file):
+
+        c = self.config_reader(config_file)
+
+        self.counties_shp = gp.read_file(c['f_counties_shp'], index='county')
+
+        self.key_file = gp.read_file(c['f_key_file'], sep=',')
+
+        # TODO:  start here adding additional variables from the config file that are used in this script
+
+        # TODO:  add checks for input variables to confirm validity
+
+    @staticmethod
+    def config_reader(config_file):
+        """Read the YAML config file to a dictionary."""
+
+        with open(config_file) as f:
+            return yaml.safe_load(f)
 
 
-counties_shp = gp.read_file(DataPath+'Counties/Counties_SRB_clip_SingleID.shp')
-counties_shp = counties_shp.set_index('county')
-key_file = gp.read_file(DataPath+'CDL2GCAM_SRP_categories.csv', sep=',')
-
-# ---------------------------------------
-# 0. Declare Variables
-# ---------------------------------------
 Nt = 50
 # set agent switching parameters (alpha, beta)
 switch = np.array([[4.5, 1.0],  # switching averse
