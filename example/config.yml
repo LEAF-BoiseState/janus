@@ -1,0 +1,30 @@
+
+
+
+DataPath : 'IM3-BoiseState/Data/'
+GCAMpath: '/path/to/GCAM/dir/'
+
+
+# full path with file name and extension to the counties shapefile
+f_counties_shp: 'Counties/Counties_SRB_clip_SingleID.shp'
+
+# full path with file name and extension to the land class category key file
+f_key_file: 'CDL2GCAM_SRP_categories.csv'
+
+
+# TODO
+Nt: 50
+
+## set agent switching parameters (alpha, beta)
+#switch = np.array([[4.5, 1.0],  # switching averse
+#                   [0.5, 3.0]])  # switching tolerant
+## proportion of each switching type, lower than p is averse, higher is tolerant
+#p = 0.5
+#
+## Max and min .... total Profit, percent profit?
+#fmin = 1.0
+#fmax = 1.5
+#f0 = 1.2
+#n = 100
+#
+#crpdec.DefineSeed(5)
