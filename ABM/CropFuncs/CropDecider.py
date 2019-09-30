@@ -13,8 +13,6 @@ def DefineSeed(seed):
     seed_val=seed
     return
 
-# Not sure if this is needed if we can get scipy to return the value of the 
-# CDF
 def SwitchingProbCurve(alpha,beta,fmin,fmax,n,profit):
     
     x  = np.linspace(0,1.0,num=n)
@@ -54,8 +52,23 @@ def Decide(alpha,beta,fmin,fmax,n,profit,profit_p):
 #          cipated proft values.                                              #
 #                                                                             #
 #=============================================================================#
-def DecideN(alpha, beta, fmin, fmax, n, profit, vec_crops, 
+def DecideN(alpha, beta, fmin, fmax, n, Profits_current, vec_crops, 
             vec_profit_p, rule=True): 
+    
+    """Decide which crop and associated profit to pick out of two options.
+    
+    :param alpha:              
+    :param beta:                
+    :param fmin:                
+    :param fmax:
+    :param n:              
+    :param current_profit:                
+    :param vec_crops:                
+    :param vec_profit_p:   
+    :param rule: 
+                
+    :return: integer denoting crop choice and float of the associated profit                         
+    """
 
     # Key assumptions: the vector of crop IDs and anticipated profits associated
     # with each crop must both be N x 1 column vectors. Error trap this below:
@@ -71,7 +84,7 @@ def DecideN(alpha, beta, fmin, fmax, n, profit, vec_crops,
     for i in np.arange(AccRej.size):
         # Use the `Decide` function above to choose whether or not the crop is
         # viable
-        AccRej[i] = Decide(alpha,beta,fmin,fmax,n,profit,vec_profit_p[i]) #is fmin/fmax setting bounds on range of additional profit?
+        AccRej[i] = Decide(alpha,beta,fmin,fmax,n,Profits_current,vec_profit_p[i]) #is fmin/fmax setting bounds on range of additional profit?
 
     # Find the Crop IDs and associated profits that were returned as "viable" 
     # based on the "Decide" function (that is, Decide came back as "yes" == 1)
@@ -96,8 +109,6 @@ def DecideN(alpha, beta, fmin, fmax, n, profit, vec_crops,
         rule = False # Switch rule to trick the algorithm into using the random option
     
     
-    ### TO-DO: Right now, only rules choose crops based on profitability and/or 
-    ### randomness. In future, add rules to choose based on network behavior, etc.
     if(rule): # Return crop with largest profit
         CropChoice = MaxProfitCrop
         ProfitChoice = MaxProfit
@@ -110,6 +121,68 @@ def DecideN(alpha, beta, fmin, fmax, n, profit, vec_crops,
     # Return the crop choice and associated profit
     return CropChoice, ProfitChoice
 
+
+#=============================================================================#
+#                                                                             #
+# AssessProfit:                                                               #
+#                                                                             #
+#=============================================================================#
+
+def AssessProfit(Crop, Profits_current, Profits_expected,  Num_crops, CropIDs):
+     """Decide which crop and associated profit to pick out of two options.
+    
+    :param Crop:              
+    :param Profits_current:                
+    :param Profits_expected:                
+    :param Num_crops:   
+    :param rule: 
+                
+    :return: integer denoting crop choice and float of the associated profit                         
+    """
+    
+     # Existing Crop ID
+     CurCropChoice_ind = Crop.astype('int') 
+     CropIx=np.where(CropIDs == CurCropChoice_ind)
+     #assess current and future profit of that given crop
+     if (np.isin(CurCropChoice_ind, CropIDs)): #change this to be a vector of possible cropIDs
+         Profit_last = Profits_current[CropIx[0][0]] #last years profit
+         Profit_pred   = Profits_expected[:] #(changed from profits_alt)
+         Profit_pred = Profit_pred.reshape(Num_crops,1)
+     else: 
+        Profit_last = 0
+        Profit_pred = np.zeros((Num_crops,1))
+        
+     return(Profit_last, Profit_pred)
+     
+#=============================================================================#
+#                                                                             #
+#  Make Choice:                                           #
+#                                                                             #
+#=============================================================================#
+
+
+def MakeChoice(CropID_last, Profit_last, CropChoice, ProfitChoice, seed = False):
+    
+    if (seed == True):
+        
+        try:
+            seed_val
+        except NameError:
+            print("Random seed needs to be initialized using the CropDecider.DefineSeed() Function")
+        
+        np.random.seed(seed_val)
+    
+    # Check if return  values indicate the farmer shouldn't switch
+    if(CropChoice==-1) and (ProfitChoice==-1):
+        CropID_next = CropID_last
+        Profit_ant = Profit_last
+        Profit_act = Profit_ant + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1)) #this years actual profit
+    else: #switch to the new crop
+        CropID_next = CropChoice
+        Profit_ant = ProfitChoice
+        Profit_act= Profit_ant + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1))
+    return(CropID_next, Profit_ant, Profit_act)
+    
 #=============================================================================#
 #                                                                             #
 # GeneratePrices: Generates 6 synthetic crop profits with different           #
@@ -173,47 +246,3 @@ def GeneratePrices(Nt):
     
     return P_matrix
 
-#=============================================================================#
-#                                                                             #
-# AssessProfit and Make Choice: seperates the differenct components           #
-#                               into functions                                #
-#=============================================================================#
-
-def AssessProfit(Crop, Profits_cur, Profits_alt,  Nc, CropIDs):
-     # Existing Crop ID
-     CurCropChoice_ind = Crop.astype('int') #- 1
-     CropIx=np.where(CropIDs == CurCropChoice_ind)
-     #assess current and future profit of that given crop
-     if (np.isin(CurCropChoice_ind, CropIDs)): #change this to be a vector of possible cropIDs
-         Profit_last = Profits_cur[CropIx[0][0]] #last years profit
-         Profit_p   = Profits_alt[:] #this years  expected profit
-         Profit_p = Profit_p.reshape(Nc,1)
-     else: 
-        Profit_last = 0
-        Profit_p = np.zeros((Nc,1))
-        
-     return(Profit_last, Profit_p)
-
-
-def MakeChoice(CropID_last, Profit_last, CropChoice, ProfitChoice, seed = False):
-    
-    if (seed == True):
-        
-        try:
-            seed_val
-        except NameError:
-            print("Random seed needs to be initialized using the CropDecider.DefineSeed() Function")
-        
-        np.random.seed(seed_val)
-    
-    # Check if return  values indicate the farmer shouldn't switch
-    if(CropChoice==-1) and (ProfitChoice==-1):
-        CropID_next = CropID_last
-        Profit_ant = Profit_last
-        Profit_act = Profit_ant + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1)) #this years actual profit
-    else: #switch to the new crop
-        CropID_next = CropChoice
-        Profit_ant = ProfitChoice
-        Profit_act= Profit_ant + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1))
-    return(CropID_next, Profit_ant, Profit_act)
-    
