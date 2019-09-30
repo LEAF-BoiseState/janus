@@ -75,6 +75,14 @@ class Abm:
         # initialize agents
         self.agent_domain, self.agent_array = self.initialize_agents()
 
+        # make agent decisions
+        self.decisions()
+
+        # update variables
+        self.update()
+
+        # save output
+        self.save_output()
 
     @staticmethod
     def config_reader(config_file):
@@ -97,12 +105,12 @@ class Abm:
         """
 
         # select initial gcam data from initial year
-        lc = gf.getGCAM(self.counties_shp, self.county_list, self.target_year, self.scale, GCAMpath)
+        lc = gf.get_gcam(self.counties_shp, self.county_list, self.target_year, self.scale, GCAMpath)
 
         ny, nx = lc[0].shape
 
         # initialize minimum distance to city
-        dist2city = gf.minDistCity(lc)
+        dist2city = gf.min_dist_city(lc)
 
         domain = init_agent.InitializeDomain(ny, nx)
 
@@ -266,9 +274,7 @@ class Abm:
 
 
         """
+        pass
 
         # write landcover to array - sub w Jons work
-
         # saveLC(temp_lc, 2010, it, DataPath)
-           
-
