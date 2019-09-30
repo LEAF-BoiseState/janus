@@ -1,15 +1,17 @@
 # IM3-BoiseState
 
-## Spatial Initialization
-select counties, year, and scale of interest to return the extent and inital land cover numpy array
+The Agent Based model was designed to simulate land cover changes over time. These landcover changes are carried out by individual agents that choose to either continue planting the same crop, or choose to switch to a new crop based on expected profits. 
+
 
 # Model Structure
 The model is ... based on cells and classes ...
 
-## Agent:
-aFarmer:(a = agent) sets up farmer class with details on atrributes and functions of farmer 
-aUrban: sets up urban class with attribute based on landcover classification of population density
 dCell- (d = domain) - pixel with geographic information about terrain, and which agents are located
+
+## Agents:
+aFarmer:(a = agent) sets up farmer class with details on atrributes and functions of farmer 
+
+aUrban: sets up urban class with attribute based on landcover classification of population density
 
 
 # LULCC ABM V.0
@@ -18,10 +20,10 @@ dCell- (d = domain) - pixel with geographic information about terrain, and which
   - Number of simulation years or time steps
   - Agent attributes regarding switching crops
   - Max/min (total profit or percentage?)
-  - 
+ 
 
 # 1. Preprocessing
-  - Load spatial maps
+  - select counties, year, and scale of interest to return the extent and inital land cover numpy array
   - Initialize crops
   - Initialize profits
   - Initialize agents
