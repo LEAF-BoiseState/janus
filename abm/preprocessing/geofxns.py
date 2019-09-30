@@ -7,9 +7,6 @@ Created on Thu May 30 15:09:10 2019
 
 Library of functions for geospatial processing
 
-minDistCity - Calculates the distance from any cell to a city cell of any density category. It requires np.array of SRP
-GCAM categories, otherwise city cells will not be identified properly.
-
 """
 
 import numpy as np
@@ -23,16 +20,16 @@ from shapely.ops import cascaded_union
 from scipy import spatial
 
 
-# TODO:  is this used?
+# TODO: This will be used if a user want to use and clip other geospatial data such as elevation
 def getExtent(counties_shp, county_list, scale, DataPath):
     """Create a grid of the extent based on counties and scale of interest.
 
     :param counties_shp:                Geopandas data frame for counties data
-    :param county_list:
-    :param scale:
-    :param DataPath:
+    :param county_list:                 List of counties in the domain of interest
+    :param scale:                       Grid scale of output, can only be 3000 or 1000 (meters)
+    :param DataPath:                    File path to data folder
 
-    :return:
+    :return:                            Grid of polygons for the domain of interest
     """
     
     if scale == 3000:
@@ -41,7 +38,7 @@ def getExtent(counties_shp, county_list, scale, DataPath):
     elif scale == 1000:
         SRB_poly = gp.read_file(DataPath+'domain_poly_1000.shp')
     
-    # select two shapefiles, this returns geometry of the union - this no longer distinguishes two - see issue #1
+    # this returns geometry of the union, no longer distinguishes counties - see issue #1
 
     # this is the row index, not the "COUNTY_ALL" index
     extent=counties_shp['geometry'].loc[county_list].unary_union
@@ -55,13 +52,13 @@ def getExtent(counties_shp, county_list, scale, DataPath):
 def get_gcam(counties_shp, countyList, year, scale, GCAMpath):
     """Clip GCAM coverage to the counties of interest at scale of interest.
 
-    :param counties_shp:
-    :param countyList:
-    :param year:
-    :param scale:
-    :param GCAMpath:
+    :param counties_shp:                Geopandas data frame for counties data
+    :param countyList:                  List of counties in the domain of interest
+    :param year:                        Year of GCAM data to initalize with, used to identify file name
+    :param scale:                       Scale of grid cells, used to identify file name
+    :param GCAMpath:                    Path to the folder where the GCAm data is
 
-    :return:
+    :return:                            Landcover data clipped to domain of interest
 
     """
 
@@ -81,13 +78,12 @@ def get_gcam(counties_shp, countyList, year, scale, GCAMpath):
                         )
     return out_img
 
-
 def min_dist_city(gcam):
     """Calculate the minimum distance to a city cell.
 
-    :param gcam:
+    :param gcam: np.array of landcover of Snake River Basin GCAM categories, other keyfiles will incorrectly identify city cells
 
-    :return:
+    :return: np.array of distance to a city cell within the domain
 
     """
 
