@@ -1,30 +1,46 @@
-
-
-
-DataPath : 'IM3-BoiseState/Data/'
-GCAMpath: '/path/to/GCAM/dir/'
-
+# Configuration file for the ABM land use land cover change agent based model
 
 # full path with file name and extension to the counties shapefile
-f_counties_shp: 'Counties/Counties_SRB_clip_SingleID.shp'
+f_counties_shp: '/Users/d3y010/projects/boise_state/Data/Counties/Counties_SRB_clip_SingleID.shp'
 
 # full path with file name and extension to the land class category key file
-f_key_file: 'CDL2GCAM_SRP_categories.csv'
-
+f_key_file: '/Users/d3y010/projects/boise_state/Data/CDL2GCAM_SRP_categories.csv'
 
 # TODO
-Nt: 50
+nt: 50
 
-## set agent switching parameters (alpha, beta)
-#switch = np.array([[4.5, 1.0],  # switching averse
-#                   [0.5, 3.0]])  # switching tolerant
-## proportion of each switching type, lower than p is averse, higher is tolerant
-#p = 0.5
-#
-## Max and min .... total Profit, percent profit?
-#fmin = 1.0
-#fmax = 1.5
-#f0 = 1.2
-#n = 100
-#
-#crpdec.DefineSeed(5)
+# TODO:  there are actually 17 when the 1km is run, need random profit profiles for each of these
+nc: 4
+
+# list of lists for switching averse, tolerant parameters (alpha, beta)
+switch_params: [[4.5, 1.0], [0.5, 3.0]]
+
+# proportion of each switching type, lower than p is averse, higher is tolerant
+p: 0.5
+
+# TODO:  Max and min .... total Profit, percent profit?
+fmin: 1.0
+fmax: 1.5
+f0: 1.2
+n: 100
+
+# TODO:  Crop random seed size
+crop_seed_size: 5
+
+# target year
+target_yr: 2010
+
+# scale of grid in meters
+scale: 3000
+
+# list of counties to evaluate
+county_list: ['Ada', 'Canyon']
+
+# TODO
+agent_variables: ["TENURE", "AREA OPERATED"]
+
+# TODO:  NASS year; 2007, 2012 are available
+nass_year: 2007
+
+# TODO:  NASS county list
+nass_county_list: ['ADA', 'CANYON']
