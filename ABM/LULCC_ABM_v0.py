@@ -8,7 +8,7 @@ Agent Based Model of Land Use and Land Cover Change
 #---------------------------------------
 import os
 
-userPath='/Users/kek25/Documents/GitRepos/'
+userPath='/Users/kendrakaiser/Documents/GitRepos/'
 os.chdir(userPath+'IM3-BoiseState/ABM')
 
 import numpy as np
@@ -116,12 +116,14 @@ for i in np.arange(1,Nt):
                 #Decide on Crop
                 CropChoice, ProfitChoice = cd.DecideN(domain[j,k].FarmerAgents[0].alpha, domain[j,k].FarmerAgents[0].beta, fmin, fmax, n, Profit_last, CropIDs, \
                                                           Profit_pred, rule=True)
-                CropID_all, Profit_ant, Profit_act = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, Profit_pred, \
-                                                                   CropChoice, ProfitChoice, Profit_act) #"move these indicies into the input variables"
+                
+                
+                CropID_all[i,j,k], Profit_ant[i,j,k], Profit_act[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, CropChoice, ProfitChoice, seed=False) 
+                
                 CropChoice, ProfitChoice = cd.DecideN(domain[j,k].FarmerAgents[0].alpha, domain[j,k].FarmerAgents[0].beta, fmin, fmax, n, Profit_last, CropIDs, \
                                                           Profit_pred, rule=True)
-                CropID_all[i,j,k], Profit_ant[i,j,k], Profit_act[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, Profit_ant, \
-                                                                   CropChoice, ProfitChoice, seed = False) #is there a way to set this up so you can pass a NULL value or no value when seed=False?
+                
+                CropID_all[i,j,k], Profit_ant[i,j,k], Profit_act[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, CropChoice, ProfitChoice, seed = False) 
  
 ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)
 #ppf.CreateAnimation(CropID_all, Nt)

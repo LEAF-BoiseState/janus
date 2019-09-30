@@ -195,7 +195,7 @@ def AssessProfit(Crop, Profits_cur, Profits_alt,  Nc, CropIDs):
      return(Profit_last, Profit_p)
 
 
-def MakeChoice(CropID_last, Profit_last, Profit_ant, CropChoice, ProfitChoice, seed = False):
+def MakeChoice(CropID_last, Profit_last, CropChoice, ProfitChoice, seed = False):
     
     if (seed == True):
         
