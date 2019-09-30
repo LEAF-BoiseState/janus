@@ -126,34 +126,18 @@ for i in np.arange(1,Nt):
                 CropID_all[i,j,k], Profit_ant[i,j,k], Profit_act[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, CropChoice, ProfitChoice, seed = False) 
  
 ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)
-#ppf.CreateAnimation(CropID_all, Nt)
-#CropID_all, Profit_ant, Profit_act = cd.MakeDecision(Nt, Ny, Nx, Nc, CropID_all, Profits, Profit_ant, Profit_act, a_ra, b_ra, fmin, fmax, n, CropIDs)
-#"one unit test would be to confirm that non-ag stayed the same and that all of the ag did not stay the same"        
-#need to pull out the parts that dont rely on the loop and put the decision inside of it, that way relevant info can be updated between timesteps; 
+
 
 FarmerAges = ppf.AgentAges(domain, AgentArray, Ny, Nx)
 #---------------------------------------
 # 3. update variables 
 #---------------------------------------
 
-#update distance to city from output of decision process - IF we were incorperating the urban agent then this would happen in each time step
-#dist2city=minDistCity(lc_new) 
-     
-  #Update AgentArray 
-#where in the model does the code denote that the agent goes from farmer to urban or visa versa
-     #domain[i][j].SwapAgent('aFarmer','aUrban',fromIndex,AgentArray) "switch for now"
-     
 for i in np.arange(Ny):
  	for j in np.arange(Nx):
          if(AgentArray[i][j]=='aFarmer'):            
              domain[i][j].FarmAgents[0].UpdateAge()
              domain[i][j].FarmAgents[0].UpdateDist2city(dist2city[i][j])
       
-#---------------------------------------
-# 4. Save Output
-#---------------------------------------
-      
-#write landcover to array - sub w Jons work
-#saveLC(temp_lc, 2010, it, DataPath)
-           
+
 
