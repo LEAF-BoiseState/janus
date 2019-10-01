@@ -5,7 +5,7 @@
 /Data/*
 /GCAM_SRP/*.*
 /GCAM_SRP/**/*.*
-*__pycache__/*
+/abm/postprocessing/__pycache__/*
 
 # OS-specific files
 .DS_Store
@@ -25,4 +25,4 @@
 # ignore build
 build
 dist
-xanthos.egg-info
+abm.egg-info
