@@ -20,7 +20,7 @@ NPRICE_FUNCTIONS = 3
 def GeneratePrice_linear(Num_timesteps,Pi,Pf,perturb,s_p=0.0):
     """Description
     
-    :param Num_timesteps:           
+    :param Num_timesteps:           Number of timesteps in the model             
     :param Pi:          
     :param Pf:                
     :param perturb:   
@@ -41,7 +41,7 @@ def GeneratePrice_linear(Num_timesteps,Pi,Pf,perturb,s_p=0.0):
 def GeneratePrice_step(Num_timesteps,Pi,Pf,t_step,perturb,s_p=0.0):
     """Description
     
-    :param Num_timesteps:           
+    :param Num_timesteps:           Number of timesteps in the model        
     :param Pi:          
     :param Pf:                
     :param t_step:   
@@ -70,7 +70,7 @@ def GeneratePrice_step(Num_timesteps,Pi,Pf,t_step,perturb,s_p=0.0):
 def GeneratePrice_periodic(Num_timesteps,Pmag,Pamp,n_period,perturb,s_p=0.0):
     """Description
     
-    :param Num_timesteps:           
+    :param Num_timesteps:           Number of timesteps in the model             
     :param Pmag:          
     :param Pamp:                
     :param n_period:   

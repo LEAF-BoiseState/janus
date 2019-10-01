@@ -78,6 +78,8 @@ Profit_ant = np.zeros((Nt,Ny,Nx))
 Profit_act = np.zeros((Nt,Ny,Nx))
 
 Profit_ant[0,:,:] = 30000.0 + np.random.normal(loc=0.0,scale=1000.0,size=(1,Ny,Nx))
+#what is this 30,0000? what is the scale here?
+
 Profit_act[0,:,:] = Profit_ant[0,:,:]
 
 Profits = [] # A list of numpy arrays that will be Nt x Nc 
@@ -129,11 +131,11 @@ for i in np.arange(1,Nt):
                 #update agent attributes
                 domain[j,k].FarmerAgents[0].UpdateAge() #there needs to be a limit on this - e.g. what happens when farmers are over 90 - do they automatically get replaced with another?
  
-ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)
 
 
-FarmerAges = ppf.AgentAges(domain, AgentArray, Ny, Nx)
+ppf.CropPerc(CropID_all, CropIDs, Nt, Nc) #save this to results output
+ppf.AgentAges(domain, AgentArray, Ny, Nx)
 
-      
+#save 3D landcover coverage
 
 
