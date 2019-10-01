@@ -124,20 +124,16 @@ for i in np.arange(1,Nt):
                                                           Profit_pred, rule=True)
                 
                 CropID_all[i,j,k], Profit_ant[i,j,k], Profit_act[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], Profit_last, CropChoice, ProfitChoice, seed = False) 
+                
+                
+                #update agent attributes
+                domain[j,k].FarmerAgents[0].UpdateAge() #there needs to be a limit on this - e.g. what happens when farmers are over 90 - do they automatically get replaced with another?
  
 ppf.CropPerc(CropID_all, CropIDs, Nt, Nc)
 
 
 FarmerAges = ppf.AgentAges(domain, AgentArray, Ny, Nx)
-#---------------------------------------
-# 3. update variables 
-#---------------------------------------
 
-for i in np.arange(Ny):
- 	for j in np.arange(Nx):
-         if(AgentArray[i][j]=='aFarmer'):            
-             domain[i][j].FarmAgents[0].UpdateAge()
-             domain[i][j].FarmAgents[0].UpdateDist2city(dist2city[i][j])
       
 
 
