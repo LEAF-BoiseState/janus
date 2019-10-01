@@ -14,6 +14,7 @@ import geopandas as gp
 import rasterio
 import pycrs
 import json
+import urllib
 
 from rasterio.mask import mask
 from shapely.ops import cascaded_union
@@ -70,13 +71,17 @@ def get_gcam(counties_shp, county_list, gcam_file):
     out_meta = data.meta.copy()
     epsg_code = int(data.crs.data['init'][5:])
 
-    fetch_crs = pycrs.parse.from_epsg_code(epsg_code).to_proj4()
-    
+    try:
+        fetch_crs = pycrs.parse.from_epsg_code(epsg_code).to_proj4()
+
+    except urllib.error.URLError:
+        fetch_crs = None
+
     out_meta.update({"driver": "GTiff",
                  "height": out_img.shape[1],
                  "width": out_img.shape[2],
                  "transform": out_transform,
-                 "crs": pycrs.parse.from_epsg_code(epsg_code).to_proj4()} # this doesnt work w.o internet connection
+                 "crs": fetch_crs} # this doesnt work w.o internet connection
                         )
     return out_img
 
