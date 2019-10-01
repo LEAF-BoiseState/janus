@@ -9,9 +9,6 @@ import nass
 import pandas as pd
 import numpy as np
 
-# TODO:  Is this your personal API key?
-api = nass.NassApi("B5240598-2A7D-38EE-BF8D-816A27BEF504")
-
 
 def cleanup(value):
     """Massage data into proper form.
@@ -28,15 +25,18 @@ def cleanup(value):
         return 0
 
 
-def Ages(YR, state):
+def Ages(YR, state, nass_api_key):
     """Need description.
 
     :param YR:
     :param state:
+    :param nass_api_key:
 
     :return:
 
     """
+    api = nass.NassApi(nass_api_key)
+
     q = api.query()
 
     # prepare lists for data
@@ -57,17 +57,20 @@ def Ages(YR, state):
     return ages
 
 
-def TenureArea(state, county_list, NASS_yr, variables):
+def TenureArea(state, county_list, NASS_yr, variables, nass_api_key):
     """County level aggregation, can change to report each county
 
     :param state:
     :param county_list:
     :param NASS_yr:
     :param variables:
+    :param nass_api_key:
 
     :return:
 
     """
+    api = nass.NassApi(nass_api_key)
+
     q = api.query()
 
     q.filter('commodity_desc', 'FARM OPERATIONS').filter('state_alpha', state).filter('year', NASS_yr).filter('domain_desc', variables).filter('county_name', county_list)

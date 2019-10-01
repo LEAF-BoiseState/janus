@@ -69,6 +69,8 @@ def get_gcam(counties_shp, county_list, gcam_file):
     out_img, out_transform = mask(dataset=data, shapes=coords, crop=True)
     out_meta = data.meta.copy()
     epsg_code = int(data.crs.data['init'][5:])
+
+    fetch_crs = pycrs.parse.from_epsg_code(epsg_code).to_proj4()
     
     out_meta.update({"driver": "GTiff",
                  "height": out_img.shape[1],
