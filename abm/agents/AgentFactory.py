@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
+from abm.agents.aUrban import aUrban
+from abm.agents.aFarmer import aFarmer
 
-from Classes.aUrban import aUrban
-from Classes.aFarmer import aFarmer
 
 class AgentFactory(object):
 
@@ -13,19 +12,23 @@ class AgentFactory(object):
 
     @staticmethod
     def CreateAgent(type):
+
         if type == 'aUrban' : return aUrban()
         if type == 'aFarmer' : return aFarmer()
         assert 0, "Invalid Agent Type: " + type
 
     @staticmethod
     def IsAgentTypeValid(type):
+
         return type == 'aUrban' or type == "aFarmer"
 
     @staticmethod
     def AgentTypeCount():
+
         return 2
 
     @staticmethod
     def GetColumnIndex(self, type):
+
         if self.isAgentTypeValid(type) is False: raise Exception("Invalid Agent Type: " + type)
         return self._CONST_AGENT_COLUMN_INDEX[type]

@@ -49,23 +49,23 @@ def getExtent(counties_shp, county_list, scale, DataPath):
     return extent_poly
     
 
-def get_gcam(counties_shp, countyList, year, scale, GCAMpath):
+def get_gcam(counties_shp, county_list, gcam_file):
     """Clip GCAM coverage to the counties of interest at scale of interest.
 
     :param counties_shp:                Geopandas data frame for counties data
     :param countyList:                  List of counties in the domain of interest
     :param year:                        Year of GCAM data to initalize with, used to identify file name
     :param scale:                       Scale of grid cells, used to identify file name
-    :param GCAMpath:                    Path to the folder where the GCAm data is
+    :param gcam_file:                   Full path with file name and extension to the GCAM raster
 
     :return:                            Landcover data clipped to domain of interest
 
     """
 
-    data = rasterio.open(GCAMpath+'gcam_'+str(year)+'_domain_'+str(scale)+'.tiff') #this isn't working consistently ...?
-    extent_shp=counties_shp['geometry'].loc[countyList]
+    data = rasterio.open(gcam_file) # this isn't working consistently ...?
+    extent_shp = counties_shp['geometry'].loc[county_list]
     boundary = gp.GeoSeries(cascaded_union(extent_shp))
-    coords = [json.loads(boundary.to_json())['features'][0]['geometry']] #parses features from GeoDataFrame the way rasterio wants them
+    coords = [json.loads(boundary.to_json())['features'][0]['geometry']] # parses features from GeoDataFrame the way rasterio wants them
     out_img, out_transform = mask(dataset=data, shapes=coords, crop=True)
     out_meta = data.meta.copy()
     epsg_code = int(data.crs.data['init'][5:])
@@ -74,9 +74,10 @@ def get_gcam(counties_shp, countyList, year, scale, GCAMpath):
                  "height": out_img.shape[1],
                  "width": out_img.shape[2],
                  "transform": out_transform,
-                 "crs": pycrs.parse.from_epsg_code(epsg_code).to_proj4()} #this doesnt work w.o internet connection
+                 "crs": pycrs.parse.from_epsg_code(epsg_code).to_proj4()} # this doesnt work w.o internet connection
                         )
     return out_img
+
 
 def min_dist_city(gcam):
     """Calculate the minimum distance to a city cell.

@@ -21,9 +21,12 @@ class Abm:
 
         c = self.config_reader(config_file)
 
-        self.counties_shp = gp.read_file(c['f_counties_shp'], index='county')
+        self.counties_shp = gp.read_file(c['f_counties_shp'])
+        self.counties_shp.set_index('county', inplace=True)
 
         self.key_file = gp.read_file(c['f_key_file'], sep=',')
+
+        self.gcam_file = c['gcam_file']
 
         self.Nt = c['nt']
 
@@ -46,7 +49,7 @@ class Abm:
         crpdec.DefineSeed(c['crop_seed_size'])
 
         # target year
-        self.target_year = c['target_year']
+        self.target_year = c['target_yr']
 
         # scale of grid in meters
         self.scale = c['scale']
@@ -105,7 +108,7 @@ class Abm:
         """
 
         # select initial gcam data from initial year
-        lc = gf.get_gcam(self.counties_shp, self.county_list, self.target_year, self.scale, GCAMpath)
+        lc = gf.get_gcam(self.counties_shp, self.county_list, self.gcam_file)
 
         ny, nx = lc[0].shape
 
@@ -116,7 +119,7 @@ class Abm:
 
         return lc, dist2city, domain, ny, nx
 
-    def initialize_profit(self):
+    def initialize_crops(self):
         """Initialize crops
 
         :return:                        TODO: add return descriptions for each variable
@@ -133,7 +136,7 @@ class Abm:
 
         return crop_ids, crop_id_all
 
-    def initalize_profits(self, unknown_var=30000.0, scale=1000.0):
+    def initialize_profit(self, unknown_var=30000.0, scale=1000.0):
         """Initialize profits.
 
         :return:                        TODO:  add return descriptions for each variable
@@ -208,12 +211,13 @@ class Abm:
                                                                       profit_pred,
                                                                       rule=True)
 
-                        crop_id_all, profit_ant, profit_act = crpdec.MakeChoice(self.crop_id_all[i - 1, j, k],
-                                                                                profit_last,
-                                                                                profit_pred,
-                                                                                crop_choice,
-                                                                                profit_choice,
-                                                                                self.profit_act)
+                        self.crop_id_all[i, j, k], self.profit_ant[i, j, k], self.profit_act[i, j, k] = crpdec.MakeChoice(
+                                                                                            self.crop_id_all[i - 1, j, k],
+                                                                                            profit_last,
+                                                                                            self.profit_ant,
+                                                                                            crop_choice,
+                                                                                            profit_choice,
+                                                                                            seed=False)
 
                         # move these indicies into the input variables
                         crop_choice, profit_choice = crpdec.DecideN(self.agent_domain[j, k].FarmerAgents[0].alpha,
@@ -227,7 +231,7 @@ class Abm:
                                                                   rule=True)
 
                         # is there a way to set this up so you can pass a NULL value or no value when seed=False?
-                        crop_id_all[i, j, k], profit_ant[i, j, k], profit_act[i, j, k] = crpdec.MakeChoice(
+                        self.crop_id_all[i, j, k], self.profit_ant[i, j, k], self.profit_act[i, j, k] = crpdec.MakeChoice(
                                                                                             self.crop_id_all[i - 1, j, k],
                                                                                             profit_last,
                                                                                             self.profit_ant,
@@ -278,3 +282,8 @@ class Abm:
 
         # write landcover to array - sub w Jons work
         # saveLC(temp_lc, 2010, it, DataPath)
+
+
+if __name__ == '__main__':
+
+    Abm('/Users/d3y010/repos/github/IM3-BoiseState/example/config.yml')

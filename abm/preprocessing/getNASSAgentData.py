@@ -80,15 +80,17 @@ def makeAgeCDF(varArray):
         ser=np.random.randint(varArray.low[i], high =varArray.high[i], size = varArray.operators[i])
         serFull=np.append(serFull, ser)
         
-    H,X1 = np.histogram(serFull, bins = 68, normed=True)
-    X2=np.floor(X1)
+    H, X1 = np.histogram(serFull, bins=68, normed=True)
+    X2 = np.floor(X1)
     dx = X2[2] - X2[1]
-    F1 = np.cumsum(H)*dx
-    perc=np.column_stack((X2[1:],F1))
+    F1 = np.cumsum(H) * dx
+    perc = np.column_stack((X2[1:], F1))
     
-    return(perc)
- 
+    return perc
+
+
 def makeTenureCDF(varArray):
+
     serFull=np.zeros(0)
     
 

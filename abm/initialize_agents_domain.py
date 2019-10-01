@@ -6,10 +6,11 @@ Created on Mon Aug 12 11:15:12 2019
 @author: kek25
 """
 import numpy as np
-import Classes.aFarmer as farmer
-import Classes.dCellClass as cell
-import Classes.aUrban as urban
-import PreprocessingTools.getNASSAgentData as getNASS
+import abm.agents.aFarmer as farmer
+import abm.agents.dCellClass as cell
+import abm.agents.aUrban as urban
+import abm.preprocessing.getNASSAgentData as getNASS
+
 
 def InitializeDomain(Ny,Nx):
     
@@ -20,6 +21,7 @@ def InitializeDomain(Ny,Nx):
             domain[i][j] = cell.dCellClass()
         #whats a unit test for this??"
     return (domain)
+
 
 def PlaceAgents(Ny,Nx, lc, key_file, cat_option):
     #assert that cat_option has to be a header in the csv doc
@@ -70,4 +72,3 @@ def InitializeAgents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, N
                 domain[i][j].AddAgent(NewAgent)
     
     return(domain)
-             

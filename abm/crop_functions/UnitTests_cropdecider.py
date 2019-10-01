@@ -8,7 +8,8 @@ Created on Wed Aug 14 15:52:44 2019
 
 import unittest
 import numpy as np
-import CropDecider as cd
+import abm.crop_functions.CropDecider as cd
+
 
 class CropDeciderTest(unittest.TestCase):
 
@@ -97,6 +98,7 @@ class CropDeciderTest(unittest.TestCase):
         self.assertEqual(CropID_all_known, CropID_all_test)
         self.assertEqual(Profit_ant_known, Profit_ant_test)
         self.assertEqual(Profit_act_known.astype('int'), Profit_act_test.astype('int'))
-        
+
+
 if __name__ == '__main__':
     unittest.main()
