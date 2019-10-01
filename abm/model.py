@@ -4,9 +4,9 @@ Agent Based Model of Land Use and Land Cover Change
 @author: lejoflores & kendrakaiser
 """
 
+import argparse
+
 import numpy as np
-import geopandas as gp
-import yaml
 
 import abm.preprocessing.geofxns as gf
 import abm.crop_functions.CropDecider as crpdec
@@ -14,80 +14,14 @@ import abm.initialize_agents_domain as init_agent
 import abm.postprocessing.FigureFuncs as ppf
 import abm.preprocessing.getNASSAgentData as get_nass
 
+from abm.config_reader import ConfigReader
+
 
 class Abm:
 
-    # keys found in the configuration file
-    F_COUNTIES_SHP = 'f_counties_shp'
-    F_KEY_FILE = 'f_key_file'
-    F_GCAM_FILE = 'f_gcam_file'
-    NT = 'nt'
-    NC = 'nc'
-    SWITCH_PARAMS = 'switch_params'
-    P = 'p'
-    FMIN = 'fmin'
-    FMAX = 'fmax'
-    F0 = 'f0'
-    N = 'n'
-    CROP_SEED_SIZE = 'crop_seed_size'
-    TARGET_YR = 'target_yr'
-    SCALE = 'scale'
-    COUNTY_LIST = 'county_list'
-    AGENT_VARS = 'agent_variables'
-    NASS_YR = 'nass_year'
-    NASS_COUNTY_LIST = 'nass_county_list'
-
-    # county field name in the input shapefile
-    COUNTY_FLD = 'county'
-
     def __init__(self, config_file):
 
-        c = self.config_reader(config_file)
-
-        self.counties_shp = gp.read_file(c[Abm.F_COUNTIES_SHP])
-        self.counties_shp.set_index(Abm.COUNTY_FLD, inplace=True)
-
-        self.key_file = gp.read_file(c[Abm.F_KEY_FILE], sep=',')
-
-        self.gcam_file = c[Abm.F_GCAM_FILE]
-
-        self.Nt = c[Abm.NT]
-
-        # TODO: there are actually 17 when the 1km is run, need random profit profiles for each of these
-        self.Nc = c[Abm.NC]
-
-        # set agent switching parameters (alpha, beta) [[switching averse], [switching tolerant]]
-        self.switch = np.array(c[Abm.SWITCH_PARAMS])
-
-        # proportion of each switching type, lower than p is averse, higher is tolerant
-        self.p = c[Abm.P]
-
-        # Max and min .... total Profit, percent profit?
-        self.fmin = c[Abm.FMIN]
-        self.fmax = c[Abm.FMAX]
-        self.f0 = c[Abm.F0]
-        self.n = c[Abm.N]
-
-        # TODO:  define seed for crop decider; This is not used in this script but is set as `global`
-        crpdec.DefineSeed(c[Abm.CROP_SEED_SIZE])
-
-        # target year
-        self.target_year = c[Abm.TARGET_YR]
-
-        # scale of grid in meters
-        self.scale = c[Abm.SCALE]
-
-        # list of counties to evaluate
-        self.county_list = c[Abm.COUNTY_LIST]
-
-        # agent variables
-        self.agent_variables = c[Abm.AGENT_VARS]
-
-        # NASS year
-        self.nass_year = c[Abm.NASS_YR]
-
-        # NASS county list
-        self.nass_county_list = [i.upper() for i in c[Abm.NASS_COUNTY_LIST]]
+        self.c = ConfigReader(config_file)
 
         # initialize landscape and domain
         self.lc, self.dist2city, self.domain, self.Ny, self.Nx = self.initialize_landscape_domain()
@@ -107,22 +41,6 @@ class Abm:
         # update variables
         self.update()
 
-        # save output
-        self.save_output()
-
-    @staticmethod
-    def config_reader(config_file):
-        """Read the YAML config file to a dictionary.
-
-        :param config_file:             Full path with file name and extension to the input config file.
-
-        :return:                        YAML dictionary-like object
-
-        """
-
-        with open(config_file) as f:
-            return yaml.safe_load(f)
-
     def initialize_landscape_domain(self):
         """Initialize landscape and domain.
 
@@ -131,7 +49,7 @@ class Abm:
         """
 
         # select initial gcam data from initial year
-        lc = gf.get_gcam(self.counties_shp, self.county_list, self.gcam_file)
+        lc = gf.get_gcam(self.c.counties_shp, self.c.county_list, self.c.gcam_file)
 
         ny, nx = lc[0].shape
 
@@ -150,9 +68,9 @@ class Abm:
         """
 
         # TODO: need to make this automatic depending on which crops show up (which of AllCropIDs == np.unique(lc))
-        crop_ids = np.array([1, 2, 3, 10]).reshape(self.Nc, 1)
+        crop_ids = np.array([1, 2, 3, 10]).reshape(self.c.Nc, 1)
 
-        crop_id_all = np.zeros((self.Nt, self.Ny, self.Nx))
+        crop_id_all = np.zeros((self.c.Nt, self.Ny, self.Nx))
 
         # TODO: this will be added into the cell class
         crop_id_all[0, :, :] = self.lc
@@ -166,14 +84,14 @@ class Abm:
 
         """
 
-        profit_ant = np.zeros((self.Nt, self.Ny, self.Nx))
+        profit_ant = np.zeros((self.c.Nt, self.Ny, self.Nx))
 
         # TODO: what is the unknown variable??  Where does scale in this case come from??
         profit_ant[0, :, :] = unknown_var + np.random.normal(loc=0.0, scale=scale, size=(1, self.Ny, self.Nx))
 
         profit_act = profit_ant.copy()
 
-        profits = crpdec.GeneratePrices(self.Nt)[:, 0:self.Nc]
+        profits = crpdec.GeneratePrices(self.c.Nt)[:, 0:self.c.Nc]
 
         return profit_act, profit_ant, profits
 
@@ -186,18 +104,18 @@ class Abm:
         """
 
         # tenure from individual counties can also be used
-        tenure = get_nass.TenureArea(id_field, self.nass_county_list, self.nass_year, self.agent_variables)
+        tenure = get_nass.TenureArea(id_field, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables, self.c.nass_api_key)
 
-        ages = get_nass.Ages(self.nass_year, id_field)
+        ages = get_nass.Ages(self.c.nass_year, id_field, self.c.nass_api_key)
 
         age_cdf = get_nass.makeAgeCDF(ages)
 
         tenure_cdf = get_nass.makeTenureCDF(tenure)
 
-        agent_array = init_agent.PlaceAgents(self.Ny, self.Nx, self.lc, self.key_file, cat_header)
+        agent_array = init_agent.PlaceAgents(self.Ny, self.Nx, self.lc, self.c.key_file, cat_header)
 
         agent_domain = init_agent.InitializeAgents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf,
-                                                   self.switch, self.Ny, self.Nx, self.lc, self.p)
+                                                   self.c.switch, self.Ny, self.Nx, self.lc, self.c.p)
 
         return agent_domain, agent_array
 
@@ -207,7 +125,7 @@ class Abm:
         :return:                        TODO:  add return descriptions for each variable
 
         """
-        for i in np.arange(1, self.Nt):
+        for i in np.arange(1, self.c.Nt):
 
             for j in np.arange(self.Ny):
 
@@ -219,15 +137,15 @@ class Abm:
                         profit_last, profit_pred = crpdec.AssessProfit(self.crop_id_all[i - 1, j, k],
                                                                        self.profits[i - 1, :],
                                                                        self.profits[i, :],
-                                                                       self.Nc,
+                                                                       self.c.Nc,
                                                                        self.crop_ids)
 
                         # Decide on Crop
                         crop_choice, profit_choice = crpdec.DecideN(self.agent_domain[j, k].FarmerAgents[0].alpha,
                                                                       self.agent_domain[j, k].FarmerAgents[0].beta,
-                                                                      self.fmin,
-                                                                      self.fmax,
-                                                                      self.n,
+                                                                      self.c.fmin,
+                                                                      self.c.fmax,
+                                                                      self.c.n,
                                                                       profit_last,
                                                                       self.crop_ids,
                                                                       profit_pred,
@@ -244,9 +162,9 @@ class Abm:
                         # move these indicies into the input variables
                         crop_choice, profit_choice = crpdec.DecideN(self.agent_domain[j, k].FarmerAgents[0].alpha,
                                                                   self.agent_domain[j, k].FarmerAgents[0].beta,
-                                                                  self.fmin,
-                                                                  self.fmax,
-                                                                  self.n,
+                                                                  self.c.fmin,
+                                                                  self.c.fmax,
+                                                                  self.c.n,
                                                                   profit_last,
                                                                   self.crop_ids,
                                                                   profit_pred,
@@ -261,14 +179,7 @@ class Abm:
                                                                                             profit_choice,
                                                                                             seed=False)
 
-        ppf.CropPerc(self.crop_id_all, self.crop_ids, self.Nt, self.Nc)
-
-        # crop_id_all, profit_ant, profit_act = cd.MakeDecision(Nt, Ny, Nx, Nc, crop_id_all, profits, profit_ant,
-        # profit_act, a_ra, b_ra, fmin, fmax, n, crop_ids)
-
-        # one unit test would be to confirm that non-ag stayed the same and that all of the ag did not stay the same"
-        # need to pull out the parts that dont rely on the loop and put the decision inside of it, that way
-        # relevant info can be updated between timesteps;
+        ppf.CropPerc(self.crop_id_all, self.crop_ids, self.c.Nt, self.c.Nc)
 
         # TODO:  where is FarmerAges used?
         FarmerAges = ppf.AgentAges(self.agent_domain, self.agent_array, self.Ny, self.Nx)
@@ -279,10 +190,6 @@ class Abm:
         :return:
 
         """
-
-        # Update self.agent_array
-        # where in the model does the code denote that the agent goes from farmer to urban or visa versa
-             # agent_domain[i][j].SwapAgent('aFarmer','aUrban',fromIndex,AgentArray) "switch for now"
 
         for i in np.arange(self.Ny):
 
@@ -295,17 +202,33 @@ class Abm:
                     # TODO:  are you overwriting the previous value?
                     self.agent_domain[i][j].FarmerAgents[0].UpdateDist2city(self.dist2city[i][j])
 
-    def save_output(self):
-        """Save output
-
-
-        """
-        pass
-
-        # write landcover to array - sub w Jons work
-        # saveLC(temp_lc, 2010, it, DataPath)
-
 
 if __name__ == '__main__':
+
+    # parser = argparse.ArgumentParser()
+    #
+    # parser.add_argument('-c', '--config_file', type=str, help='Full path with file name and extension to YAML configuration file.')
+    # parser.add_argument('-shp', '--f_counties_shp', type=str, help='Full path with file name and extension to the input counties shapefile.')
+    # parser.add_argument('-key', '--f_key_file', type=str, help='Full path with file name and extension to the input land class category key file.')
+    # parser.add_argument('-gcam', '--f_gcam_file', type=str, help='Full path with file name and extension to the input GCAM raster file.')
+    # parser.add_argument('-s', '--switch_params', type=list, help='List of lists for switching averse, tolerant parameters (alpha, beta)')
+    # parser.add_argument('-nt', '--nt', type=int, help='Need description')
+    # parser.add_argument('-nc', '--nc', type=int, help='Need description')
+    # parser.add_argument('-fmin', '--fmin', type=float, help='Need description')
+    # parser.add_argument('-fmax', '--fmax', type=float, help='Need description')
+    # parser.add_argument('-f0', '--f0', type=float, help='Need description')
+    # parser.add_argument('-n', '--n', type=int, help='Need description')
+    # parser.add_argument('-seed', '--crop_seed_size', type=int, help='Need description')
+    # parser.add_argument('-yr', '--target_yr', type=int, help='Need description')
+    # parser.add_argument('-sc', '--scale', type=int, help='Need description')
+    # parser.add_argument('-cl', '--county_list', type=list, help='List of county names to evaluate from the input shapefile.')
+    # parser.add_argument('-av', '--agent_variables', type=list, help='Need description')
+    # parser.add_argument('-nyr', '--nass_year', type=int, help='Need description')
+    # parser.add_argument('-ncy', '--nass_county_list', type=list, help='Need description')
+    # parser.add_argument('-api', '--nass_api_key', type=int, help='Need description')
+    #
+    # args = parser.parse_args()
+    #
+    # Abm(args.config_file)
 
     Abm('/Users/d3y010/repos/github/IM3-BoiseState/example/config.yml')
