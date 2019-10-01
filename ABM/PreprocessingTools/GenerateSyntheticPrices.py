@@ -17,11 +17,20 @@ NPRICE_FUNCTIONS = 3
 #                                                                             #
 #                                                                             #
 #=============================================================================#
-def GeneratePrice_linear(Nt,Pi,Pf,perturb,s_p=0.0):
+def GeneratePrice_linear(Num_timesteps,Pi,Pf,perturb,s_p=0.0):
+    """Description
     
-    P = np.linspace(Pi,Pf,num=Nt).reshape((Nt,1))
+    :param Num_timesteps:           
+    :param Pi:          
+    :param Pf:                
+    :param perturb:   
+    :param s_p:
+                
+    :return:                         
+    """
+    P = np.linspace(Pi,Pf,num=Num_timesteps).reshape((Num_timesteps,1))
     if(perturb==1):
-        P += np.random.normal(loc=0.0, scale=s_p, size=(Nt,1))
+        P += np.random.normal(loc=0.0, scale=s_p, size=(Num_timesteps,1))
     
     return P
 
@@ -29,18 +38,28 @@ def GeneratePrice_linear(Nt,Pi,Pf,perturb,s_p=0.0):
 #                                                                             #
 #                                                                             #
 #=============================================================================#
-def GeneratePrice_step(Nt,Pi,Pf,t_step,perturb,s_p=0.0):
+def GeneratePrice_step(Num_timesteps,Pi,Pf,t_step,perturb,s_p=0.0):
+    """Description
     
+    :param Num_timesteps:           
+    :param Pi:          
+    :param Pf:                
+    :param t_step:   
+    :param perturb: 
+    :param s_p:  
+        
+    :return:                         
+    """
     assert t_step > 0.0, 'GenerateSyntheticPrices.py ERROR: Step price change time is less than 0.0'
     assert t_step < 1.0, 'GenerateSyntheticPrices.py ERROR: Step price change time is greeater than 1.0'
     
     
-    P = np.zeros((Nt,1))
-    P[0:(int(t_step*Nt))] = Pi
-    P[(int(t_step*Nt)):]  = Pf
+    P = np.zeros((Num_timesteps,1))
+    P[0:(int(t_step*Num_timesteps))] = Pi
+    P[(int(t_step*Num_timesteps)):]  = Pf
 
     if(perturb==1):
-        P += np.random.normal(loc=0.0, scale=s_p, size=(Nt,1))
+        P += np.random.normal(loc=0.0, scale=s_p, size=(Num_timesteps,1))
 
     return P
 
@@ -48,13 +67,23 @@ def GeneratePrice_step(Nt,Pi,Pf,t_step,perturb,s_p=0.0):
 #                                                                             #
 #                                                                             #
 #=============================================================================#
-def GeneratePrice_periodic(Nt,Pmag,Pamp,n_period,perturb,s_p=0.0):
-
-    x = np.linspace(0.0,n_period*2*np.pi, num=Nt).reshape((Nt,1))
+def GeneratePrice_periodic(Num_timesteps,Pmag,Pamp,n_period,perturb,s_p=0.0):
+    """Description
+    
+    :param Num_timesteps:           
+    :param Pmag:          
+    :param Pamp:                
+    :param n_period:   
+    :param perturb:
+    :param s_p:
+                
+    :return:                         
+    """
+    x = np.linspace(0.0,n_period*2*np.pi, num=Num_timesteps).reshape((Num_timesteps,1))
     P = Pmag + Pamp  * np.sin(x)
     
     if(perturb==1):
-        P += np.random.normal(loc=0.0, scale=s_p, size=(Nt,1))
+        P += np.random.normal(loc=0.0, scale=s_p, size=(Num_timesteps,1))
       
     return P
 
@@ -63,6 +92,12 @@ def GeneratePrice_periodic(Nt,Pmag,Pamp,n_period,perturb,s_p=0.0):
 #                                                                             #
 #=============================================================================#
 def main(argv):
+    """Description
+    
+    :param argv:           
+                
+    :return:                         
+    """
     
     if(len(argv)!=5):
         print('\nERROR: Incorrect number of command line arguments\n')
