@@ -11,8 +11,8 @@ import numpy as np
 import sys
 import csv
 
-NPRICE_FUNCTIONS = 3
-
+# TODO: This gets added to the config file
+NPRICE_FUNCTIONS = 3 
 #=============================================================================#
 #                                                                             #
 #                                                                             #
