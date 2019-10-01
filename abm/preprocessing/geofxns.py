@@ -94,7 +94,7 @@ def min_dist_city(gcam):
     :return: np.array of distance to a city cell within the domain
 
     """
-
+    # TODO:  are these values supposed to be hard-coded
     urban_bool = np.logical_or(np.logical_or(gcam[0] == 26, gcam[0] == 27), np.logical_or(gcam[0] == 17, gcam[0] == 25))
     
     rur = np.where(np.logical_and(~urban_bool, gcam[0] != 0))
