@@ -131,11 +131,11 @@ def DecideN(alpha, beta, fmin, fmax, n, Profits_current, vec_crops,
 def AssessProfit(Crop, Profits_current, Profits_expected,  Num_crops, CropIDs):
      """Decide which crop and associated profit to pick out of two options.
     
-    :param Crop:              
-    :param Profits_current:                
+    :param Crop:                    Current Crop Choice            
+    :param Profits_current:         Profit from current crop choice              
     :param Profits_expected:                
     :param Num_crops:   
-    :param rule: 
+    :param CropIDs: 
                 
     :return: integer denoting crop choice and float of the associated profit                         
     """
@@ -162,6 +162,16 @@ def AssessProfit(Crop, Profits_current, Profits_expected,  Num_crops, CropIDs):
 
 
 def MakeChoice(CropID_last, Profit_last, CropChoice, ProfitChoice, seed = False):
+    """
+    
+    :param CropID_last:           
+    :param Profit_last:          
+    :param CropChoice:                
+    :param ProfitChoice:   
+    :param seed: 
+                
+    :return:                         
+    """
     
     if (seed == True):
         
@@ -190,6 +200,7 @@ def MakeChoice(CropID_last, Profit_last, CropChoice, ProfitChoice, seed = False)
 #                 to test new model test cases, etc.                          #
 #                                                                             #
 #=============================================================================#
+"""ARE WE RETAINING THIS?"""
 
 def GeneratePrices(Nt):
     
