@@ -19,9 +19,19 @@ from abm.config_reader import ConfigReader
 
 class Abm:
 
-    def __init__(self, config_file):
+    def __init__(self, args=None, config_file=None):
 
-        self.c = ConfigReader(config_file)
+        if (args is not None) and (config_file is None):
+
+            # if config file used, read it in; else, use args from user
+            try:
+                self.c = ConfigReader(args.config_file)
+
+            except AttributeError:
+                self.c = args
+
+        else:
+            self.c = ConfigReader(config_file)
 
         # initialize landscape and domain
         self.lc, self.dist2city, self.domain, self.Ny, self.Nx = self.initialize_landscape_domain()
@@ -205,30 +215,30 @@ class Abm:
 
 if __name__ == '__main__':
 
-    # parser = argparse.ArgumentParser()
-    #
-    # parser.add_argument('-c', '--config_file', type=str, help='Full path with file name and extension to YAML configuration file.')
-    # parser.add_argument('-shp', '--f_counties_shp', type=str, help='Full path with file name and extension to the input counties shapefile.')
-    # parser.add_argument('-key', '--f_key_file', type=str, help='Full path with file name and extension to the input land class category key file.')
-    # parser.add_argument('-gcam', '--f_gcam_file', type=str, help='Full path with file name and extension to the input GCAM raster file.')
-    # parser.add_argument('-s', '--switch_params', type=list, help='List of lists for switching averse, tolerant parameters (alpha, beta)')
-    # parser.add_argument('-nt', '--nt', type=int, help='Need description')
-    # parser.add_argument('-nc', '--nc', type=int, help='Need description')
-    # parser.add_argument('-fmin', '--fmin', type=float, help='Need description')
-    # parser.add_argument('-fmax', '--fmax', type=float, help='Need description')
-    # parser.add_argument('-f0', '--f0', type=float, help='Need description')
-    # parser.add_argument('-n', '--n', type=int, help='Need description')
-    # parser.add_argument('-seed', '--crop_seed_size', type=int, help='Need description')
-    # parser.add_argument('-yr', '--target_yr', type=int, help='Need description')
-    # parser.add_argument('-sc', '--scale', type=int, help='Need description')
-    # parser.add_argument('-cl', '--county_list', type=list, help='List of county names to evaluate from the input shapefile.')
-    # parser.add_argument('-av', '--agent_variables', type=list, help='Need description')
-    # parser.add_argument('-nyr', '--nass_year', type=int, help='Need description')
-    # parser.add_argument('-ncy', '--nass_county_list', type=list, help='Need description')
-    # parser.add_argument('-api', '--nass_api_key', type=int, help='Need description')
-    #
-    # args = parser.parse_args()
-    #
-    # Abm(args.config_file)
+    parser = argparse.ArgumentParser()
 
-    Abm('/Users/d3y010/repos/github/IM3-BoiseState/example/config.yml')
+    parser.add_argument('-c', '--config_file', type=str, help='Full path with file name and extension to YAML configuration file.')
+    parser.add_argument('-shp', '--f_counties_shp', type=str, help='Full path with file name and extension to the input counties shapefile.')
+    parser.add_argument('-key', '--f_key_file', type=str, help='Full path with file name and extension to the input land class category key file.')
+    parser.add_argument('-gcam', '--f_gcam_file', type=str, help='Full path with file name and extension to the input GCAM raster file.')
+    parser.add_argument('-s', '--switch_params', type=list, help='List of lists for switching averse, tolerant parameters (alpha, beta)')
+    parser.add_argument('-nt', '--nt', type=int, help='Need description')
+    parser.add_argument('-nc', '--nc', type=int, help='Need description')
+    parser.add_argument('-fmin', '--fmin', type=float, help='Need description')
+    parser.add_argument('-fmax', '--fmax', type=float, help='Need description')
+    parser.add_argument('-f0', '--f0', type=float, help='Need description')
+    parser.add_argument('-n', '--n', type=int, help='Need description')
+    parser.add_argument('-seed', '--crop_seed_size', type=int, help='Need description')
+    parser.add_argument('-yr', '--target_yr', type=int, help='Need description')
+    parser.add_argument('-sc', '--scale', type=int, help='Need description')
+    parser.add_argument('-cl', '--county_list', type=list, help='List of county names to evaluate from the input shapefile.')
+    parser.add_argument('-av', '--agent_variables', type=list, help='Need description')
+    parser.add_argument('-nyr', '--nass_year', type=int, help='Need description')
+    parser.add_argument('-ncy', '--nass_county_list', type=list, help='Need description')
+    parser.add_argument('-api', '--nass_api_key', type=int, help='Need description')
+
+    args = parser.parse_args()
+
+    Abm(args)
+
+    # Abm('/Users/d3y010/repos/github/IM3-BoiseState/example/config.yml')
