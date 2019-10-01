@@ -47,3 +47,6 @@ nass_year: 2007
 
 # TODO:  NASS county list
 nass_county_list: ['ADA', 'CANYON']
+
+# NASS API key
+nass_api_key:  'B5240598-2A7D-38EE-BF8D-816A27BEF504'
