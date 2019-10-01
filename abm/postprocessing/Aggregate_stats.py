@@ -5,7 +5,10 @@ Created on Wed Jan 16 09:41:43 2019
 
 @author: kendrakaiser
 """
-from rasterstats import zonal_stats #zonal stats http://www.perrygeo.com/index2.html, https://pythonhosted.org/rasterstats/manual.html
+# TODO:  when is this used?
+# zonal stats http://www.perrygeo.com/index2.html, https://pythonhosted.org/rasterstats/manual.html
+from rasterstats import zonal_stats
+
 
 #create histogram of each year at each scale
 #ts plots of each land cover at each scale
@@ -23,4 +26,4 @@ shpFile='SRB_poly_3km.shp'
 #Calculate Raster Stats                                                       #
 #=============================================================================#
 
-zonal_satats(shp, tif, categorical=TRUE)
+zonal_stats(shp, tif, categorical=TRUE)

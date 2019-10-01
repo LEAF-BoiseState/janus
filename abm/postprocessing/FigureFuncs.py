@@ -11,6 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
+
 def CreateAnimation(CropID_all, Nt):
     ims = []
 
@@ -24,12 +25,21 @@ def CreateAnimation(CropID_all, Nt):
 
     ani.save('CropID_vs_Time.gif')
 
-#line plot showing the change in landcover over time    
-def dCdT(CropID_all, Nt):
-    unique_elementsToat, counts_elementsToat = np.unique(CropID_all, return_counts=True)
+
+def dCdT(crop_id_all, Nt):
+    """Line plot showing the change in landcover over time.
+
+    :param CropID_all:
+    :param Nt:
+
+    :return:
+
+    """
+    unique_elementsToat, counts_elementsToat = np.unique(crop_id_all, return_counts=True)
     counts = np.zeros((len(unique_elementsToat), Nt))
     for t in np.arange(Nt):
-        unique_elements, counts_elements = np.unique(CropID_all[t], return_counts=True)
+        unique_elements, counts_elements = np.unique(crop_id_all[t], return_counts=True)
+
         #this isn't working .. need to come up with a better way to do this
       #  loc=np.where(unique_elementsToat == unique_elements)
         counts[:, t] = counts_elements
