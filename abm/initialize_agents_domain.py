@@ -12,15 +12,15 @@ import abm.agents.aUrban as urban
 import abm.preprocessing.getNASSAgentData as getNASS
 
 
-def InitializeDomain(Ny,Nx):
+def InitializeDomain(Ny, Nx):
     
     domain = np.empty((Ny,Nx), dtype=object) 
 
     for i in np.arange(Ny):
         for j in np.arange(Nx):
             domain[i][j] = cell.dCellClass()
-        #whats a unit test for this??"
-    return (domain)
+
+    return domain
 
 
 def PlaceAgents(Ny,Nx, lc, key_file, cat_option):

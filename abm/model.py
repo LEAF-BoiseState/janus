@@ -17,54 +17,77 @@ import abm.preprocessing.getNASSAgentData as get_nass
 
 class Abm:
 
+    # keys found in the configuration file
+    F_COUNTIES_SHP = 'f_counties_shp'
+    F_KEY_FILE = 'f_key_file'
+    F_GCAM_FILE = 'f_gcam_file'
+    NT = 'nt'
+    NC = 'nc'
+    SWITCH_PARAMS = 'switch_params'
+    P = 'p'
+    FMIN = 'fmin'
+    FMAX = 'fmax'
+    F0 = 'f0'
+    N = 'n'
+    CROP_SEED_SIZE = 'crop_seed_size'
+    TARGET_YR = 'target_yr'
+    SCALE = 'scale'
+    COUNTY_LIST = 'county_list'
+    AGENT_VARS = 'agent_variables'
+    NASS_YR = 'nass_year'
+    NASS_COUNTY_LIST = 'nass_county_list'
+
+    # county field name in the input shapefile
+    COUNTY_FLD = 'county'
+
     def __init__(self, config_file):
 
         c = self.config_reader(config_file)
 
-        self.counties_shp = gp.read_file(c['f_counties_shp'])
-        self.counties_shp.set_index('county', inplace=True)
+        self.counties_shp = gp.read_file(c[Abm.F_COUNTIES_SHP])
+        self.counties_shp.set_index(Abm.COUNTY_FLD, inplace=True)
 
-        self.key_file = gp.read_file(c['f_key_file'], sep=',')
+        self.key_file = gp.read_file(c[Abm.F_KEY_FILE], sep=',')
 
-        self.gcam_file = c['gcam_file']
+        self.gcam_file = c[Abm.F_GCAM_FILE]
 
-        self.Nt = c['nt']
+        self.Nt = c[Abm.NT]
 
         # TODO: there are actually 17 when the 1km is run, need random profit profiles for each of these
-        self.Nc = c['nc']
+        self.Nc = c[Abm.NC]
 
         # set agent switching parameters (alpha, beta) [[switching averse], [switching tolerant]]
-        self.switch = np.array(c['switch_params'])
+        self.switch = np.array(c[Abm.SWITCH_PARAMS])
 
         # proportion of each switching type, lower than p is averse, higher is tolerant
-        self.p = c['p']
+        self.p = c[Abm.P]
 
         # Max and min .... total Profit, percent profit?
-        self.fmin = c['fmin']
-        self.fmax = c['fmax']
-        self.f0 = c['f0']
-        self.n = c['n']
+        self.fmin = c[Abm.FMIN]
+        self.fmax = c[Abm.FMAX]
+        self.f0 = c[Abm.F0]
+        self.n = c[Abm.N]
 
         # TODO:  define seed for crop decider; This is not used in this script but is set as `global`
-        crpdec.DefineSeed(c['crop_seed_size'])
+        crpdec.DefineSeed(c[Abm.CROP_SEED_SIZE])
 
         # target year
-        self.target_year = c['target_yr']
+        self.target_year = c[Abm.TARGET_YR]
 
         # scale of grid in meters
-        self.scale = c['scale']
+        self.scale = c[Abm.SCALE]
 
         # list of counties to evaluate
-        self.county_list = c['county_list']
+        self.county_list = c[Abm.COUNTY_LIST]
 
         # agent variables
-        self.agent_variables = c['agent_variables']
+        self.agent_variables = c[Abm.AGENT_VARS]
 
         # NASS year
-        self.nass_year = c['nass_year']
+        self.nass_year = c[Abm.NASS_YR]
 
         # NASS county list
-        self.nass_county_list = [i.upper() for i in c['nass_county_list']]
+        self.nass_county_list = [i.upper() for i in c[Abm.NASS_COUNTY_LIST]]
 
         # initialize landscape and domain
         self.lc, self.dist2city, self.domain, self.Ny, self.Nx = self.initialize_landscape_domain()
@@ -268,10 +291,10 @@ class Abm:
 
                 if self.agent_array[i][j]=='aFarmer':
 
-                    self.agent_domain[i][j].FarmAgents[0].UpdateAge()
+                    self.agent_domain[i][j].FarmerAgents[0].UpdateAge()
 
                     # TODO:  are you overwriting the previous value?
-                    self.agent_domain[i][j].FarmAgents[0].UpdateDist2city(self.dist2city[i][j])
+                    self.agent_domain[i][j].FarmerAgents[0].UpdateDist2city(self.dist2city[i][j])
 
     def save_output(self):
         """Save output
