@@ -59,7 +59,6 @@ There is an example config file in the `abm/example` directory of this package t
 <Use this section to describe any processing needed to prepare input files for use.
 
 - `file_one.csv`:  Need description
-
 - `file_two.csv`:  Need description
 
 ## Running `abm`
