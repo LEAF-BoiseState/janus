@@ -3,8 +3,8 @@
 `abm` was designed to simulate land cover changes over time. These landcover changes are carried out by individual agents that choose to either continue planting the same crop, or choose to switch to a new crop based on expected profits.
 
 ## Contact
-Kendra Kaiser (kendrakaiser@boisestate.edu)
-Lejo Flores (lejoflores@boisestate.edu)
+- Kendra Kaiser (kendrakaiser@boisestate.edu)
+- Lejo Flores (lejoflores@boisestate.edu)
 
 ## Getting Started
 The `abm` package uses only Python 3.3 and up.
