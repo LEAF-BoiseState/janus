@@ -120,13 +120,18 @@ for i in np.arange(1,Nt):
                 CropID_all[i,j,k], profits_actual[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], profit_last, CropChoice, profitChoice, seed=False) 
                 
                 #update agent attributes
-                domain[j,k].FarmerAgents[0].UpdateAge() #there needs to be a limit on this - e.g. what happens when farmers are over 90 - do they automatically get replaced with another?
+                domain[j,k].FarmerAgents[0].UpdateAge() #there is something wrong w this - they ballon up to 600 years
  
 
 
 ppf.CropPerc(CropID_all, CropIDs, Nt, Num_crops) #save this to results output
 ppf.AgentAges(domain, AgentArray, Ny, Nx)
 
+#---------------------------------------
+# 3. Save output
+#---------------------------------------
+
 #save 3D landcover coverage
+# 3D profits 
 
 

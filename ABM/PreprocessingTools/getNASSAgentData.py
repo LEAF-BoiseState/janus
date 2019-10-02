@@ -80,7 +80,7 @@ def makeAgeCDF(varArray):
         ser=np.random.randint(varArray.low[i], high =varArray.high[i], size = varArray.operators[i])
         serFull=np.append(serFull, ser)
         
-    H,X1 = np.histogram(serFull, bins = 68, normed=True)
+    H,X1 = np.histogram(serFull, bins = 68, density=True)
     X2=np.floor(X1)
     dx = X2[2] - X2[1]
     F1 = np.cumsum(H)*dx
@@ -99,7 +99,7 @@ def makeTenureCDF(varArray):
     serFull=np.append(serFull, ser1)
     serFull=np.append(serFull, ser2)
         
-    H,X1 = np.histogram(serFull, bins = 3, normed=True)
+    H,X1 = np.histogram(serFull, bins = 3, density=True)
     dx = X1[2] - X1[1]
     F1 = np.cumsum(H)*dx #I think this is the one to return
     perc=np.column_stack(([0,1,2], F1))        
@@ -112,7 +112,7 @@ def makeTenureCDF(varArray):
 def FarmerData(TenureCDF, AgeCDF, switch, p, d2c):
     ss=np.random.random_sample()
     ts = np.random.random_sample() 
-    ageS = np.random.random_sample()
+    ageS = np.random.rand(1)
     #print(ageS)
             
     if ss >= p:
