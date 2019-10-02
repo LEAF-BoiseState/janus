@@ -121,6 +121,7 @@ for i in np.arange(1,Nt):
     for j in np.arange(Ny):
         for k in np.arange(Nx):
             if domain[j,k].FarmerAgents:
+                # TODO: fix either how AssessProfit takes in the profits_actual and profit_signals, or change them prior to being read into the function
                 #Assess Profit
                 profit_last, profit_pred = cd.AssessProfit(CropID_all[i-1,j,k], profits_actual[i-1,:], profit_signals.iloc[:,i], Num_crops, CropIDs)
                 #Decide on Crop
