@@ -212,13 +212,11 @@ def MakeChoice(CropID_last, Profit_last, CropChoice, ProfitChoice, seed = False)
     # Check if return  values indicate the farmer shouldn't switch
     if(CropChoice==-1) and (ProfitChoice==-1):
         CropID_next = CropID_last
-        Profit_ant = Profit_last
-        Profit_act = Profit_ant + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1)) #this years actual profit
+        Profit_act = Profit_last + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1)) #this years actual profit
     else: #switch to the new crop
         CropID_next = CropChoice
-        Profit_ant = ProfitChoice
-        Profit_act= Profit_ant + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1))
-    return(CropID_next, Profit_ant, Profit_act)
+        Profit_act= ProfitChoice + np.random.normal(loc=0.0, scale=1000.0, size=(1,1,1))
+    return(CropID_next, Profit_act)
     
 #=============================================================================#
 #                                                                             #
