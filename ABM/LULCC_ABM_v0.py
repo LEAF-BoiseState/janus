@@ -29,6 +29,8 @@ counties_shp=counties_shp.set_index('county')
 key_file= pd.read_csv(DataPath+'CDL2GCAM_SRP_categories.csv', sep=',')
 # TODO: add path to profit_file csv from config file
 profit_file=pd.read_csv(userPath+'IM3-BoiseState/ABM/PreprocessingTools/NewSyntheticOutput2.csv', header=None)
+profit_signals=profit_file.to_numpy()
+
 #---------------------------------------
 # 0. Declare Variables
 #---------------------------------------
@@ -81,7 +83,7 @@ CropID_all[0,:,:] = lc #this will be added into the cell class
 #  Initialize Profits
 #---------------------------------------
 # initializes profits based on profit signals from csv output from generate synthetic prices 
-profits_actual =init.Profits(profit_file, Nt, Ny, Nx, CropID_all, CropIDs)
+profits_actual =init.Profits(profit_signals, Nt, Ny, Nx, CropID_all, CropIDs)
             
 #---------------------------------------
 #  Initialize Agents

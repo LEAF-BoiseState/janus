@@ -71,11 +71,11 @@ def Agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
     
     return(domain)
              
-#
-#
-#
+#------------------------------------------------------------------------------
+# Initialize np array of profits
+#------------------------------------------------------------------------------
     
-def Profits(profit_file, Nt, Ny, Nx, CropID_all, CropIDs):
+def Profits(profit_signals, Nt, Ny, Nx, CropID_all, CropIDs):
     """Decide which crop and associated profit to pick out of two options.
     
     :param profit_file: data frame of profit signals creatd from generate synthetic prices, or user supplied         
@@ -89,7 +89,6 @@ def Profits(profit_file, Nt, Ny, Nx, CropID_all, CropIDs):
     """
     
     profits_actual = np.zeros((Nt,Ny,Nx))
-    profit_signals=profit_file.to_numpy()
     for i in np.arange(Ny):
         for j in np.arange(Nx):
             CropInd= CropID_all[0,i,j]
