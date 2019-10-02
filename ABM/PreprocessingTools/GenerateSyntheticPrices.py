@@ -17,20 +17,20 @@ NPRICE_FUNCTIONS = 3
 #                                                                             #
 #                                                                             #
 #=============================================================================#
-def GeneratePrice_linear(Num_timesteps,Pi,Pf,perturb,s_p=0.0):
+def GeneratePrice_linear(Nt,Pi,Pf,perturb,s_p=0.0):
     """Description
     
-    :param Num_timesteps: Number of timesteps in the model             
+    :param Nt: Number of timesteps in the model             
     :param Pi: Profit at the beginning of the time series
     :param Pf: Profit at the end of the time series
     :param perturb: Perturbation flag. 0 = no random perturbations to profit. 1 = add zero mean, uncorrelated noise to every time step
     :param s_p: Standard deviation of noise added to profit signal at each time step (default = 0.0)
                 
-    :return: An Num_timesteps x 1 numpy array of profit
+    :return: An Nt x 1 numpy array of profit
     """
-    P = np.linspace(Pi,Pf,num=Num_timesteps).reshape((Num_timesteps,1))
+    P = np.linspace(Pi,Pf,num=Nt).reshape((Nt,1))
     if(perturb==1):
-        P += np.random.normal(loc=0.0, scale=s_p, size=(Num_timesteps,1))
+        P += np.random.normal(loc=0.0, scale=s_p, size=(Nt,1))
     
     return P
 
@@ -38,28 +38,28 @@ def GeneratePrice_linear(Num_timesteps,Pi,Pf,perturb,s_p=0.0):
 #                                                                             #
 #                                                                             #
 #=============================================================================#
-def GeneratePrice_step(Num_timesteps,Pi,Pf,t_step,perturb,s_p=0.0):
+def GeneratePrice_step(Nt,Pi,Pf,t_step,perturb,s_p=0.0):
     """Description
     
-    :param Num_timesteps: Number of timesteps in the model        
+    :param Nt: Number of timesteps in the model        
     :param Pi: Profit prior to the step change
     :param Pf: Profit after the step change
-    :param t_step: (0.0 to 1.0) the time at which the step change occurs as a fraction of Num_timesteps
+    :param t_step: (0.0 to 1.0) the time at which the step change occurs as a fraction of Nt
     :param perturb: Perturbation flag. 0 = no random perturbations to profit. 1 = add zero mean, uncorrelated noise to every time step
     :param s_p: Standard deviation of noise added to profit signal at each time step (default = 0.0)
                 
-    :return: An Num_timesteps x 1 numpy array of profit
+    :return: An Nt x 1 numpy array of profit
     """
     assert t_step > 0.0, 'GenerateSyntheticPrices.py ERROR: Step price change time is less than 0.0'
     assert t_step < 1.0, 'GenerateSyntheticPrices.py ERROR: Step price change time is greeater than 1.0'
     
     
-    P = np.zeros((Num_timesteps,1))
-    P[0:(int(t_step*Num_timesteps))] = Pi
-    P[(int(t_step*Num_timesteps)):]  = Pf
+    P = np.zeros((Nt,1))
+    P[0:(int(t_step*Nt))] = Pi
+    P[(int(t_step*Nt)):]  = Pf
 
     if(perturb==1):
-        P += np.random.normal(loc=0.0, scale=s_p, size=(Num_timesteps,1))
+        P += np.random.normal(loc=0.0, scale=s_p, size=(Nt,1))
 
     return P
 
@@ -67,23 +67,23 @@ def GeneratePrice_step(Num_timesteps,Pi,Pf,t_step,perturb,s_p=0.0):
 #                                                                             #
 #                                                                             #
 #=============================================================================#
-def GeneratePrice_periodic(Num_timesteps,Pmag,Pamp,n_period,perturb,s_p=0.0):
+def GeneratePrice_periodic(Nt,Pmag,Pamp,n_period,perturb,s_p=0.0):
     """Description
     
-    :param Num_timesteps: Number of timesteps in the model             
+    :param Nt: Number of timesteps in the model             
     :param Pmag: 
     :param Pamp:                
     :param n_period:   
     :param perturb: Perturbation flag. 0 = no random perturbations to profit. 1 = add zero mean, uncorrelated noise to every time step
     :param s_p: Standard deviation of noise added to profit signal at each time step (default = 0.0)
                 
-    :return: An Num_timesteps x 1 numpy array of profit
+    :return: An Nt x 1 numpy array of profit
     """
-    x = np.linspace(0.0,n_period*2*np.pi, num=Num_timesteps).reshape((Num_timesteps,1))
+    x = np.linspace(0.0,n_period*2*np.pi, num=Nt).reshape((Nt,1))
     P = Pmag + Pamp  * np.sin(x)
     
     if(perturb==1):
-        P += np.random.normal(loc=0.0, scale=s_p, size=(Num_timesteps,1))
+        P += np.random.normal(loc=0.0, scale=s_p, size=(Nt,1))
       
     return P
 

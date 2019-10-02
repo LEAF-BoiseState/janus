@@ -155,7 +155,7 @@ def DecideN(alpha, beta, fmin, fmax, n, Profits_current, vec_crops,
 #                                                                             #
 #=============================================================================#
 
-def AssessProfit(Crop, Profits_current, Profits_expected,  Num_crops, CropIDs):
+def AssessProfit(Crop, Profits_current, Profit_signals,  Num_crops, CropIDs):
      """Decide which crop and associated profit to pick out of two options.
     
     :param Crop:                    Current Crop Choice            
@@ -173,7 +173,7 @@ def AssessProfit(Crop, Profits_current, Profits_expected,  Num_crops, CropIDs):
      #assess current and future profit of that given crop
      if (np.isin(CurCropChoice_ind, CropIDs)): #if the current landcover is a crop
          Profit_last = Profits_current #last years profit in this location
-         Profits_expected  = Profits_expected.reshape(Num_crops,1)
+         Profit_expected  = Profit_signals.reshape(Num_crops,1)
      else: 
         Profit_last = 0
         Profit_expected = np.zeros((Num_crops,1))

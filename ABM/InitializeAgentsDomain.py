@@ -52,7 +52,7 @@ def PlaceAgents(Ny,Nx, lc, key_file, cat_option):
 #------------------------------------------------------------------------------
 # place agent structures onto landscape and define attributes 
 #------------------------------------------------------------------------------
-def InitializeAgents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p):
+def Agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p):
      
    
     for i in np.arange(Ny):
@@ -71,3 +71,32 @@ def InitializeAgents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, N
     
     return(domain)
              
+#
+#
+#
+    
+def Profits(profit_file, Nt, Ny, Nx, CropID_all, CropIDs):
+    """Decide which crop and associated profit to pick out of two options.
+    
+    :param profit_file: data frame of profit signals creatd from generate synthetic prices, or user supplied         
+    :param Nt:                
+    :param Ny:                
+    :param Nx:
+    :param CropID_all: Nt x Nx x Ny np array of current landcover              
+    :param CropIDs: Num_crop x 1 np array of crop ids             
+                
+    :return: np array of initial profits based on price signals                       
+    """
+    
+    profits_actual = np.zeros((Nt,Ny,Nx))
+    profit_signals=profit_file.to_numpy()
+    for i in np.arange(Ny):
+        for j in np.arange(Nx):
+            CropInd= CropID_all[0,i,j]
+            CropIx=np.where(CropIDs == CropInd)
+            if CropInd in (CropIDs):
+                profits_actual[0,i,j]= profit_signals[CropIx[0][0],0]
+            else:
+                profits_actual[0,i,j]= 0
+                    
+    return(profits_actual)

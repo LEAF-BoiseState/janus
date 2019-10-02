@@ -27,8 +27,7 @@ GCAMpath=DataPath+'GCAM/'
 counties_shp= gp.read_file(DataPath+'Counties/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
 key_file= pd.read_csv(DataPath+'CDL2GCAM_SRP_categories.csv', sep=',')
-# TODO: add path to price signals csv from config file
-
+# TODO: add path to profit_file csv from config file
 profit_file=pd.read_csv(userPath+'IM3-BoiseState/ABM/PreprocessingTools/NewSyntheticOutput2.csv', header=None)
 #---------------------------------------
 # 0. Declare Variables
@@ -69,11 +68,11 @@ domain = init.InitializeDomain(Ny, Nx)
 #---------------------------------------
 
 #ID crops based on those in the initial land cover
-
 # TODO: make sure that this key_file is being called to properly from config
 ag=np.where(key_file['SRB_cat'] == 'ag')
 CropIDs =np.int64(key_file['SRB_GCAM_id_list'][ag[0]])
 Num_crops = len(CropIDs)
+CropIDs =CropIDs.reshape(Num_crops,1)
 
 CropID_all = np.zeros((Nt,Ny,Nx))
 CropID_all[0,:,:] = lc #this will be added into the cell class
@@ -81,20 +80,8 @@ CropID_all[0,:,:] = lc #this will be added into the cell class
 #---------------------------------------
 #  Initialize Profits
 #---------------------------------------
-
-# TODO: put this in initialization file
 # initializes profits based on profit signals from csv output from generate synthetic prices 
-profits_actual = np.zeros((Nt,Ny,Nx))
-profit_signals=profit_file.to_numpy()
-#profit_signals=profit_file.iloc[:,2:].set_index(profit_file['CropID']) #subsets to just prices and sets index to numerical CropID
-for i in np.arange(Ny):
-    for j in np.arange(Nx):
-        CropInd= CropID_all[0,i,j]
-        CropIx=np.where(CropIDs == CropInd)
-        if CropInd in (CropIDs):
-            profits_actual[0,i,j]= profit_signals[CropIx[0][0],0]
-        else:
-            profits_actual[0,i,j]= 0
+profits_actual =init.Profits(profit_file, Nt, Ny, Nx, CropID_all, CropIDs)
             
 #---------------------------------------
 #  Initialize Agents
@@ -111,7 +98,7 @@ TenureCDF=getNASS.makeTenureCDF(tenure)
 
 AgentArray = init.PlaceAgents(Ny, Nx, lc, key_file, 'SRB') 
 
-domain = init.InitializeAgents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p) 
+domain = init.Agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p) 
 
 #---------------------------------------
 # 2. loop through decision process 
@@ -123,12 +110,11 @@ for i in np.arange(1,Nt):
     for j in np.arange(Ny):
         for k in np.arange(Nx):
             if domain[j,k].FarmerAgents:
-                # TODO: fix either how AssessProfit takes in the profits_actual and profit_signals, or change them prior to being read into the function
                 #Assess Profit
                 profit_last, profit_pred = cd.AssessProfit(CropID_all[i-1,j,k], profits_actual[i-1,j,k], profit_signals[:,i], Num_crops, CropIDs)
-                #Decide on Crop
+                #Choose between crops 
                 CropChoice, profitChoice = cd.DecideN(domain[j,k].FarmerAgents[0].alpha, domain[j,k].FarmerAgents[0].beta, fmin, fmax, n, profit_last, CropIDs, profit_pred, rule=True)
-                
+                #Decid whether to switch and add random variation to actual profit
                 CropID_all[i,j,k], profits_actual[i,j,k] = cd.MakeChoice(CropID_all[i-1,j,k], profit_last, CropChoice, profitChoice, seed=False) 
                 
                 #update agent attributes
