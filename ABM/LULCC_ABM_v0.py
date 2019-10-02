@@ -13,7 +13,7 @@ os.chdir(userPath+'IM3-BoiseState/ABM')
 
 import numpy as np
 import PreprocessingTools.geofxns as gf
-import CropFuNum_cropss.CropDecider as cd
+import CropFuncs.CropDecider as cd
 import InitializeAgentsDomain as init
 import PostProcessing.FigureFuncs as ppf
 import PreprocessingTools.getNASSAgentData as getNASS
@@ -82,6 +82,7 @@ CropID_all[0,:,:] = lc #this will be added into the cell class
 #  Initialize Profits
 #---------------------------------------
 
+# TODO: put this in initialization file
 # initializes profits based on profit signals from csv output from generate synthetic prices 
 profits_actual = np.zeros((Nt,Ny,Nx))
 profit_signals=profit_file.iloc[:,2:].set_index(profit_file['CropID']) #subsets to just prices and sets index to numerical CropID
@@ -121,7 +122,7 @@ for i in np.arange(1,Nt):
         for k in np.arange(Nx):
             if domain[j,k].FarmerAgents:
                 #Assess Profit
-                profit_last, profit_pred = cd.AssessProfit(CropID_all[i-1,j,k], profits_actual[i-1,:], profit_signals[i,:], Num_crops, CropIDs)
+                profit_last, profit_pred = cd.AssessProfit(CropID_all[i-1,j,k], profits_actual[i-1,:], profit_signals.iloc[:,i], Num_crops, CropIDs)
                 #Decide on Crop
                 CropChoice, profitChoice = cd.DecideN(domain[j,k].FarmerAgents[0].alpha, domain[j,k].FarmerAgents[0].beta, fmin, fmax, n, profit_last, CropIDs, profit_pred, rule=True)
                 
