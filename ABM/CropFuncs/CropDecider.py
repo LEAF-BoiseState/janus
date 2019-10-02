@@ -169,17 +169,16 @@ def AssessProfit(Crop, Profits_current, Profits_expected,  Num_crops, CropIDs):
     
      # Existing Crop ID
      CurCropChoice_ind = Crop.astype('int') 
-     CropIx=np.where(CropIDs == CurCropChoice_ind)
+     #CropIx=np.where(CropIDs == CurCropChoice_ind)# crop ID lookup
      #assess current and future profit of that given crop
-     if (np.isin(CurCropChoice_ind, CropIDs)): #change this to be a vector of possible cropIDs
-         Profit_last = Profits_current[CropIx[0][0]] #last years profit
-         Profit_pred = Profits_expected[:] #(changed from profits_alt)
-         Profit_pred = Profit_pred.reshape(Num_crops,1)
+     if (np.isin(CurCropChoice_ind, CropIDs)): #if the current landcover is a crop
+         Profit_last = Profits_current #last years profit in this location
+         Profits_expected  = Profits_expected.reshape(Num_crops,1)
      else: 
         Profit_last = 0
-        Profit_pred = np.zeros((Num_crops,1))
+        Profit_expected = np.zeros((Num_crops,1))
         
-     return(Profit_last, Profit_pred)
+     return(Profit_last, Profit_expected)
      
 #=============================================================================#
 #                                                                             #

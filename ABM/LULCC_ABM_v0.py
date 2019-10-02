@@ -29,7 +29,7 @@ counties_shp=counties_shp.set_index('county')
 key_file= pd.read_csv(DataPath+'CDL2GCAM_SRP_categories.csv', sep=',')
 # TODO: add path to price signals csv from config file
 
-profit_file=pd.read_csv(userPath+'IM3-BoiseState/ABM/PreprocessingTools/NewSyntheticOutput.csv')
+profit_file=pd.read_csv(userPath+'IM3-BoiseState/ABM/PreprocessingTools/NewSyntheticOutput2.csv', header=None)
 #---------------------------------------
 # 0. Declare Variables
 #---------------------------------------
@@ -85,12 +85,14 @@ CropID_all[0,:,:] = lc #this will be added into the cell class
 # TODO: put this in initialization file
 # initializes profits based on profit signals from csv output from generate synthetic prices 
 profits_actual = np.zeros((Nt,Ny,Nx))
-profit_signals=profit_file.iloc[:,2:].set_index(profit_file['CropID']) #subsets to just prices and sets index to numerical CropID
+profit_signals=profit_file.to_numpy()
+#profit_signals=profit_file.iloc[:,2:].set_index(profit_file['CropID']) #subsets to just prices and sets index to numerical CropID
 for i in np.arange(Ny):
     for j in np.arange(Nx):
         CropInd= CropID_all[0,i,j]
+        CropIx=np.where(CropIDs == CropInd)
         if CropInd in (CropIDs):
-            profits_actual[0,i,j]= profit_signals.loc[CropInd][0]
+            profits_actual[0,i,j]= profit_signals[CropIx[0][0],0]
         else:
             profits_actual[0,i,j]= 0
             
@@ -123,7 +125,7 @@ for i in np.arange(1,Nt):
             if domain[j,k].FarmerAgents:
                 # TODO: fix either how AssessProfit takes in the profits_actual and profit_signals, or change them prior to being read into the function
                 #Assess Profit
-                profit_last, profit_pred = cd.AssessProfit(CropID_all[i-1,j,k], profits_actual[i-1,:], profit_signals.iloc[:,i], Num_crops, CropIDs)
+                profit_last, profit_pred = cd.AssessProfit(CropID_all[i-1,j,k], profits_actual[i-1,j,k], profit_signals[:,i], Num_crops, CropIDs)
                 #Decide on Crop
                 CropChoice, profitChoice = cd.DecideN(domain[j,k].FarmerAgents[0].alpha, domain[j,k].FarmerAgents[0].beta, fmin, fmax, n, profit_last, CropIDs, profit_pred, rule=True)
                 
