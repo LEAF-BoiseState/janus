@@ -20,13 +20,13 @@ NPRICE_FUNCTIONS = 3
 def GeneratePrice_linear(Num_timesteps,Pi,Pf,perturb,s_p=0.0):
     """Description
     
-    :param Num_timesteps:           Number of timesteps in the model             
-    :param Pi:          
-    :param Pf:                
-    :param perturb:   
-    :param s_p:
+    :param Num_timesteps: Number of timesteps in the model             
+    :param Pi: Profit at the beginning of the time series
+    :param Pf: Profit at the end of the time series
+    :param perturb: Perturbation flag. 0 = no random perturbations to profit. 1 = add zero mean, uncorrelated noise to every time step
+    :param s_p: Standard deviation of noise added to profit signal at each time step (default = 0.0)
                 
-    :return:                         
+    :return: An Num_timesteps x 1 numpy array of profit
     """
     P = np.linspace(Pi,Pf,num=Num_timesteps).reshape((Num_timesteps,1))
     if(perturb==1):
@@ -41,14 +41,14 @@ def GeneratePrice_linear(Num_timesteps,Pi,Pf,perturb,s_p=0.0):
 def GeneratePrice_step(Num_timesteps,Pi,Pf,t_step,perturb,s_p=0.0):
     """Description
     
-    :param Num_timesteps:           Number of timesteps in the model        
-    :param Pi:          
-    :param Pf:                
-    :param t_step:   
-    :param perturb: 
-    :param s_p:  
-        
-    :return:                         
+    :param Num_timesteps: Number of timesteps in the model        
+    :param Pi: Profit prior to the step change
+    :param Pf: Profit after the step change
+    :param t_step: (0.0 to 1.0) the time at which the step change occurs as a fraction of Num_timesteps
+    :param perturb: Perturbation flag. 0 = no random perturbations to profit. 1 = add zero mean, uncorrelated noise to every time step
+    :param s_p: Standard deviation of noise added to profit signal at each time step (default = 0.0)
+                
+    :return: An Num_timesteps x 1 numpy array of profit
     """
     assert t_step > 0.0, 'GenerateSyntheticPrices.py ERROR: Step price change time is less than 0.0'
     assert t_step < 1.0, 'GenerateSyntheticPrices.py ERROR: Step price change time is greeater than 1.0'
@@ -70,14 +70,14 @@ def GeneratePrice_step(Num_timesteps,Pi,Pf,t_step,perturb,s_p=0.0):
 def GeneratePrice_periodic(Num_timesteps,Pmag,Pamp,n_period,perturb,s_p=0.0):
     """Description
     
-    :param Num_timesteps:           Number of timesteps in the model             
-    :param Pmag:          
+    :param Num_timesteps: Number of timesteps in the model             
+    :param Pmag: 
     :param Pamp:                
     :param n_period:   
-    :param perturb:
-    :param s_p:
+    :param perturb: Perturbation flag. 0 = no random perturbations to profit. 1 = add zero mean, uncorrelated noise to every time step
+    :param s_p: Standard deviation of noise added to profit signal at each time step (default = 0.0)
                 
-    :return:                         
+    :return: An Num_timesteps x 1 numpy array of profit
     """
     x = np.linspace(0.0,n_period*2*np.pi, num=Num_timesteps).reshape((Num_timesteps,1))
     P = Pmag + Pamp  * np.sin(x)
@@ -94,9 +94,14 @@ def GeneratePrice_periodic(Num_timesteps,Pmag,Pamp,n_period,perturb,s_p=0.0):
 def main(argv):
     """Description
     
-    :param argv:           
-                
-    :return:                         
+    :param argv: Array of 5 command line arguments passed from the __main__ function   
+    :param argv[0]: Name of this function (GenerateSyntheticPrices)               
+    :param argv[1]: Number of crops expect to create profit time series for
+    :param argv[2]: Number of timesteps in the time series
+    :param argv[3]: Name of CSV file that contains information about the crops, including parameters of the generator functions, for which profits are generated and including path if CSV file is in a different directory
+    :param argv[4]: Name of CSV file to which profit time series will be written, including path to output if in a different directory than the script
+
+    :return: null (output written to file)
     """
     
     if(len(argv)!=5):
