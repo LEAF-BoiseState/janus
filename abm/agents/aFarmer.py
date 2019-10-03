@@ -21,7 +21,7 @@ class aFarmer:
         self.beta = kwargs.get('beta')
 
     def UpdateAge(self):
-        self.Age += 12
+        self.Age += 1
 
     def UpdateDist2city(self, newDist):
         self.Dist2city = newDist
