@@ -6,5 +6,6 @@
 /GCAM_SRP/*.*
 /GCAM_SRP/**/*.*
 *.pyc
-*__pycache__/*
+*/__pycache__/*
 *.zip
+*/*/__pycache__/*
