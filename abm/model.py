@@ -38,7 +38,7 @@ class Abm:
         self.lc, self.dist2city, self.domain, self.Ny, self.Nx = self.initialize_landscape_domain()
 
         # initialize crops
-        self.crop_ids, self.crop_id_all = self.initialize_crops()
+        self.crop_ids, self.crop_id_all, self.ag, self.num_crops = self.initialize_crops()
 
         # initialize profits
         self.profit_act, self.profit_ant, self.profits = self.initialize_profit()
@@ -51,7 +51,7 @@ class Abm:
 
         # update variables
         self.update()
-        
+
         # save outputs
         self.save_outputs()
 
@@ -81,15 +81,20 @@ class Abm:
 
         """
 
-        # TODO: need to make this automatic depending on which crops show up (which of AllCropIDs == np.unique(lc))
-        crop_ids = np.array([1, 2, 3, 10]).reshape(self.c.Nc, 1)
+        ag = np.where(self.c.key_file['SRB_cat'] == 'ag')
+
+        crop_ids_load = np.int64(self.c.key_file['SRB_GCAM_id_list'][ag[0]])
+
+        num_crops = len(crop_ids_load)
+
+        crop_ids = crop_ids_load.reshape(num_crops, 1)
 
         crop_id_all = np.zeros((self.c.Nt, self.Ny, self.Nx))
 
         # TODO: this will be added into the cell class
         crop_id_all[0, :, :] = self.lc
 
-        return crop_ids, crop_id_all
+        return crop_ids, crop_id_all, ag, num_crops
 
     def initialize_profit(self, unknown_var=30000.0, scale=1000.0):
         """Initialize profits.

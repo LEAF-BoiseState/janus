@@ -9,12 +9,30 @@ import scipy.special as sp
 
 
 def DefineSeed(seed):
+    """Creates seed for random selection for testing
+
+    :param seed:            Seed value
+
+    :return:                Global seed value
+
+    """
     global seed_val
-    seed_val=seed
+    seed_val = seed
     return
 
 
 def SwitchingProbCurve(alpha,beta,fmin,fmax,n,profit):
+    """ Creates probability curves that show likelyhood of switching crops based on profits
+
+    :param alpha:
+    :param beta:
+    :param fmin:
+    :param fmax:
+    :param n:
+    :param profit:
+
+    :return:
+    """
     
     x  = np.linspace(0,1.0,num=n)
     
@@ -26,7 +44,7 @@ def SwitchingProbCurve(alpha,beta,fmin,fmax,n,profit):
 
 
 def Decide(alpha, beta, fmin, fmax, n, profit, profit_p):
-    """Choose from among two different alternatives
+    """This decides whether to retain current crop or switch to one other option
 
     :param alpha:
     :param beta:
