@@ -10,7 +10,7 @@ f_key_file: '/Users/d3y010/projects/boise_state/Data/CDL2GCAM_SRP_categories.csv
 f_gcam_file: '/Users/d3y010/projects/boise_state/Data/GCAM/gcam_2010_domain_3000.tiff'
 
 # TODO
-nt: 50
+nt: 20
 
 # TODO:  there are actually 17 when the 1km is run, need random profit profiles for each of these
 nc: 4
