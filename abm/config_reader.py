@@ -45,7 +45,7 @@ class ConfigReader:
 
         self.gcam_file = c[ConfigReader.F_GCAM_FILE]
 
-        self.profits_file = c[ConfigReader.F_PROFITS_FILE]
+        self.profits_file = pd.read_csv(c[ConfigReader.F_PROFITS_FILE], header=None)
 
         self.output_dir = c[ConfigReader.OUTPUT_DIR]
 
