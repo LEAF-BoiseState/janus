@@ -113,20 +113,19 @@ def FarmerData(TenureCDF, AgeCDF, switch, p, d2c):
     ss=np.random.random_sample()
     ts = np.random.random_sample() 
     ageS = np.random.rand(1)
-    #print(ageS)
             
     if ss >= p:
         k= 0
     else: k =1
     
-    ageI= np.round(np.interp(ageS, AgeCDF[:,1], AgeCDF[:,0]))
+    ageInit= np.round(np.interp(ageS, AgeCDF[:,1], AgeCDF[:,0]))
             
-    tt=np.where(TenureCDF[:,[1]] >= ts)
-    tenStat=min(tt[0])
+    tenStat=np.round(np.interp(ts, TenureCDF[:,1], TenureCDF[:,0]))
+
     
     AgentData = {
-            "AgeInit" : ageI,
-            "LandStatus" : tenStat,
+            "AgeInit" : int(ageInit),
+            "LandStatus" : int(tenStat),
             "Alpha": switch[k][0],
             "Beta": switch[k][1],
             "nFields": 1,
