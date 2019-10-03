@@ -6,14 +6,19 @@ Created on Mon Sep 16 14:23:05 2019
 @author: lejoflores
 """
 
+#TODO: Need to create RunProfitGenerator in config file. If value 0 = do not run GenerateSyntheticProfits. 
+#      If 0 = do not run this script (must specify profit profiles to read in). If 1 = run ihis script 
+#      (must specify profit generator parameter input file AND associate output file, which will then be 
+#      used to run the actual model) 
 
 import numpy as np
 import sys
 import csv
 
-Num_crops = 3
-# TODO: This gets added to the config file
-NPRICE_FUNCTIONS = Num_crops
+NPRICE_FUNCTIONS = 3 # Number of profit functions in this script. If the user 
+                     # wants to add additional functions, this must be increased
+                     # to reflect the total number of synthetic profit functions 
+                     # in this script.
 #=============================================================================#
 #                                                                             #
 #                                                                             #
@@ -208,9 +213,8 @@ def main(argv):
     
     with open(CropFileOut,'w') as fp:
         
-        wr = csv.writer(fp, quoting=csv.QUOTE_NONE)
-        wr.writerow(crop_ids)
         
+        np.savetxt(fp,np.asarray(crop_ids,dtype=np.int32).reshape((1,Nc)),delimiter=',',fmt='%d')
         np.savetxt(fp,P_allcrops,delimiter=',',fmt='%.2f')
         
         fp.close()
