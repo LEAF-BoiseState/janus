@@ -5,6 +5,7 @@ Agent Based Model of Land Use and Land Cover Change
 """
 
 import argparse
+import os
 
 import numpy as np
 
@@ -50,6 +51,9 @@ class Abm:
 
         # update variables
         self.update()
+        
+        # save outputs
+        self.save_outputs()
 
     def initialize_landscape_domain(self):
         """Initialize landscape and domain.
@@ -211,6 +215,24 @@ class Abm:
 
                     # TODO:  are you overwriting the previous value?
                     self.agent_domain[i][j].FarmerAgents[0].UpdateDist2city(self.dist2city[i][j])
+
+    def save_outputs(self):
+        """Save outputs as NumPy arrays.
+
+        :return:
+
+        """
+
+        out_file = os.path.join(self.c.output_dir, '{}_{}_m_{}_yr.npy')
+
+        # save timeseries of landcover coverage
+        np.save(out_file.format('landcover', self.c.scale, self.c.Nt), self.crop_id_all)
+
+        # save timeseries of profits
+        np.save(out_file.format('profits', self.c.scale, self.c.Nt), self.profit_act)
+
+        # save domain, can be used for initialization
+        np.save(out_file.format('domain', self.c.scale, self.c.Nt), self.domain)
 
 
 if __name__ == '__main__':
