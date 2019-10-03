@@ -72,9 +72,9 @@ def GeneratePrice_periodic(Nt,Pmag,Pamp,n_period,perturb,s_p=0.0):
     """Description
     
     :param Nt: Number of timesteps in the model             
-    :param Pmag: 
-    :param Pamp:                
-    :param n_period:   
+    :param Pmag: Level about which profit fluctuates through time
+    :param Pamp: Amplitude of profit fluctuation
+    :param n_period: Number of periods during the Nt timesteps. Can be negative to reflect sinusoid about Y axis.
     :param perturb: Perturbation flag. 0 = no random perturbations to profit. 1 = add zero mean, uncorrelated noise to every time step
     :param s_p: Standard deviation of noise added to profit signal at each time step (default = 0.0)
                 
@@ -207,8 +207,6 @@ def main(argv):
     
     
     with open(CropFileOut,'w') as fp:
-        wr = csv.writer(fp, quoting=csv.QUOTE_ALL)
-        wr.writerow(crop_names)
         
         wr = csv.writer(fp, quoting=csv.QUOTE_NONE)
         wr.writerow(crop_ids)
@@ -216,8 +214,6 @@ def main(argv):
         np.savetxt(fp,P_allcrops,delimiter=',',fmt='%.2f')
         
         fp.close()
-        
-    
     
 if __name__ == "__main__":
     main(sys.argv)    
