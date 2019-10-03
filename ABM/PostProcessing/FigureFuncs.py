@@ -43,8 +43,8 @@ def dCdT(CropID_all, Nt):
    
 #stackplot of crops over time
 #automate stackplot naming conventions
-def CropPerc(CropID_all, CropIDs, Nt, Nc):
-    ag=59 #need to automate what the total area in crops is - this will be a unit test when urban isnt changing
+def CropPerc(CropID_all, CropIDs, Nt, Nc, scale, ResultsPath, key_file, ag_cats):
+    agTot=59 #need to automate what the total area in crops is - this will be a unit test when urban isnt changing
     #np.any(CropID_all == CropIDs)
     names = []
     percentages=np.zeros((Nc, Nt))
@@ -53,16 +53,15 @@ def CropPerc(CropID_all, CropIDs, Nt, Nc):
         names.append(name)
         for t in np.arange(Nt):
             CropIx=CropIDs[c]
-            percentages[c,t]=np.sum((CropID_all[t,:,:] == CropIx))/ag*100.0
+            percentages[c,t]=np.sum((CropID_all[t,:,:] == CropIx))/agTot*100.0
             
     t = np.arange(Nt)
     plt.rcParams.update({'font.size': 16})
     fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(12,12))
     
-    ax.stackplot(t,percentages[0,:], percentages[1,:], percentages[2,:], percentages[3,:], colors=['#bfe1f5','#d3edab','#eda566',
-                 '#4AFFCE'], labels=['Corn','Wheat','Beans',
-                 'Alfalfa']) #,'#3A8A00','#005C94'
-
+    #set colors to come color scheme w Nc colors
+    #figure out how to automate the number of percentages in the stackplot
+    ax.stackplot(t,percentages[0,:], percentages[1,:], percentages[2,:], percentages[3,:], labels=key_file['GCAM_SRB_Name'][ag_cats[0]]) 
     ax.set_xlim([0,Nt-1])
     ax.set_ylim([0,100])
     ax.grid()
@@ -72,8 +71,8 @@ def CropPerc(CropID_all, CropIDs, Nt, Nc):
     ax.set_ylabel('Percent Crop Choice')
     ax.set_xlabel('Time [yr]')  
   
-    #plt.savefig('Exp3_plot1.png',dpi=300,facecolor='w', edgecolor='w', 
-              #  bbox_inches='tight')
+    plt.savefig(ResultsPath+'CropPercentages_'+str(scale)+'m_'+str(Nt)+'yr'.png,dpi=300,facecolor='w', edgecolor='w', 
+                bbox_inches='tight')
               
 def AgentAges(domain, AgentArray, Ny, Nx):
     FarmerAges=[]

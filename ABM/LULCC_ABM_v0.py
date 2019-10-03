@@ -129,7 +129,7 @@ for i in np.arange(1,Nt):
  
 
 
-ppf.CropPerc(CropID_all, CropIDs, Nt, Num_crops)
+ppf.CropPerc(CropID_all, CropIDs, Nt, Num_crops, scale, ResultsPath, key_file, ag)
 ppf.AgentAges(domain, AgentArray, Ny, Nx)
 
 #---------------------------------------
