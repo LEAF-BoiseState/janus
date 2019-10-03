@@ -8,7 +8,7 @@ Agent Based Model of Land Use and Land Cover Change
 #---------------------------------------
 import os
 
-userPath='/Users/kendrakaiser/Documents/GitRepos/'
+userPath='/Users/kek25/Documents/GitRepos/'
 os.chdir(userPath+'IM3-BoiseState/ABM')
 
 import numpy as np
@@ -29,7 +29,8 @@ counties_shp=counties_shp.set_index('county')
 key_file= pd.read_csv(DataPath+'CDL2GCAM_SRP_categories.csv', sep=',')
 # TODO: add path to profit_file csv from config file
 profit_file=pd.read_csv(userPath+'IM3-BoiseState/ABM/PreprocessingTools/NewSyntheticOutput2.csv', header=None)
-profit_signals=profit_file.to_numpy()
+profit_signals=profit_file.as_matrix()
+ResultsPath=DataPath+'Results/'
 
 #---------------------------------------
 # 0. Declare Variables
@@ -131,7 +132,10 @@ ppf.AgentAges(domain, AgentArray, Ny, Nx)
 # 3. Save output
 #---------------------------------------
 
-#save 3D landcover coverage
-# 3D profits 
-
+#save timeseries of landcover coverage
+np.save(ResultsPath+'landcover_'+str(scale)+'m_'+str(Nt)+'yr', CropID_all)
+# save timeseries of profits 
+np.save(ResultsPath+'profits_'+str(scale)+'m_'+str(Nt)+'yr', profits_actual)
+# save domain, can be used for initialization
+np.save(ResultsPath+'domain_'+str(scale)+'m_'+str(Nt)+'yr', domain)
 
