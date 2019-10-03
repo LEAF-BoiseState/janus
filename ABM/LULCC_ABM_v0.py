@@ -28,7 +28,7 @@ counties_shp= gp.read_file(DataPath+'Counties/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
 key_file= pd.read_csv(DataPath+'CDL2GCAM_SRP_categories.csv', sep=',')
 # TODO: add path to profit_file csv from config file and the ResultsPath for saving
-profit_file=pd.read_csv(userPath+'IM3-BoiseState/ABM/PreprocessingTools/NewSyntheticOutput2.csv', header=None)
+profit_file=pd.read_csv(userPath+'IM3-BoiseState/ABM/PreprocessingTools/GenerateSyntheticPrices_test_output.csv', header=None)
 
 
 ResultsPath=DataPath+'Results/'
@@ -36,7 +36,7 @@ ResultsPath=DataPath+'Results/'
 #---------------------------------------
 # 0. Declare Variables
 #---------------------------------------
-Nt = 50
+Nt = 20
 #set agent switching parameters (alpha, beta)
 switch = np.array([[4.5, 1.0], #switching averse
                    [0.5, 3.0]]) #switching tolerant
@@ -86,7 +86,7 @@ CropID_all[0,:,:] = lc #this will be added into the cell class
 #---------------------------------------
 # initializes profits based on profit signals from csv output from generate synthetic prices 
 profit_signals=np.transpose(profit_file.as_matrix())
-assert profit_signals[:,0] == CropIDs[:,0], 'Crop IDs in profit signals do not match Crop IDs from landcover'
+assert np.all([profit_signals[:,0], CropIDs[:,0]]), 'Crop IDs in profit signals do not match Crop IDs from landcover'
 profit_signals = profit_signals[:,1:]
 assert profit_signals.shape[1] == Nt, 'The number of timesteps in the profit signals do not match the number of model timesteps'
 profits_actual =init.Profits(profit_signals, Nt, Ny, Nx, CropID_all, CropIDs)
@@ -112,7 +112,6 @@ domain = init.Agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, N
 # 2. loop through decision process 
 #---------------------------------------
 
-
 for i in np.arange(1,Nt):
     
     for j in np.arange(Ny):
@@ -130,7 +129,7 @@ for i in np.arange(1,Nt):
  
 
 
-ppf.CropPerc(CropID_all, CropIDs, Nt, Num_crops) #save this to results output
+ppf.CropPerc(CropID_all, CropIDs, Nt, Num_crops)
 ppf.AgentAges(domain, AgentArray, Ny, Nx)
 
 #---------------------------------------
