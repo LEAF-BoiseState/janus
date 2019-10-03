@@ -28,6 +28,7 @@ class ConfigReader:
     NASS_YR = 'nass_year'
     NASS_COUNTY_LIST = 'nass_county_list'
     NASS_API_KEY = 'nass_api_key'
+    OUTPUT_DIR = 'output_directory'
 
     # county field name in the input shapefile
     COUNTY_FLD = 'county'
@@ -42,6 +43,8 @@ class ConfigReader:
         self.key_file = pd.read_csv(c[ConfigReader.F_KEY_FILE])
 
         self.gcam_file = c[ConfigReader.F_GCAM_FILE]
+
+        self.output_dir = c[ConfigReader.OUTPUT_DIR]
 
         self.Nt = c[ConfigReader.NT]
 
