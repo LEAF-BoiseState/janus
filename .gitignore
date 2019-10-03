@@ -6,6 +6,9 @@
 /GCAM_SRP/*.*
 /GCAM_SRP/**/*.*
 abm/postprocessing/__pycache__/*.pyc
+*/__pycache__/*
+*.zip
+*/*/__pycache__/*
 
 # OS-specific files
 .DS_Store
