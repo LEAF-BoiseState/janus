@@ -119,11 +119,7 @@ def FarmerData(TenureCDF, AgeCDF, switch, p, d2c):
         k= 0
     else: k =1
     
-    if ageS < AgeCDF[0,1]:
-        ageI = 18
-    else: 
-        ageT=np.where(AgeCDF[:,[1]] <= ageS)
-        ageI=max(ageT[0])
+    ageI= np.round(np.interp(ageS, AgeCDF[:,1], AgeCDF[:,0]))
             
     tt=np.where(TenureCDF[:,[1]] >= ts)
     tenStat=min(tt[0])
