@@ -9,6 +9,9 @@ f_key_file: '/Users/d3y010/projects/boise_state/Data/CDL2GCAM_SRP_categories.csv
 # gcam raster
 f_gcam_file: '/Users/d3y010/projects/boise_state/Data/GCAM/gcam_2010_domain_3000.tiff'
 
+# output directory
+output_directory: '/Users/d3y010/projects/boise_state/Data/outputs'
+
 # TODO
 nt: 20
 
