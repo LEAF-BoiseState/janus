@@ -41,7 +41,7 @@ class Abm:
         self.crop_ids, self.crop_id_all, self.ag, self.num_crops = self.initialize_crops()
 
         # initialize profits
-        self.profit_act, self.profit_ant, self.profits = self.initialize_profit()
+        self.profit_act, self.profit_signals = self.initialize_profit()
 
         # initialize agents
         self.agent_domain, self.agent_array = self.initialize_agents()
@@ -103,17 +103,21 @@ class Abm:
 
         """
 
-        profit_ant = np.zeros((self.c.Nt, self.Ny, self.Nx))
+        # initializes profits based on profit signals from csv output from generate synthetic prices
+        profit_signals = np.transpose(self.c.profits_file.as_matrix())
 
-        # TODO: what is the unknown variable??  Where does scale in this case come from??
-        profit_ant[0, :, :] = unknown_var + np.random.normal(loc=0.0, scale=scale, size=(1, self.Ny, self.Nx))
+        assert np.all([profit_signals[:, 0], self.crop_ids[:, 0]]), 'Crop IDs in profit signals do not match Crop IDs from landcover'
 
-        profit_act = profit_ant.copy()
+        profit_signals = profit_signals[:, 1:]
 
-        profits = crpdec.GeneratePrices(self.c.Nt)[:, 0:self.c.Nc]
+        assert profit_signals.shape[1] == self.c.Nt, 'The number of timesteps in the profit signals do not match the number of model timesteps'
 
-        return profit_act, profit_ant, profits
+        profits_act = init_agent.Profits(profit_signals, self.c.Nt, self.Ny, self.Nx, self.crop_id_all, self.crop_ids)
 
+        return profits_act, profit_signals
+
+
+# TODO:  start here
     def initialize_agents(self, id_field='ID', cat_header='SRB'):
         """Initialize agents.
 
