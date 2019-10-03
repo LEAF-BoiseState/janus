@@ -27,9 +27,10 @@ GCAMpath=DataPath+'GCAM/'
 counties_shp= gp.read_file(DataPath+'Counties/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
 key_file= pd.read_csv(DataPath+'CDL2GCAM_SRP_categories.csv', sep=',')
-# TODO: add path to profit_file csv from config file
+# TODO: add path to profit_file csv from config file and the ResultsPath for saving
 profit_file=pd.read_csv(userPath+'IM3-BoiseState/ABM/PreprocessingTools/NewSyntheticOutput2.csv', header=None)
-profit_signals=profit_file.as_matrix()
+
+
 ResultsPath=DataPath+'Results/'
 
 #---------------------------------------
@@ -84,6 +85,10 @@ CropID_all[0,:,:] = lc #this will be added into the cell class
 #  Initialize Profits
 #---------------------------------------
 # initializes profits based on profit signals from csv output from generate synthetic prices 
+profit_signals=np.transpose(profit_file.as_matrix())
+assert profit_signals[:,0] == CropIDs[:,0], 'Crop IDs in profit signals do not match Crop IDs from landcover'
+profit_signals = profit_signals[:,1:]
+assert profit_signals.shape[1] == Nt, 'The number of timesteps in the profit signals do not match the number of model timesteps'
 profits_actual =init.Profits(profit_signals, Nt, Ny, Nx, CropID_all, CropIDs)
             
 #---------------------------------------
