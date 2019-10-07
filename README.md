@@ -39,7 +39,7 @@ There is an example config file in the `abm/example` directory of this package t
 | `f_key_file` | full path with file name and extension to the land class category key file |
 | `f_gcam_file` | GCAM raster file |
 | `nt` | Number of timesteps |
-| `nc` | Need description |
+| `nc` | This can be removed because automated in the updated script|
 | `switch_params` | list of lists for switching averse, tolerant parameters (alpha, beta) |
 | `p` | proportion of each switching type, lower than p is averse, higher is tolerant |
 | `fmin` | Need description |
