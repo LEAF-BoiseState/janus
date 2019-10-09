@@ -13,9 +13,9 @@ import numpy as np
 def cleanup(value):
     """Massage data into proper form.
 
-    :param value:
+    :param value:   Value returned from NASS query
 
-    :return:
+    :return:        Numeric value without commas or spaces
 
     """
     try:
@@ -25,14 +25,14 @@ def cleanup(value):
         return 0
 
 
-def ages(YR, state, nass_api_key):
-    """Need description.
+def ages(NASS_yr, state, nass_api_key):
+    """ Pulls age data from the NASS dataset for a given state and year
+    
+    :param NASS_yr:        Year to pull data from, NASS data is collected every 5 years (e.g. 2007, 2012)
+    :param state:          State from which to pull NASS data, must be capatalized abbreviation (e.g. 'ID' for Idaho)
+    :param nass_api_key:   Personal API key to retrieve from NASS website
 
-    :param YR:
-    :param state:
-    :param nass_api_key:
-
-    :return:
+    :return: numpy array of number of farmers in each age category
 
     """
     api = nass.NassApi(nass_api_key)
@@ -41,7 +41,7 @@ def ages(YR, state, nass_api_key):
 
     # prepare lists for data
     age_cat = ["AGE LT 25", "AGE 25 TO 34", "AGE 35 TO 44", "AGE 45 TO 54", "AGE 55 TO 64", "AGE 65 TO 74", "AGE GE 75"]
-    q.filter('commodity_desc', 'OPERATORS').filter('state_alpha', state).filter('year', YR).filter('class_desc', age_cat)
+    q.filter('commodity_desc', 'OPERATORS').filter('state_alpha', state).filter('year', NASS_yr).filter('class_desc', age_cat)
     age_dF = pd.DataFrame(q.execute())
     age_dF['Value'] = age_dF['Value'].apply(cleanup)
     
@@ -58,15 +58,15 @@ def ages(YR, state, nass_api_key):
 
 
 def tenure_area(state, county_list, NASS_yr, variables, nass_api_key):
-    """County level aggregation, can change to report each county
+    """Aggregation of county level tenure status and associated area from domain of interest"
 
-    :param state:
-    :param county_list:
-    :param NASS_yr:
-    :param variables:
-    :param nass_api_key:
+    :param state:           State from which to pull NASS data, must be capatalized abbreviation (e.g. 'ID' for Idaho)
+    :param county_list:     List of county names to pull NASS data, must be all capatalized
+    :param NASS_yr:         Year to pull data from, NASS data is collected every 5 years (e.g. 2007, 2012)   
+    :param variables:       List of variables of interest 
+    :param nass_api_key:    Personal API key to retrieve from NASS website
 
-    :return:
+    :return: numpy array of categories of tenure status with number of agents in each status, and number of operations within each area category
 
     """
     api = nass.NassApi(nass_api_key)
@@ -98,11 +98,11 @@ def tenure_area(state, county_list, NASS_yr, variables, nass_api_key):
 
 
 def make_age_cdf(var_array):
-    """Create distributions from NASS data.
+    """Create cdf distribution from NASS age data.
 
-    :param var_array:
+    :param var_array:       Numpy array returned from ages function
 
-    :return:
+    :return:                Numpy array of each age and percent liklihood of being in that category
 
     """
     
@@ -129,9 +129,9 @@ def make_age_cdf(var_array):
 def make_tenure_cdf(var_array):
     """
 
-    :param var_array:
+    :param var_array:    Numpy array returned from tenure_area function
 
-    :return:
+    :return:             Numpy array of each tenure status and percent liklihood of being in that category
 
     """
 
@@ -155,13 +155,13 @@ def make_tenure_cdf(var_array):
 def farmer_data(TenureCDF, AgeCDF, switch, p, d2c):
     """Collect agent data from NASS distributions and place in dictionary.
 
-    :param TenureCDF:
-    :param AgeCDF:
-    :param switch:
-    :param p:
-    :param d2c:
+    :param TenureCDF:  Numpy array from make_tenure_cdf function
+    :param AgeCDF:     Numpy array from make_tage_cdf function
+    :param switch:     List of lists of alpha beta parameters describing liklihood of switching crops
+    :param p:          Percentage of farming agents that are switching averse
+    :param d2c:        Numpy array of distance to city
 
-    :return:
+    :return: Dictionary with farmer data based on NASS data
 
     """
     ss=np.random.random_sample()
@@ -194,13 +194,13 @@ def farmer_data(TenureCDF, AgeCDF, switch, p, d2c):
 
 
 def urban_data(lc):
-    """Pull the landcover category from lc, set this so it's 0 =open space, 1=low, 2=med, 3=high density
+    """Pull the landcover category from lc, set this so it's 0 =open space, 1=low density, 2=medium density, 3=high density
     this needs to be set by user based on what their landcover classes are, e.g. denisty would not
-    be a category with original GCAM cats
+    be a category with original GCAM categories. If these are changed from the local_GCAM categorization they will all be set to medium density
 
-    :param lc:
+    :param lc: numpy array of landcover data
 
-    :return:
+    :return: Dictionary of urban agent attributes, currently only density
 
     """
     # TODO:  Need closing condition (else: ...)
@@ -212,6 +212,7 @@ def urban_data(lc):
         d = 1
     elif lc == 27:
         d = 0
+    else: d=2
 
     agent_data = {"Density": d}
 
