@@ -14,10 +14,10 @@ import janus.preprocessing.get_nass_agent_data as getNASS
 def initialize_domain(Ny, Nx):
     """
 
-    :param Ny:
-    :param Nx:
+    :param Ny: Number of columns in domain
+    :param Nx: Number of rows in domain
 
-    :return:
+    :return: empty numpy array filled with class Dcell at each pixel
 
     """
     domain = np.empty((Ny, Nx), dtype=object)
@@ -32,24 +32,24 @@ def initialize_domain(Ny, Nx):
 
 
 def place_agents(Ny, Nx, lc, key_file, cat_option):
+    """ Place agents on the landscape based on landcover and associated categorization
+
+    :param Ny: Number of columns in domain
+    :param Nx: Number of rows in domain
+    :param lc: Initial landcover numpy array
+    :param key_file: csv file with categorization from CDL categories to GCAM or user defined categories, see README file.
+    :param cat_option:  Set whether using 'GCAM' or 'local'categorization. If the local caracterization has been changed to 
+    have more or less categories, the number of rows to use in line 52/53 will need to be edited
+
+    :return: numpy array of strings with each agent type
+
     """
-
-    :param Ny:
-    :param Nx:
-    :param lc:
-    :param key_file:
-    :param cat_option:
-
-    :return:
-
-    """
-    # assert that cat_option has to be a header in the csv doc
     AgentArray = np.empty((Ny, Nx), dtype='U10')
 
-    if cat_option == 'SRB':
-
-        agent_Cat = key_file['SRB_cat'][0:28]
-        code = key_file['SRB_GCAM_id_list'][0:28]
+    if cat_option == 'local':
+        
+        agent_Cat = key_file['local_cat'][0:28]
+        code = key_file['local_GCAM_id_list'][0:28]
 
     elif cat_option == 'GCAM':
 
@@ -80,18 +80,18 @@ def place_agents(Ny, Nx, lc, key_file, cat_option):
 def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p):
     """Place agent structures onto landscape and define attributes.
 
-    :param AgentArray:
-    :param domain:
-    :param dist2city:
-    :param TenureCDF:
-    :param AgeCDF:
-    :param switch:
-    :param Ny:
-    :param Nx:
-    :param lc:
-    :param p:
+    :param AgentArray: Numpy array of strings of location of each agent type
+    :param domain:     Inital domain
+    :param dist2city:  Numpy array of distance to city
+    :param TenureCDF:  CDF of tenure type in the domain
+    :param AgeCDF:     CDF of ages in the domain
+    :param switch:     List of lists of parameter sets to describe agent switching behavior
+    :param Ny:         Number of columns in domain
+    :param Nx:         Number of rows in domain
+    :param lc:         Initial landcover numpy array
+    :param p:          Percentage of switching averse farming agents
 
-    :return:
+    :return:           Domain with agents in each dCell
 
     """
     for i in np.arange(Ny):
@@ -120,9 +120,9 @@ def profits(profit_signals, Nt, Ny, Nx, CropID_all, CropIDs):
     """Initialize np array of profits
 
     :param profit_signals: data frame of profit signals created from generate synthetic prices, or user supplied
-    :param Nt:
-    :param Ny:
-    :param Nx:
+    :param Nt: Number of timesteps
+    :param Ny: Number of columns in domain
+    :param Nx: Number of rows in domain
     :param CropID_all: Nt x Nx x Ny np array of current land cover
     :param CropIDs: Num_crop x 1 np array of crop ids
 

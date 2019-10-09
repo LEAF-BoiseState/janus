@@ -56,8 +56,11 @@ class Janus:
     def initialize_landscape_domain(self):
         """Initialize landscape and domain.
 
-        :return:                        TODO:  add return descriptions for each variable
-
+        :return: lc
+        :return: dist2city
+        :return: domain
+        :return: ny
+        :return: nx
         """
 
         # select initial gcam data from initial year
@@ -79,9 +82,9 @@ class Janus:
 
         """
 
-        ag = np.where(self.c.key_file['SRB_cat'] == 'ag')
+        ag = np.where(self.c.key_file['local_cat'] == 'ag')
 
-        crop_ids_load = np.int64(self.c.key_file['SRB_GCAM_id_list'][ag[0]])
+        crop_ids_load = np.int64(self.c.key_file['local_GCAM_id_list'][ag[0]])
 
         num_crops = len(crop_ids_load)
 
@@ -114,7 +117,7 @@ class Janus:
 
         return profits_actual, profit_signals
 
-    def initialize_agents(self, id_field='ID', cat_header='SRB'):
+    def initialize_agents(self, id_field='ID', cat_option='local'):
         """Initialize agents.
 
 
@@ -122,7 +125,6 @@ class Janus:
 
         """
 
-        # tenure from individual counties can also be used
         tenure = get_nass.tenure_area(id_field, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables, self.c.nass_api_key)
 
         ages = get_nass.ages(self.c.nass_year, id_field, self.c.nass_api_key)
@@ -131,7 +133,7 @@ class Janus:
 
         tenure_cdf = get_nass.make_tenure_cdf(tenure)
 
-        agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, cat_header)
+        agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, cat_option)
 
         # replace
         agent_domain = init_agent.agents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf, self.c.switch,
