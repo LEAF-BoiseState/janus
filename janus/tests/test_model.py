@@ -9,13 +9,13 @@ Tests for model interface
 import pkg_resources
 import unittest
 
-from abm.model import Abm
+from janus.model import Abm
 
 
 class TestBuilder(unittest.TestCase):
     """Test BuildStaffWorkbooks attributes."""
 
-    DEFAULT_CONFIG_FILE = pkg_resources.resource_filename('abm', 'tests/data/config.yml')
+    DEFAULT_CONFIG_FILE = pkg_resources.resource_filename('janus', 'tests/data/config.yml')
 
     def test_n(self):
         """Check the number of months in the working hours file derived list."""

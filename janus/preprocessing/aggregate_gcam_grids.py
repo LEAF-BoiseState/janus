@@ -1,19 +1,27 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Mon Nov 19 21:33:10 2018
 
 @author: lejoflores and kendrakaiser
 """
 
-import gdal
 import glob
 import os
+
+import gdal
+
 from joblib import Parallel, delayed
 
-#=============================================================================#
-# FUNCTION DEFINITIONS    
-def AggregateGCAMGrid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
+
+def aggregate_gcam_grid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
+    """
+
+    :param GCAM_ReadWriteDir:
+    :param GCAM_ReadFile:
+    :param AggRes:
+
+    :return:
+    
+    """
     
     # Open the GeoTiff based on the input path and file
     src_ds = gdal.Open(GCAM_ReadWriteDir+GCAM_ReadFile)
@@ -48,12 +56,20 @@ def AggregateGCAMGrid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
     dst_ds = None
 
     return
-#                                                                             #
-#=============================================================================#
 
-def aggGCAM(AggRes, GCAM_Dir):
-    
-    GCAM_ReadFiles = glob.glob(GCAM_Dir +'gcam*srb.tiff')
 
-    Parallel(n_jobs=4, verbose=60, backend='threading')(delayed(AggregateGCAMGrid)(GCAM_Dir,os.path.basename(file),AggRes) \
-             for file in GCAM_ReadFiles)
+def aggregate_gcam(AggRes, gcam_directory):
+    """
+
+    :param AggRes:
+    :param gcam_directory:
+
+    :return:
+
+    """
+
+    gcam_files = glob.glob(os.path.join(gcam_directory, 'gcam*srb.tiff'))
+
+    Parallel(n_jobs=4, verbose=60, backend='threading')(delayed(aggregate_gcam_grid)(gcam_directory,
+                                                                                     os.path.basename(file), AggRes)
+                                                        for file in gcam_files)

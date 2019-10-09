@@ -14,10 +14,10 @@ def get_requirements():
         return f.read().split()
 
 setup(
-    name='abm',
+    name='janus',
     version='0.0.1',
     packages=find_packages(),
-    url='https://github.com/LEAF-BoiseState/IM3-BoiseState.git',
+    url='https://github.com/LEAF-BoiseState/janus.git',
     license='BSD 2-Clause',
     author='Kendra Kaiser; Lejo Flores',
     author_email='kendrakaiser@boisestate.edu; lejoflores@boisestate.edu',

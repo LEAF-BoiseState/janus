@@ -10,16 +10,13 @@ f_key_file: '/Users/d3y010/projects/boise_state/Data/CDL2GCAM_SRP_categories.csv
 f_gcam_file: '/Users/d3y010/projects/boise_state/Data/GCAM/gcam_2010_domain_3000.tiff'
 
 # profits file
-f_profits: '/Users/d3y010/projects/boise_state/Data/GenerateSyntheticPrices.csv'
+f_profits_file: '/Users/d3y010/projects/boise_state/Data/GenerateSyntheticPrices.csv'
 
 # output directory
 output_directory: '/Users/d3y010/projects/boise_state/Data/outputs'
 
 # TODO
 nt: 20
-
-# TODO:  there are actually 17 when the 1km is run, need random profit profiles for each of these
-nc: 4
 
 # list of lists for switching averse, tolerant parameters (alpha, beta)
 switch_params: [[4.5, 1.0], [0.5, 3.0]]

@@ -1,10 +1,10 @@
 # Author: Jonathan Carvajal
 # Date: 8/13/2019
-# FileName: aFarmer.py
-# Purpose: Holds defination of farmer
+# FileName: farmer.py
+# Purpose: Holds definition of farmer
 
 
-class aFarmer:
+class Farmer:
     
     def __init__(self,**kwargs):
 
@@ -17,11 +17,11 @@ class aFarmer:
         self.nFields = kwargs.get('nFields')
         self.nFields = self.nFields
         
-        self.alpha = kwargs.get('alpha') # write asserts that require the value to be between 0/1 ?
+        self.alpha = kwargs.get('alpha')
         self.beta = kwargs.get('beta')
 
-    def UpdateAge(self):
+    def update_age(self):
         self.Age += 1
 
-    def UpdateDist2city(self, newDist):
-        self.Dist2city = newDist
+    def update_dist2city(self, new_dist):
+        self.Dist2city = new_dist

@@ -51,7 +51,7 @@ class InstallSupplement:
         current distribution."""
 
         # get the current version that is installed
-        current_version = get_distribution('abm').version
+        current_version = get_distribution('janus').version
 
         try:
             data_link = InstallSupplement.DATA_VERSION_URLS[current_version]

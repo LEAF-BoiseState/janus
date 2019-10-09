@@ -3,7 +3,7 @@ import pandas as pd
 import geopandas as gpd
 import yaml
 
-import abm.crop_functions.CropDecider as crpdec
+import janus.crop_functions.crop_decider as crpdec
 
 
 class ConfigReader:
@@ -14,7 +14,6 @@ class ConfigReader:
     F_GCAM_FILE = 'f_gcam_file'
     F_PROFITS_FILE = 'f_profits_file'
     NT = 'nt'
-    NC = 'nc'
     SWITCH_PARAMS = 'switch_params'
     P = 'p'
     FMIN = 'fmin'
@@ -51,9 +50,6 @@ class ConfigReader:
 
         self.Nt = c[ConfigReader.NT]
 
-        # TODO: there are actually 17 when the 1km is run, need random profit profiles for each of these
-        self.Nc = c[ConfigReader.NC]
-
         # set agent switching parameters (alpha, beta) [[switching averse], [switching tolerant]]
         self.switch = np.array(c[ConfigReader.SWITCH_PARAMS])
 
@@ -67,7 +63,7 @@ class ConfigReader:
         self.n = c[ConfigReader.N]
 
         # TODO:  define seed for crop decider; This is not used in this script but is set as `global`
-        crpdec.DefineSeed(c[ConfigReader.CROP_SEED_SIZE])
+        crpdec.define_seed(c[ConfigReader.CROP_SEED_SIZE])
 
         # target year
         self.target_year = c[ConfigReader.TARGET_YR]

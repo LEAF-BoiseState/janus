@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Wed Aug 14 15:52:44 2019
 
@@ -8,7 +6,7 @@ Created on Wed Aug 14 15:52:44 2019
 
 import unittest
 import numpy as np
-import abm.crop_functions.CropDecider as cd
+import janus.crop_functions.crop_decider as cd
 
 
 class CropDeciderTest(unittest.TestCase):
@@ -24,7 +22,7 @@ class CropDeciderTest(unittest.TestCase):
         x_known= np.array([0,2500,5000,7500,10000])
         f_known= np.array([0, 0.15625, 0.5, 0.84375, 1])
         
-        x_test, f_test = cd.SwitchingProbCurve(alpha,beta,fmin,fmax,n,profit)
+        x_test, f_test = cd.switching_prob_curve(alpha,beta,fmin,fmax,n,profit)
         
         self.assertEqual(x_known.all(), x_test.all())
         self.assertEqual(f_known.all(), f_test.all())
@@ -40,7 +38,7 @@ class CropDeciderTest(unittest.TestCase):
         profit_p=1050
         
         ans = 0
-        ans_test = cd.Decide(alpha,beta,fmin,fmax,n,profit,profit_p)
+        ans_test = cd.decide(alpha,beta,fmin,fmax,n,profit,profit_p)
         
         self.assertEqual(ans, ans_test)
         
@@ -51,7 +49,7 @@ class CropDeciderTest(unittest.TestCase):
         Nc= 4
         CropIDs =np.array([1,2,3,10])
         
-        Profit_ant_test, Profit_p_test = cd.AssessProfit(Crop, Profits_cur, Profits_alt, Nc, CropIDs)
+        Profit_ant_test, Profit_p_test = cd.assess_profit(Crop, Profits_cur, Profits_alt, Nc, CropIDs)
         
         Profit_ant_known=np.array([0])
         Profit_p_known=np.zeros([4,1])
@@ -71,7 +69,7 @@ class CropDeciderTest(unittest.TestCase):
         vec_crops=vec_crops.reshape((4,1))
         vec_profit_p=np.zeros([4,1])
         
-        CropChoice_test, ProfitChoice_test = cd.DecideN(alpha, beta, fmin, fmax, n, profit, vec_crops, \
+        CropChoice_test, ProfitChoice_test = cd.decide_n(alpha, beta, fmin, fmax, n, profit, vec_crops, \
                                                       vec_profit_p, rule=True)
         
         CropChoice_known = -1
@@ -81,7 +79,7 @@ class CropDeciderTest(unittest.TestCase):
         self.assertEqual(ProfitChoice_test, ProfitChoice_known)
         
     def test_MakeChoice(self):
-        cd.DefineSeed(5)
+        cd.define_seed(5)
         
         CropID_all=np.float64(15)
         Profit_last=0
@@ -93,7 +91,7 @@ class CropDeciderTest(unittest.TestCase):
         Profit_ant_known=0
         Profit_act_known =np.array([[[441.22748689]]])
         
-        CropID_all_test, Profit_ant_test, Profit_act_test  = cd.MakeChoice(CropID_all, Profit_last, Profit_ant, CropChoice, ProfitChoice, seed=True)
+        CropID_all_test, Profit_ant_test, Profit_act_test  = cd.make_choice(CropID_all, Profit_last, Profit_ant, CropChoice, ProfitChoice, seed=True)
         
         self.assertEqual(CropID_all_known, CropID_all_test)
         self.assertEqual(Profit_ant_known, Profit_ant_test)

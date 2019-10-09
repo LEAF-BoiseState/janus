@@ -1,25 +1,22 @@
 import numpy as np
 
-FieldOps_nMonths = 12
-FieldOps_nCols = 6
-FieldOps_nRows = 12
-
 
 class FieldOpsStruct:
-	"""#defines how agent is operating field; for each month what is being grown,
+	"""Defines how agent is operating field; for each month what is being grown,
 	vector of 1/0 did you plant, irrigate or harvest.
 
 	"""
+	FIELDOPS_NMONTHS = 12
+	FIELDOPS_NCOLS = 6
+	FIELDOPS_NROWS = 12
 
 	def __init__(self, Description, CropID, flagPlant, flagDevelop, flagIrrigate, flagHarvest):
 
-		fieldops_nmths_str = str(FieldOps_nMonths)
-
-		assert CropID.size == FieldOps_nMonths, "CropID must be a vector of " + fieldops_nmths_str
-		assert flagPlant.size == FieldOps_nMonths, "flagPlant must be a vector of " + fieldops_nmths_str
-		assert flagDevelop.size == FieldOps_nMonths, "flagDevelop must be a vector of " + fieldops_nmths_str
-		assert flagIrrigate.size == FieldOps_nMonths, "flagIrrigate must be a vector of " + fieldops_nmths_str
-		assert flagHarvest.size == FieldOps_nMonths, "flagHarvest must be a vector of " + fieldops_nmths_str
+		assert CropID.size == FieldOpsStruct.FIELDOPS_NMONTHS, "CropID must be a vector of {}.".format(FieldOpsStruct.FIELDOPS_NMONTHS)
+		assert flagPlant.size == FieldOpsStruct.FIELDOPS_NMONTHS, "flagPlant must be a vector of {}.".format(FieldOpsStruct.FIELDOPS_NMONTHS)
+		assert flagDevelop.size == FieldOpsStruct.FIELDOPS_NMONTHS, "flagDevelop must be a vector of {}.".format(FieldOpsStruct.FIELDOPS_NMONTHS)
+		assert flagIrrigate.size == FieldOpsStruct.FIELDOPS_NMONTHS, "flagIrrigate must be a vector of {}.".format(FieldOpsStruct.FIELDOPS_NMONTHS)
+		assert flagHarvest.size == FieldOpsStruct.FIELDOPS_NMONTHS, "flagHarvest must be a vector of {}.".format(FieldOpsStruct.FIELDOPS_NMONTHS)
 
 		self.Description = Description
 		self.CropID = CropID
@@ -29,7 +26,15 @@ class FieldOpsStruct:
 		self.flagHarvest = flagHarvest
 
 
-def ReadFieldOps(ReadPath, ReadFile):
+def read_field_ops(ReadPath, ReadFile):
+	"""
+
+	:param ReadPath:
+	:param ReadFile:
+
+	:return:
+
+	"""
 
 	try:
 		ifid = open(ReadPath+ReadFile,'r')
@@ -45,26 +50,25 @@ def ReadFieldOps(ReadPath, ReadFile):
 		ifid.close()
 
 	Ops = np.loadtxt(ReadPath+ReadFile,delimiter=',',skiprows=2)
-	
+
 	# Parse ops... need new function, return structure
 	FieldOps = ParseOpsArray(Ops,Description)
 
 	return FieldOps
 
 
-def ParseOpsArray(Ops, Description):
+def parse_ops_array(Ops, Description):
 
-	assert Ops.shape == (FieldOps_nRows, FieldOps_nCols), "[FieldOps ERROR]: FieldOps data file must begin with 2 header rows followed by 12 rows by 5 columns of data"
+	assert Ops.shape == (FieldOpsStruct.FIELDOPS_NROWS, FieldOpsStruct.FIELDOPS_NCOLS), "[FieldOps ERROR]: FieldOps data file must begin with 2 header rows followed by 12 rows by 5 columns of data"
 
-	Months = Ops[:,0]
-	CropID = Ops[:,1]
-	flagPlant = Ops[:,2]
-	flagDevelop = Ops[:,3]
-	flagIrrigate = Ops[:,4]
-	flagHarvest = Ops[:,5]
+	Months = Ops[:, 0]
+	CropID = Ops[:, 1]
+	flagPlant = Ops[:, 2]
+	flagDevelop = Ops[:, 3]
+	flagIrrigate = Ops[:, 4]
+	flagHarvest = Ops[:, 5]
 
-	# Unit tests:
-	assert np.array_equal(Months,np.linspace(1,12,num=12)), "[FieldOps ERROR] Months in FieldOps data array must be sequential from 1 to 12"
+	assert np.array_equal(Months,np.linspace(1, 12, num=12)), "[FieldOps ERROR] Months in FieldOps data array must be sequential from 1 to 12"
 
 	assert np.array_equal(flagPlant, flagPlant.astype(bool)), "[FieldOps ERROR]: flagPlant must be 0 or 1"
 	assert np.array_equal(flagDevelop, flagDevelop.astype(bool)), "[FieldOps ERROR]: flagDevelop must be 0 or 1"
