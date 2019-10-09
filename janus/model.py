@@ -77,9 +77,10 @@ class Janus:
 
     def initialize_crops(self):
         """Initialize crops
-
-        :return:                        TODO: add return descriptions for each variable
-
+        :return: crop_ids, numpy array of the crop IDs that are in the domain
+        :return: crop_id_all, numpy array of landcover categories through time
+        :return: ag, numpy array of where agricultural cells exist in the domain
+        :return: num_crops, integer og the number of crops being assessed
         """
 
         ag = np.where(self.c.key_file['local_cat'] == 'ag')
