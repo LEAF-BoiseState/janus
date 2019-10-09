@@ -6,7 +6,6 @@ Created on Thu May 30 15:09:10 2019
 @author: kek25
 
 Library of functions for geospatial processing
-
 """
 
 import numpy as np
@@ -21,9 +20,9 @@ from shapely.ops import cascaded_union
 from scipy import spatial
 
 
-# TODO: This will be used if a user want to use and clip other geospatial data such as elevation
 def get_extent(counties_shp, county_list, scale, DataPath):
-    """Create a grid of the extent based on counties and scale of interest.
+    """Create a grid of the extent based on counties and scale of interest. 
+    This will be used if a user want to use and clip other geospatial data such as elevation
 
     :param counties_shp:                Geopandas data frame for counties data
     :param county_list:                 List of counties in the domain of interest
@@ -63,7 +62,7 @@ def get_gcam(counties_shp, county_list, gcam_file):
 
     """
 
-    data = rasterio.open(gcam_file) # this isn't working consistently ...?
+    data = rasterio.open(gcam_file) 
     extent_shp = counties_shp['geometry'].loc[county_list]
     boundary = gp.GeoSeries(cascaded_union(extent_shp))
     coords = [json.loads(boundary.to_json())['features'][0]['geometry']] # parses features from GeoDataFrame the way rasterio wants them
@@ -94,7 +93,7 @@ def min_dist_city(gcam):
     :return: np.array of distance to a city cell within the domain
 
     """
-    # TODO:  are these values supposed to be hard-coded
+    # TODO:  are these values supposed to be hard-coded, no, update to follow based on key file
     urban_bool = np.logical_or(np.logical_or(gcam[0] == 26, gcam[0] == 27), np.logical_or(gcam[0] == 17, gcam[0] == 25))
     
     rur = np.where(np.logical_and(~urban_bool, gcam[0] != 0))
