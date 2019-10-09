@@ -9,7 +9,7 @@ Tests for model interface
 import pkg_resources
 import unittest
 
-from janus.model import Abm
+from janus import Janus
 
 
 class TestBuilder(unittest.TestCase):
