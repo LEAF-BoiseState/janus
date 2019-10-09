@@ -136,7 +136,7 @@ def c2g(CDL_GCAM_keyfile, conversionID):
     #=========================================================================#
     CDL2GCAM_key = pd.read_csv(CDL_GCAM_keyfile, sep=',')
     CDL_cat      = CDL2GCAM_key['CDL_id'].values
-    GCAM_cat     = CDL2GCAM_key[conversionID].values #'SRP_GCAM_id' or set to GCAM_id for regular GCAM categories, or edit the original file to user defineted categories
+    GCAM_cat     = CDL2GCAM_key[conversionID].values #'local_GCAM_id' or set to 'GCAM_id' for regular GCAM categories, or edit the original file to user defineted categories
 
     #=========================================================================#
     # 1. Initialize a list of CDL structures for analysis                     #
