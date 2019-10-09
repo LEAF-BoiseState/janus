@@ -98,13 +98,12 @@ class Janus:
         return crop_ids, crop_id_all, ag, num_crops
 
     def initialize_profit(self):
-        """Initialize profits.
+        """Initialize profits based on profit signals csv that is either generated or input from other model output
 
-        :return:                        TODO:  add return descriptions for each variable
+        :return: profits_actual is the profit signal with a random variation, 
+        profit_signals is the transposed profit signals cleaned to be used in other functions
 
         """
-
-        # initializes profits based on profit signals from csv output from generate synthetic prices
         profit_signals = np.transpose(self.c.profits_file.as_matrix())
 
         assert np.all([profit_signals[:, 0], self.crop_ids[:, 0]]), 'Crop IDs in profit signals do not match Crop IDs from landcover'
@@ -118,10 +117,11 @@ class Janus:
         return profits_actual, profit_signals
 
     def initialize_agents(self, id_field='ID', cat_option='local'):
-        """Initialize agents.
+        """Initialize agents based on nass data and initial landcover
 
 
-        :return:                        TODO:  add return descriptions for each variable
+        :return: agent_domain is the domain with agent cell classes filled with agent information, 
+        agent_array is a numpy array of strings that define which agent is in each location
 
         """
 
@@ -135,7 +135,7 @@ class Janus:
 
         agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, cat_option)
 
-        # replace
+        # TODO: replace (dont know what this refers to)
         agent_domain = init_agent.agents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf, self.c.switch,
                                          self.Ny, self.Nx, self.lc, self.c.p)
 
@@ -144,7 +144,7 @@ class Janus:
     def decisions(self):
         """Decision process.
 
-        :return:                        TODO:  add return descriptions for each variable
+        :return:    Updated domain with agent information and landcover choice
 
         """
         for i in np.arange(1, self.c.Nt):
