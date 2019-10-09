@@ -9,7 +9,7 @@ Pre-process GIS data based on counties, base year, and resolution
 import geopandas as gp
 
 import janus.preprocessing.geofxns as gf
-import janus.preprocessing.landcoverPreProcessingfxns as lc
+import janus.preprocessing.landcover_preprocessing as lc
 
 # TODO:  this needs to be wrapped in a function that can be called
 userPath='/Users/kek25/Documents/GitRepos/'

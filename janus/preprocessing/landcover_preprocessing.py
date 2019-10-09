@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Mon Nov 19 09:53:01 2018
 
@@ -26,16 +24,18 @@ GCAMPath= '../../Data/GCAM/'
 
 files = glob.glob(CDLPath+'cdl*.txt') 
 
-#=============================================================================#
-# CLASS DEFINITIONS    
-class CDL_DataStruct:
+
+class CdlDataStruct:
+    """TODO:  need description of class
+
+    """
     # Constructor requires the path and file name of the input CDL data
-    def __init__(self,cdl_path,cdl_infile): 
+    def __init__(self, cdl_path, cdl_infile):
         self.cdl_path   = cdl_path
         self.cdl_infile = cdl_infile
         
     # Add CDL geographic transformation adn projection information
-    def SetCDL_ProjInfo(self,GeoTransform,Projection,PixelSize):
+    def SetCDL_ProjInfo(self, GeoTransform, Projection, PixelSize):
         self.cdl_geotransform = GeoTransform
         self.cdl_projection   = Projection
         self.cdl_pixelsize    = PixelSize
@@ -45,9 +45,10 @@ class CDL_DataStruct:
 
     def SetCDLStats(self,cdl_stats): # Add CDL stats
         self.cdl_stats = cdl_stats
-                
+
+
 class GCAM_DataStruct:
-    def __init__(self,gcam_path,gcam_outfile):
+    def __init__(self, gcam_path, gcam_outfile):
         self.gcam_path    = gcam_path
         self.gcam_outfile = gcam_outfile
 
@@ -146,7 +147,7 @@ def c2g(CDL_GCAM_keyfile, conversionID):
         # Initialize CDL data structures with paths and file names
         cdl_path   = os.path.dirname(file)
         cdl_infile = os.path.basename(file)
-        CDL_Data.append(CDL_DataStruct(cdl_path,cdl_infile))
+        CDL_Data.append(CdlDataStruct(cdl_path,cdl_infile))
 
         # Initialize GCAM data structures with paths and file names
         gcam_path    = GCAMPath
