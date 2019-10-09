@@ -203,7 +203,6 @@ def urban_data(lc):
     :return: Dictionary of urban agent attributes, currently only density
 
     """
-    # TODO:  Need closing condition (else: ...)
     if lc == 17:
         d = 3
     elif lc == 25:
