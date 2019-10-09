@@ -13,7 +13,7 @@ import janus.preprocessing.geofxns as gf
 import janus.crop_functions.crop_decider as crpdec
 import janus.initialize_agents_domain as init_agent
 import janus.postprocessing.create_figures as ppf
-import janus.preprocessing.getNASSAgentData as get_nass
+import janus.preprocessing.get_nass_agent_data as get_nass
 
 from janus.config_reader import ConfigReader
 
@@ -123,13 +123,13 @@ class Janus:
         """
 
         # tenure from individual counties can also be used
-        tenure = get_nass.TenureArea(id_field, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables, self.c.nass_api_key)
+        tenure = get_nass.tenure_area(id_field, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables, self.c.nass_api_key)
 
-        ages = get_nass.Ages(self.c.nass_year, id_field, self.c.nass_api_key)
+        ages = get_nass.ages(self.c.nass_year, id_field, self.c.nass_api_key)
 
-        age_cdf = get_nass.makeAgeCDF(ages)
+        age_cdf = get_nass.make_age_cdf(ages)
 
-        tenure_cdf = get_nass.makeTenureCDF(tenure)
+        tenure_cdf = get_nass.make_tenure_cdf(tenure)
 
         agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, cat_header)
 

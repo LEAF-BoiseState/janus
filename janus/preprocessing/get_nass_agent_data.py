@@ -25,7 +25,7 @@ def cleanup(value):
         return 0
 
 
-def Ages(YR, state, nass_api_key):
+def ages(YR, state, nass_api_key):
     """Need description.
 
     :param YR:
@@ -57,7 +57,7 @@ def Ages(YR, state, nass_api_key):
     return ages
 
 
-def TenureArea(state, county_list, NASS_yr, variables, nass_api_key):
+def tenure_area(state, county_list, NASS_yr, variables, nass_api_key):
     """County level aggregation, can change to report each county
 
     :param state:
@@ -97,7 +97,7 @@ def TenureArea(state, county_list, NASS_yr, variables, nass_api_key):
     return farms
 
 
-def makeAgeCDF(var_array):
+def make_age_cdf(var_array):
     """Create distributions from NASS data.
 
     :param var_array:
@@ -126,7 +126,14 @@ def makeAgeCDF(var_array):
     return perc
 
 
-def makeTenureCDF(var_array):
+def make_tenure_cdf(var_array):
+    """
+
+    :param var_array:
+
+    :return:
+
+    """
 
     ser_full = np.zeros(0)
 
@@ -145,7 +152,7 @@ def makeTenureCDF(var_array):
     return perc
     
 
-def FarmerData(TenureCDF, AgeCDF, switch, p, d2c):
+def farmer_data(TenureCDF, AgeCDF, switch, p, d2c):
     """Collect agent data from NASS distributions and place in dictionary.
 
     :param TenureCDF:
@@ -186,7 +193,7 @@ def FarmerData(TenureCDF, AgeCDF, switch, p, d2c):
     return AgentData
 
 
-def UrbanData(lc):
+def urban_data(lc):
     """Pull the landcover category from lc, set this so it's 0 =open space, 1=low, 2=med, 3=high density
     this needs to be set by user based on what their landcover classes are, e.g. denisty would not
     be a category with original GCAM cats

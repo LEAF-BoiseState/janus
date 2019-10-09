@@ -8,7 +8,7 @@ import numpy as np
 import janus.agents.farmer as farmer
 import janus.agents.d_cell as cell
 import janus.agents.urban as urban
-import janus.preprocessing.getNASSAgentData as getNASS
+import janus.preprocessing.get_nass_agent_data as getNASS
 
 
 def initialize_domain(Ny, Nx):
@@ -100,7 +100,7 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
 
             if AgentArray[i][j] == farmer.Farmer.__name__:
 
-                AgentData = getNASS.FarmerData(TenureCDF, AgeCDF, switch, p, dist2city[i][j])
+                AgentData = getNASS.farmer_data(TenureCDF, AgeCDF, switch, p, dist2city[i][j])
                 NewAgent = farmer.Farmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"],
                                           Dist2city=AgentData["Dist2city"], nFields=AgentData['nFields'],
                                           alpha=AgentData['Alpha'],
@@ -109,7 +109,7 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
 
             if AgentArray[i][j] == urban.Urban.__name__:
 
-                AgentData = getNASS.UrbanData(lc[0][i][j])
+                AgentData = getNASS.urban_data(lc[0][i][j])
                 NewAgent = urban.Urban(density=AgentData["Density"])
                 domain[i][j].add_agent(NewAgent)
 

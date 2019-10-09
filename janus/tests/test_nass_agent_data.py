@@ -4,7 +4,7 @@ Created on Wed Aug 21 14:08:22 2019
 """
 
 import unittest
-import janus.preprocessing.getNASSAgentData as nass
+import janus.preprocessing.get_nass_agent_data as nass
 
 
 class TestNassAgent(unittest.TestCase):
