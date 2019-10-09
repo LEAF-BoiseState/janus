@@ -19,7 +19,7 @@ GCAMpath=DataPath+'GCAM/'
 counties_shp= gp.read_file(DataPath+'Counties/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
 
-key_file= gp.read_file(DataPath+'CDL2GCAM_SRP_categories.csv', sep=',')
+key_file= gp.read_file(DataPath+'CDL2GCAM_categories.csv', sep=',')
 
 #------------------------------------------------------------------------
 # Select, crop and save npy file of specific initialization year and scale
@@ -30,7 +30,7 @@ scale=3000 #scale of grid in meters
 year=2010
 
 #convert cdl data to GCAM categories of choice, this will take a while depending on size of original dataset
-lc.c2g(key_file,'SRP_GCAM_id') 
+lc.c2g(key_file,'local_GCAM_id') 
 
 #convert GCAM file to scale of interest
 lc.aggGCAM(scale, GCAMpath)
