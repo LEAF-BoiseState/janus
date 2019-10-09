@@ -20,7 +20,7 @@ def aggregate_gcam_grid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
     :param AggRes:
 
     :return:
-    
+
     """
     
     # Open the GeoTiff based on the input path and file
