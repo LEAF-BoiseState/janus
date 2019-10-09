@@ -16,15 +16,36 @@ import sys
 import csv
 
 NPRICE_FUNCTIONS = 3  # Number of profit functions in this script. If the user
-
-
 # wants to add additional functions, this must be increased
 # to reflect the total number of synthetic profit functions
 # in this script.
-# =============================================================================#
+
+#=============================================================================#
 #                                                                             #
+#             GeneratePrice_linear(Nt, Pi, Pf, perturb, s_p=0.0)              #
 #                                                                             #
-# =============================================================================#
+# AUTHOR: Lejo Flores                                                         #
+#                                                                             #
+# PURPOSE: The purpose of this function is to generate a synthetic price      #
+#          signal that is Nt timesteps long and changes linearly from the     #
+#          initial price, Pi, to the final price, Pf. Optionally, the user    #
+#          has the option to perturb that synthetic price with gaussian,      #
+#          uncorrelated, zero-mean noise with a standard deviation of s_p     #
+#                                                                             #
+# RETURNS: An (Nt x 1) numpy array of prices that vary linearly from Pi to    #
+#          Pt, optionally perturbed with gaussian, zero mean noise.           #
+#                                                                             #
+# ALGORITHM:                                                                  #
+#                                                                             #
+#         (1) Use the numpy linspace function to create an (Nt x 1) array of  #
+#             prices that vary from Pi at the beginning of the array to Pf at #
+#             the end of the array.                                           #
+#         (2) Check if the perturb flag is set to true                        #
+#         (3) If true, add gaussian, uncorrelated, zero mean, s_p standard    #
+#             deviation noise to the vector. If false, do nothing.            #
+#         (4) Return the (Nt x 1) numpy array.                                #
+#                                                                             #
+#=============================================================================#
 def GeneratePrice_linear(Nt, Pi, Pf, perturb, s_p=0.0):
     """Description
 
@@ -43,10 +64,24 @@ def GeneratePrice_linear(Nt, Pi, Pf, perturb, s_p=0.0):
     return P
 
 
-# =============================================================================#
+#=============================================================================#
 #                                                                             #
+#          GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p=0.0)           #
 #                                                                             #
-# =============================================================================#
+# AUTHOR: Lejo Flores                                                         #
+#                                                                             #
+# PURPOSE: The purpose of this function is to generate a synthetic price      #
+#          signal that is Nt timesteps long and undergoes a step-change in    #
+#          price from from the initial price, Pi, to the final price, Pf.     #
+#          Optionally, the user can perturb that synthetic price with         #
+#          gaussian, uncorrelated, zero-mean noise with a standard deviation  #
+#          of s_p.                                                            #
+#                                                                             #
+# RETURNS: An (Nt x 1) numpy array of prices that undergo a step-change from  #
+#          Pi to Pt, optionally perturbed with gaussian, zero mean noise.     #
+
+#                                                                             #
+#=============================================================================#
 def GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p=0.0):
     """Description
 
