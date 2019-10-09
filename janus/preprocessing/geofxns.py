@@ -22,7 +22,7 @@ from scipy import spatial
 
 
 # TODO: This will be used if a user want to use and clip other geospatial data such as elevation
-def getExtent(counties_shp, county_list, scale, DataPath):
+def get_extent(counties_shp, county_list, scale, DataPath):
     """Create a grid of the extent based on counties and scale of interest.
 
     :param counties_shp:                Geopandas data frame for counties data
@@ -71,6 +71,7 @@ def get_gcam(counties_shp, county_list, gcam_file):
     out_meta = data.meta.copy()
     epsg_code = int(data.crs.data['init'][5:])
 
+    # TODO:  check to see if this is a vaild workaround for not setting a coordinate system on failure
     try:
         fetch_crs = pycrs.parse.from_epsg_code(epsg_code).to_proj4()
 
@@ -81,8 +82,7 @@ def get_gcam(counties_shp, county_list, gcam_file):
                  "height": out_img.shape[1],
                  "width": out_img.shape[2],
                  "transform": out_transform,
-                 "crs": fetch_crs} # this doesnt work w.o internet connection
-                        )
+                 "crs": fetch_crs})
     return out_img
 
 
