@@ -193,7 +193,7 @@ class Janus:
         :return:
 
         """
-        out_file = os.path.join(self.c.output_dir, '{}_{}_m_{}_yr.npy')
+        out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr.npy')
 
         # save time series of landcover coverage
         np.save(out_file.format('landcover', self.c.scale, self.c.Nt), self.crop_id_all)
