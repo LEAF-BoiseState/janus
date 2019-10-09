@@ -56,11 +56,11 @@ class Janus:
     def initialize_landscape_domain(self):
         """Initialize landscape and domain.
 
-        :return: lc
-        :return: dist2city
-        :return: domain
-        :return: ny
-        :return: nx
+        :return: lc, numpy array of landcover categories within domain at scale of interest
+        :return: dist2city, numpy array of distance to nearest city cell
+        :return: domain, grid of dCell classes
+        :return: ny, number of rows in domain
+        :return: nx, number of columns in domain
         """
 
         # select initial gcam data from initial year
@@ -78,7 +78,10 @@ class Janus:
     def initialize_crops(self):
         """Initialize crops
 
-        :return:                        TODO: add return descriptions for each variable
+        :return: crop_ids, numpy array of the crop IDs that are in the domain
+        :return: crop_id_all, numpy array of landcover categories through time
+        :return: ag, numpy array of where agricultural cells exist in the domain
+        :return: num_crops, integer og the number of crops being assessed
 
         """
 
@@ -100,8 +103,8 @@ class Janus:
     def initialize_profit(self):
         """Initialize profits based on profit signals csv that is either generated or input from other model output
 
-        :return: profits_actual is the profit signal with a random variation, 
-        profit_signals is the transposed profit signals cleaned to be used in other functions
+        :return: profits_actual is the profit signal with a random variation 
+        :return: profit_signals is the transposed profit signals cleaned to be used in other functions
 
         """
         profit_signals = np.transpose(self.c.profits_file.as_matrix())
@@ -120,8 +123,8 @@ class Janus:
         """Initialize agents based on nass data and initial landcover
 
 
-        :return: agent_domain is the domain with agent cell classes filled with agent information, 
-        agent_array is a numpy array of strings that define which agent is in each location
+        :return: agent_domain is the domain with agent cell classes filled with agent information 
+        :return: agent_array is a numpy array of strings that define which agent is in each location
 
         """
 
