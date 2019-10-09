@@ -1,4 +1,4 @@
 from janus.model import *
 from janus.install_supplement import *
 
-__all__ = ['model', 'InstallSupplement']
+__all__ = ['Janus', 'InstallSupplement']
