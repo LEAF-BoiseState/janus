@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Mon Apr  8 21:55:00 2019
 
@@ -7,22 +5,21 @@ Created on Mon Apr  8 21:55:00 2019
 
 Pre-process GIS data based on counties, base year, and resolution
 """
- 
-import PreprocessingTools.geofxns as gf
-import PreprocessingTools.landcoverPreProcessingfxns as lc
+
 import geopandas as gp
 
+import janus.preprocessing.geofxns as gf
+import janus.preprocessing.landcoverPreProcessingfxns as lc
 
+# TODO:  this needs to be wrapped in a function that can be called
 userPath='/Users/kek25/Documents/GitRepos/'
 DataPath= userPath+'IM3-BoiseState/Data/'
 GCAMpath=DataPath+'GCAM/'
-
 
 counties_shp= gp.read_file(DataPath+'Counties/Counties_SRB_clip_SingleID.shp')
 counties_shp=counties_shp.set_index('county')
 
 key_file= gp.read_file(DataPath+'CDL2GCAM_SRP_categories.csv', sep=',')
-
 
 #------------------------------------------------------------------------
 # Select, crop and save npy file of specific initialization year and scale
@@ -48,17 +45,7 @@ extent=gf.getExtent(counties_shp, countyList, scale, DataPath)
 
 
 #select initial gcam data from inital year 
-lc=gf.getGCAM(counties_shp, countyList, year, scale, GCAMpath)
-
-
+lc = gf.getGCAM(counties_shp, countyList, year, scale, GCAMpath)
 
 #if additional geospatial data are avialable and included in model they can be 
 #clipped and processed here using the extent file
-
-
-
-
-
-
-
-
