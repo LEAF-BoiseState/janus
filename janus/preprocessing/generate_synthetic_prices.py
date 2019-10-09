@@ -32,18 +32,30 @@ NPRICE_FUNCTIONS = 3  # Number of profit functions in this script. If the user
 #          has the option to perturb that synthetic price with gaussian,      #
 #          uncorrelated, zero-mean noise with a standard deviation of s_p     #
 #                                                                             #
+# INPUTS:                                                                     #
+#                                                                             #
+#          Nt      = The number of timesteps for which to create prices.      #
+#          Pi      = The price at the start of the time series.               #
+#          Pf      = The price at the end of the time series.                 #
+#          perturb = A flag noting whether to perturb the times series with   #
+#                    gaussian, uncorrelated, zero mean noise. 0 = false.      #
+#                    1 = true.                                                #
+#          s_p     = The standard deviation of the noise that will be added   #
+#                    to the prices if perturb is set to true.                 # 
+#                                                                             #
 # RETURNS: An (Nt x 1) numpy array of prices that vary linearly from Pi to    #
 #          Pt, optionally perturbed with gaussian, zero mean noise.           #
 #                                                                             #
 # ALGORITHM:                                                                  #
 #                                                                             #
-#         (1) Use the numpy linspace function to create an (Nt x 1) array of  #
-#             prices that vary from Pi at the beginning of the array to Pf at #
-#             the end of the array.                                           #
-#         (2) Check if the perturb flag is set to true                        #
-#         (3) If true, add gaussian, uncorrelated, zero mean, s_p standard    #
-#             deviation noise to the vector. If false, do nothing.            #
-#         (4) Return the (Nt x 1) numpy array.                                #
+#          (1) Error trap to ensure that Pi and Pf are greater than 0.        #
+#          (2) Use the numpy linspace function to create an (Nt x 1) array of #
+#              prices that vary from Pi at the beginning of the array to Pf   #
+#              at the end of the array.                                       #
+#          (3) Check if the perturb flag is set to true                       #
+#          (4) If true, add gaussian, uncorrelated, zero mean, s_p standard   #
+#              deviation noise to the vector. If false, do nothing.           #
+#          (5) Return the (Nt x 1) numpy array.                               #
 #                                                                             #
 #=============================================================================#
 def GeneratePrice_linear(Nt, Pi, Pf, perturb, s_p=0.0):
@@ -57,6 +69,9 @@ def GeneratePrice_linear(Nt, Pi, Pf, perturb, s_p=0.0):
 
     :return: An Nt x 1 numpy array of profit
     """
+    assert Pi >= 0.0, 'generate_synthetic_prices.py ERROR: Pi must be greater than or equal to 0.0'
+    assert Pf >= 0.0, 'generate_synthetic_prices.py ERROR: Pf must be greater than or equal to 0.0'
+
     P = np.linspace(Pi, Pf, num=Nt).reshape((Nt, 1))
     if (perturb == 1):
         P += np.random.normal(loc=0.0, scale=s_p, size=(Nt, 1))
@@ -77,9 +92,33 @@ def GeneratePrice_linear(Nt, Pi, Pf, perturb, s_p=0.0):
 #          gaussian, uncorrelated, zero-mean noise with a standard deviation  #
 #          of s_p.                                                            #
 #                                                                             #
+# INPUTS:                                                                     #
+#                                                                             #
+#          Nt      = The number of timesteps for which to create prices.      #
+#          Pi      = The price at the start of the time series.               #
+#          Pf      = The price at the end of the time series.                 #
+#          t_step  = The time (as a fraction of the number of timesteps Nt)   #
+#                    at which the price change occurs.                        #
+#          perturb = A flag noting whether to perturb the times series with   #
+#                    gaussian, uncorrelated, zero mean noise. 0 = false.      #
+#                    1 = true.                                                #
+#          s_p     = The standard deviation of the noise that will be added   #
+#                    to the prices if perturb is set to true.                 # 
+#                                                                             #
 # RETURNS: An (Nt x 1) numpy array of prices that undergo a step-change from  #
 #          Pi to Pt, optionally perturbed with gaussian, zero mean noise.     #
-
+#                                                                             #
+# ALGORITHM:                                                                  #
+#                                                                             #
+#          (1) Error trap to ensure that t_step is valid (0 < t_step < 1)     #
+#              and that Pi and Pf are greater than or equal to zero.          #
+#          (2) Create an (Nt x 1) numpy array of zeros as an empty container. #
+#          (3) Set the first (int)(t_step * Nt) prices equal to Pi.           #
+#          (4) Set the last (int)(t_step * Nt) to Nt prices equal to Pf.      #
+#          (5) Check if the perturb flag is set to true                       #
+#          (6) If true, add gaussian, uncorrelated, zero mean, s_p standard   #
+#              deviation noise to the vector. If false, do nothing.           #
+#          (7) Return the (Nt x 1) numpy array.                               #
 #                                                                             #
 #=============================================================================#
 def GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p=0.0):
@@ -94,6 +133,8 @@ def GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p=0.0):
 
     :return: An Nt x 1 numpy array of profit
     """
+    assert Pi >= 0.0, 'generate_synthetic_prices.py ERROR: Pi must be greater than or equal to 0.0'
+    assert Pf >= 0.0, 'generate_synthetic_prices.py ERROR: Pf must be greater than or equal to 0.0'
     assert t_step > 0.0, 'generate_synthetic_prices.py ERROR: Step price change time is less than 0.0'
     assert t_step < 1.0, 'generate_synthetic_prices.py ERROR: Step price change time is greeater than 1.0'
 
@@ -107,10 +148,49 @@ def GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p=0.0):
     return P
 
 
-# =============================================================================#
+#=============================================================================#
 #                                                                             #
+#      GeneratePrice_periodic(Nt, Pmag, Pamp, n_period, perturb, s_p=0.0)     #
 #                                                                             #
-# =============================================================================#
+# AUTHOR: Lejo Flores                                                         #
+#                                                                             #
+# PURPOSE: The purpose of this function is to generate a synthetic price      #
+#          signal that is Nt timesteps long and varies periodically about a   #
+#          level Pmag, with an amplitude Pamp, over n_periods during the Nt   #
+#          timesteps. Optionally, the user can perturb that synthetic price   #         #
+#          with gaussian, uncorrelated, zero-mean noise with a standard       #
+#          deviation of s_p.                                                  #
+#                                                                             #
+# INPUTS:                                                                     #
+#                                                                             #
+#          Nt        = The number of timesteps for which to create prices.    #
+#          Pmag      = The level about which prices fluctuate.                #
+#          Pamp      = The amplitude of the fluctuation.                      #
+#          n_period  = The number of periods during the Nt timesteps to       #
+#                      that the price fluctuations should undergo.            #                     at which the price change occurs.                        #
+#          perturb   = A flag noting whether to perturb the times series with #
+#                      gaussian, uncorrelated, zero mean noise. 0 = false.    #
+#                      1 = true.                                              #
+#          s_p       = The standard deviation of the noise that will be added #
+#                      to the prices if perturb is set to true.               # 
+#                                                                             #
+# RETURNS: An (Nt x 1) numpy array of prices that fluctuates about Pmag with  #
+#          an amplitude Pamp, optionally perturbed with gaussian, zero mean   #
+#          noise.                                                             #
+#                                                                             #
+# ALGORITHM:                                                                  #
+#                                                                             #
+#          (1) Error trap to ensure that Pmag and Pamp are greater than 0.    #
+#          (2) Create an (Nt x 1) numpy array that is a sinusoidal signal     #
+#              with  n_period periods over Nt timesteps.                      #
+#          (3) Scale and shift the sinusoid such that it fluctuates about     #
+#              Pmag with an amplitude Pamp.                                   #
+#          (4) Check if the perturb flag is set to true                       #
+#          (5) If true, add gaussian, uncorrelated, zero mean, s_p standard   #
+#              deviation noise to the vector. If false, do nothing.           #
+#          (6) Return the (Nt x 1) numpy array.                               #
+#                                                                             #
+#=============================================================================#
 def GeneratePrice_periodic(Nt, Pmag, Pamp, n_period, perturb, s_p=0.0):
     """Description
 
@@ -123,6 +203,10 @@ def GeneratePrice_periodic(Nt, Pmag, Pamp, n_period, perturb, s_p=0.0):
 
     :return: An Nt x 1 numpy array of profit
     """
+
+    assert Pmag > 0.0, 'generate_synthetic_prices.py ERROR: Pmag must be greater than 0'
+    assert Pamp > 0.0, 'generate_synthetic_prices.py ERROR: Pamp must be greater than 0'
+    
     x = np.linspace(0.0, n_period * 2 * np.pi, num=Nt).reshape((Nt, 1))
     P = Pmag + Pamp * np.sin(x)
 
@@ -132,15 +216,64 @@ def GeneratePrice_periodic(Nt, Pmag, Pamp, n_period, perturb, s_p=0.0):
     return P
 
 
-# =============================================================================#
+#=============================================================================#
 #                                                                             #
+#                                 main(argv)                                  #
 #                                                                             #
-# =============================================================================#
+# AUTHOR: Lejo Flores                                                         #
+#                                                                             #
+# PURPOSE: The purpose of this main function is to read in input from a CSV   #
+#          file that contains instructions on how to generate synthetic       #
+#          prices for a variety of different crops and write those synthetic  #
+#          crop prices to a CSV file that is then read as input by the agent  #
+#          based model.                                                       #
+# INPUTS:                                                                     #
+#                                                                             #
+#          argv    = A character array that can be passed from the command    #
+#                    line. It should contain 5 character strings, in order.   #
+#          argv[0] = The name of this function (generate_synthetic_prices).   #
+#          argv[1] = The string representation of the number of crops for     #
+#                    which prices will be synthesized.                        #
+#          argv[2] = The string representation of the number of timesteps for #
+#                    which prices will be generated for every crop.           #
+#          argv[3] = The string containing the name of the CSV file that      #
+#                    contains information on what mathematical form crop      #
+#                    prices will take, and the associated parameters for that #
+#                    mathematical form for every crop.                        #        
+#          argv[4] = The string containing the name of the CSV file to which  #
+#                    generated crop prices will be written.                   #
+#                                                                             #
+# RETURNS: NULL - the output synthetic prices will be written to the CSV file #
+#          contained in argv[4].                                              #    
+#                                                                             #
+# ALGORITHM:                                                                  # 
+#                                                                             #
+#          (1) Error trap for correct number of command line arguments, print #
+#              usage statement.                                               #
+#          (2) Save command line arguments to variablles, and error trap for  #
+#              validity of input.                                             #
+#          (3) Open the input file containing information on how prices will  #
+#              be generated, error trap.                                      #
+#          (4) Parse the input CSV file and read in the parameters.           #
+#          (5) Call the appropriate price generating function for each crop   #
+#              reading the associated parameters from that row of the CSV     #
+#              file.                                                          #
+#          (6) Repeat step (5) for all crops.                                 #
+#          (7) Error trap that the number of crops for which prices are       #
+#              generated corresponds to the number of rows read in the input  #
+#              CSV file.                                                      #
+#          (8) Open and write the generated crop prices to the output CSV     #
+#              file whose name is provided in the input. Note that if the     #
+#              output file exists, it will be overwritten.                    #
+#          (9) Close the output file. This is the end of the function, there  #
+#              is no return.                                                  #
+#                                                                             #
+#=============================================================================#
 def main(argv):
     """Description
 
     :param argv: Array of 5 command line arguments passed from the __main__ function
-    :param argv[0]: Name of this function (GenerateSyntheticPrices)
+    :param argv[0]: Name of this function (generate_synthetic_prices)
     :param argv[1]: Number of crops expect to create profit time series for
     :param argv[2]: Number of timesteps in the time series
     :param argv[3]: Name of CSV file that contains information about the crops, including parameters of the generator functions, for which profits are generated and including path if CSV file is in a different directory
