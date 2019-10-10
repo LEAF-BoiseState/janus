@@ -77,18 +77,12 @@ class Janus:
 
     def initialize_crops(self):
         """Initialize crops
-<<<<<<< HEAD
-=======
 
->>>>>>> 6a08f1e8f7522c6e47654da5c3a074a2593236a9
         :return: crop_ids, numpy array of the crop IDs that are in the domain
         :return: crop_id_all, numpy array of landcover categories through time
         :return: ag, numpy array of where agricultural cells exist in the domain
         :return: num_crops, integer og the number of crops being assessed
-<<<<<<< HEAD
-=======
 
->>>>>>> 6a08f1e8f7522c6e47654da5c3a074a2593236a9
         """
 
         ag = np.where(self.c.key_file['local_cat'] == 'ag')
@@ -226,6 +220,7 @@ if __name__ == '__main__':
     parser.add_argument('-gcam', '--f_gcam_file', type=str, help='Full path with file name and extension to the input GCAM raster file.')
     parser.add_argument('-s', '--switch_params', type=list, help='List of lists for switching averse, tolerant parameters (alpha, beta)')
     parser.add_argument('-nt', '--nt', type=int, help='Number of timesteps')
+
     # TODO: number of crops is calculated after doing the GIS pre-processing, if nc is needed for price generation, we might need to adjust this
     parser.add_argument('-nc', '--nc', type=int, help='Number of crops')
     parser.add_argument('-fmin', '--fmin', type=float, help='Need description')
@@ -233,8 +228,7 @@ if __name__ == '__main__':
     parser.add_argument('-f0', '--f0', type=float, help='Need description')
     parser.add_argument('-n', '--n', type=int, help='Need description')
     parser.add_argument('-seed', '--crop_seed_size', type=int, help='Seed to set for random number generators for unit testing')
-    # TODO: can we rename this to initalization_yr ? target_yr seems more like the last timestep than the first
-    parser.add_argument('-yr', '--target_yr', type=int, help='Initialization year assocciated with landcover input')
+    parser.add_argument('-yr', '--initalization_yr', type=int, help='Initialization year assocciated with landcover input')
     parser.add_argument('-sc', '--scale', type=int, help='Scale of landcover grid in meters. Current options are 1000 and 3000 m')
     parser.add_argument('-cl', '--county_list', type=list, help='List of county names to evaluate from the input shapefile.')
     parser.add_argument('-av', '--agent_variables', type=list, help='NASS variables to characterize agents with. Currently set to use "TENURE" and "AREA OPERATED"')
