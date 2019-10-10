@@ -1,19 +1,19 @@
 # Configuration file for the ABM land use land cover change agent based model
 
 # full path with file name and extension to the counties shapefile
-f_counties_shp: '/Users/d3y010/projects/boise_state/Data/Counties/Counties_SRB_clip_SingleID.shp'
+f_counties_shp: '<Full path with file name and extension to the counties shapefile>'
 
 # full path with file name and extension to the land class category key file
-f_key_file: '/Users/d3y010/projects/boise_state/Data/CDL2GCAM_categories.csv'
+f_key_file: '<Full path with file name and extension to the land class category key file>'
 
 # gcam raster
-f_gcam_file: '/Users/d3y010/projects/boise_state/Data/GCAM/gcam_2010_domain_3000.tiff'
+f_gcam_file: '<Full path with file name and extension to the GCAM raster>'
 
 # profits file
-f_profits_file: '/Users/d3y010/projects/boise_state/Data/GenerateSyntheticPrices.csv'
+f_profits_file: '<Full path with file name and extension to the profits csv file>'
 
 # output directory
-output_directory: '/Users/d3y010/projects/boise_state/Data/outputs'
+output_directory: '<Full path with file name and extension to the output directory>'
 
 # number of time steps
 nt: 20
