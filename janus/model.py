@@ -31,6 +31,13 @@ class Janus:
             except AttributeError:
                 self.c = args
 
+            except TypeError:
+                raise TypeError("Must pass either a configuration file or required parameters.")
+
+        elif (args is None) and (config_file is None):
+
+            raise RuntimeError("Must pass either a configuration file or required parameters.")
+
         else:
 
             self.c = ConfigReader(config_file)
@@ -243,4 +250,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    Janus(args)
+    Janus(args=args)
