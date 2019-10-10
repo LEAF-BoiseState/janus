@@ -31,12 +31,13 @@ from janus import Janus
 If no error is returned then you are ready to go!
 
 ### Step 4:
-If you choose to install the example data execute; you must have write access to the directory you choose to store the data in:
+If you choose to install the example data run the following (you must have write access to the directory you choose to store the data in):
 
 ```python
 from janus import InstallSupplement
 
-InstallSupplement(<directory you wish to install the data to>)```
+InstallSupplement(<directory you wish to install the data to>)
+```
 
 ## Setting up a run
 
