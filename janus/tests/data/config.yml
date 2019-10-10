@@ -1,21 +1,21 @@
-# Configuration file for the ABM land use land cover change agent based model
+# Configuration file for Janus
 
 # full path with file name and extension to the counties shapefile
-f_counties_shp: '/Users/d3y010/repos/github/janus/janus/tests/data/shp/counties_srb.shp'
+f_counties_shp: 'janus/tests/data/shp/counties_srb.shp'
 
 # full path with file name and extension to the land class category key file
-f_key_file: '/Users/d3y010/repos/github/janus/janus/tests/data/CDL2GCAM_categories.csv'
+f_key_file: 'janus/tests/data/CDL2GCAM_categories.csv'
 
 # gcam raster
-f_gcam_file: '/Users/d3y010/repos/github/janus/janus/tests/data/gcam_2010_domain_3000.tiff'
+f_gcam_file: 'janus/tests/data/gcam_2010_domain_3000.tiff'
 
 # profits file
-f_profits_file: '/Users/d3y010/repos/github/janus/janus/tests/data/GenerateSyntheticPrices_test_output.csv'
+f_profits_file: 'janus/tests/data/GenerateSyntheticPrices_test_output.csv'
 
 # output directory
-output_directory: '/Users/d3y010/repos/github/janus/janus/tests/data/outputs'
+output_directory: None
 
-# TODO
+# number of time steps
 nt: 20
 
 # list of lists for switching averse, tolerant parameters (alpha, beta)
@@ -33,8 +33,8 @@ n: 100
 # TODO:  Crop random seed size
 crop_seed_size: 5
 
-# target year
-target_yr: 2010
+# initialization year
+initialization_yr: 2010
 
 # scale of grid in meters
 scale: 3000

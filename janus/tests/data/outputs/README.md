@@ -1,1 +1,0 @@
-### Storage directory for test generated outputs

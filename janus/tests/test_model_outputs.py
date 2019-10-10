@@ -1,6 +1,5 @@
 import unittest
 import pkg_resources
-import glob
 
 import numpy as np
 
@@ -14,36 +13,26 @@ class TestEqualOutputs(unittest.TestCase):
     COMP_OUTPUTS_DIR = pkg_resources.resource_filename('janus', 'tests/data/comp_outputs')
     DEFAULT_OUTPUTS_DIR = pkg_resources.resource_filename('janus', 'tests/data/outputs')
 
-    def setUp(self):
-        pass
+    COMP_OUTPUT_DOMAIN = pkg_resources.resource_filename('janus', 'tests/data/comp_outputs/domain_3000m_20yr.npy')
+    COMP_OUTPUT_LANDCOVER = pkg_resources.resource_filename('janus', 'tests/data/comp_outputs/landcover_3000m_20yr.npy')
+    COMP_OUTPUT_PROFITS = pkg_resources.resource_filename('janus', 'tests/data/comp_outputs/profits_3000m_20yr.npy')
 
-    def testOutputs(self):
+    def test_outputs(self):
         """Test that Xanthos produces correct outputs for the default configuration."""
+        # TODO: verify that this test will pass with current data
 
-        # get comp outputs
-        old_files = self.read_outputs(TestEqualOutputs.COMP_OUTPUTS_DIR)
+        # load comp data
+        # comp_domain_arr = np.load(TestEqualOutputs.COMP_OUTPUT_DOMAIN)
+        comp_landcover_arr = np.load(TestEqualOutputs.COMP_OUTPUT_LANDCOVER)
+        comp_profits_arr = np.load(TestEqualOutputs.COMP_OUTPUT_PROFITS)
 
-        # Set up and run janus
-        Janus(TestEqualOutputs.DEFAULT_CONFIG_FILE)
+        # set up and run janus
+        res = Janus(config_file=TestEqualOutputs.DEFAULT_CONFIG_FILE, save_result=False, plot_results=False)
 
-        # Test that new outputs equal old outputs.
-        new_files = self.read_outputs(TestEqualOutputs.DEFAULT_OUTPUTS_DIR)
-
-        for k in new_files.keys():
-            np.testing.assert_array_equal(new_files[k], old_files[k])
-
-    @staticmethod
-    def read_outputs(directory):
-        """Read all .npy files in output directory."""
-
-        out_file_names = glob.glob('{}*.npy'.format(directory))
-
-        out_files = {}
-        for f in out_file_names:
-            arr = np.read(f)
-            out_files[f] = arr
-
-        return out_files
+        # test that new outputs equal old outputs
+        # np.testing.assert_array_equal(res.agent_domain, comp_domain_arr)
+        np.testing.assert_array_equal(res.crop_id_all, comp_landcover_arr)
+        np.testing.assert_array_equal(res.profits_actual, comp_profits_arr)
 
 
 if __name__ == '__main__':
