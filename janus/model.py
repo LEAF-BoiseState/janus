@@ -20,7 +20,7 @@ from janus.config_reader import ConfigReader
 
 class Janus:
 
-    def __init__(self, config_file=None, args=None):
+    def __init__(self, config_file=None, args=None, save_result=True, plot_results=True):
 
         if (args is not None) and (config_file is None):
 
@@ -50,8 +50,13 @@ class Janus:
         # make agent decisions
         self.decisions()
 
+        # plot results
+        if plot_results:
+            self.plot_results()
+
         # save outputs
-        self.save_outputs()
+        if save_result:
+            self.save_outputs()
 
     def initialize_landscape_domain(self):
         """Initialize landscape and domain.
@@ -186,6 +191,9 @@ class Janus:
                         # update agent attributes
                         self.agent_domain[j, k].FarmerAgents[0].update_age()
 
+    def plot_results(self):
+        """Create result plots and save them."""
+
         ppf.plot_crop_percent(self.crop_id_all, self.crop_ids, self.c.Nt, self.num_crops, self.c.scale,
                               self.c.output_dir, self.c.key_file, self.ag)
 
@@ -193,11 +201,8 @@ class Janus:
         ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx)
 
     def save_outputs(self):
-        """Save outputs as NumPy arrays.
+        """Save outputs as NumPy arrays."""
 
-        :return:
-
-        """
         out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr.npy')
 
         # save time series of landcover coverage
