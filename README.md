@@ -30,10 +30,18 @@ from janus import Janus
 
 If no error is returned then you are ready to go!
 
+### Step 4:
+If you choose to install the example data execute; you must have write access to the directory you choose to store the data in:
+
+```python
+from janus import InstallSupplement
+
+InstallSupplement(<directory you wish to install the data to>)```
+
 ## Setting up a run
 
 ### Setup the `config.yml` file
-There is an example config file in the `abm/example` directory of this package that describes each input.
+There is an example config file in the `janus/example` directory of this package that describes each input.
 
 | key | description |
 | -- | -- |
@@ -71,9 +79,9 @@ There is an example config file in the `abm/example` directory of this package t
 
 	'id_list' are numeric identifiers for each category associated with names ('GCAM_name', 'local_GCAM_name') of output categorization.
 
-	Columns that start with 'local' are where the file can be modified to create location specific landcover categories. 
+	Columns that start with 'local' are where the file can be modified to create location specific landcover categories.
 
-	'cat' is the generic category for assigning agents.'ag' for agricultural, 'nat' for natural (e.g. water, wetland), or 'urb' for urban landcovers. 
+	'cat' is the generic category for assigning agents.'ag' for agricultural, 'nat' for natural (e.g. water, wetland), or 'urb' for urban landcovers.
 
 - `profits_file.csv`:  csv with the number of rows equal to number of crops. This contains the crop name, crop ID number, price function of choice and parameters for that function.
 
