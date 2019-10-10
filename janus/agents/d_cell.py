@@ -3,7 +3,23 @@ import janus.agents.farmer as farmer_class
 
 
 class Dcell:
-    """TODO: need class description
+    """A class that contains both static and dynamic information about the simulation domain
+
+    :param Area: The area of the cell
+    :param cLat: The latitude of the cell center
+    :param cLon: The longitude of the cell center
+    :param Elev: The elevation of the cell
+    :param Slope: The slope of the cell
+    :param Aspect: The aspect of the cell
+    :param perSand: The soil percent sand
+    :param perSilt: The soil percent silt
+    :param perClay: The soill percent clay
+    :param nUrbAgent: The number of urban agents in the cell (initialized to 0)
+    :param nFarmAgent: The number of farmer agents in the cell (initialized to 0)
+    :param UrbanAgents: An empty container in which to store UrbanAgent class types
+    :param FarmerAgents: An empty container in which to store FarmerAgent class types
+        
+        
 
     """
     def __init__(self, **kwargs):
