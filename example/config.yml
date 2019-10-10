@@ -4,7 +4,7 @@
 f_counties_shp: '/Users/d3y010/projects/boise_state/Data/Counties/Counties_SRB_clip_SingleID.shp'
 
 # full path with file name and extension to the land class category key file
-f_key_file: '/Users/d3y010/projects/boise_state/Data/CDL2GCAM_SRP_categories.csv'
+f_key_file: '/Users/d3y010/projects/boise_state/Data/CDL2GCAM_categories.csv'
 
 # gcam raster
 f_gcam_file: '/Users/d3y010/projects/boise_state/Data/GCAM/gcam_2010_domain_3000.tiff'
@@ -33,8 +33,8 @@ n: 100
 # TODO:  Crop random seed size
 crop_seed_size: 5
 
-# target year
-target_yr: 2010
+# initalization year
+initalization_yr: 2010
 
 # scale of grid in meters
 scale: 3000
