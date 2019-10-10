@@ -69,7 +69,7 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     # set colors to come color scheme w nc colors
     # figure out how to automate the number of percentages in the stackplot
     ax.stackplot(t, percentages[0, :], percentages[1, :], percentages[2, :], percentages[3, :],
-                 labels=key_file['GCAM_SRB_Name'][ag_cats[0]])
+                 labels=key_file['local_GCAM_Name'][ag_cats[0]])
     ax.set_xlim([0, nt - 1])
     ax.set_ylim([0, 100])
     ax.grid()
@@ -85,6 +85,16 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
 
 
 def plot_agent_ages(domain, AgentArray, Ny, Nx):
+    """
+
+    :param domain:
+    :param AgentArray:
+    :param Ny:
+    :param Nx:
+
+    :return:
+
+    """
 
     FarmerAges = []
     for i in np.arange(Ny):
