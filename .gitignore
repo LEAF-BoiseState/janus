@@ -27,4 +27,4 @@ abm/postprocessing/__pycache__/*.pyc
 # ignore build
 build
 dist
-abm.egg-info
+janus.egg-info
