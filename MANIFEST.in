@@ -6,4 +6,3 @@ include janus/tests/data/*.csv
 include janus/tests/data/shp/*.*
 include janus/tests/data/*.tiff
 include janus/tests/data/comp_outputs/*.npy
-include janus/tests/data/outputs/*.md
