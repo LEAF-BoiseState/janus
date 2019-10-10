@@ -150,7 +150,6 @@ class Janus:
 
         agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, cat_option)
 
-        # TODO: replace (dont know what this refers to)
         agent_domain = init_agent.agents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf, self.c.switch,
                                          self.Ny, self.Nx, self.lc, self.c.p)
 
@@ -204,8 +203,8 @@ class Janus:
         ppf.plot_crop_percent(self.crop_id_all, self.crop_ids, self.c.Nt, self.num_crops, self.c.scale,
                               self.c.output_dir, self.c.key_file, self.ag)
 
-        # TODO:  this currently has no output that is saved
-        ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx)
+        ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx, self.c.Nt, 
+                            self.num_crops, self.c.scale, self.c.output_dir)
 
     def save_outputs(self):
         """Save outputs as NumPy arrays."""

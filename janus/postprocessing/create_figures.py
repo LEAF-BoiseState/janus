@@ -84,7 +84,7 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
 
 
-def plot_agent_ages(domain, AgentArray, Ny, Nx):
+def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, nc, scale, results_path):
     """
 
     :param domain:
@@ -105,5 +105,9 @@ def plot_agent_ages(domain, AgentArray, Ny, Nx):
 
                 FarmerAges = np.append(FarmerAges, domain[i, j].FarmerAgents[0].Age)
 
-    # TODO:  does this need to be saved as an output?
-    out_fig = plt.hist(FarmerAges)
+
+    plt.hist(FarmerAges)
+   
+    output_figure = os.path.join(results_path, 'AgentAges_{}m_{}yr.png'.format(scale, nt))
+
+    plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
