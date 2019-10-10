@@ -1,9 +1,9 @@
 include README.md
 include requirements.txt
 include LICENSE
-include janus/data/config.yml
-include janus/data/*.csv
-include janus/data/shp/*.*
-include janus/data/*.tiff
-include janus/data/comp_outputs/*.npy
-include janus/data/outputs/*.md
+include janus/tests/data/config.yml
+include janus/tests/data/*.csv
+include janus/tests/data/shp/*.*
+include janus/tests/data/*.tiff
+include janus/tests/data/comp_outputs/*.npy
+include janus/tests/data/outputs/*.md

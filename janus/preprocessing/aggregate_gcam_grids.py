@@ -6,20 +6,18 @@ Created on Mon Nov 19 21:33:10 2018
 
 import glob
 import os
-
 import gdal
-
 from joblib import Parallel, delayed
 
 
 def aggregate_gcam_grid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
-    """
+    """ Create grid that landcover data is saved in when aggregating from smaller scale to larger scale
 
-    :param GCAM_ReadWriteDir:
-    :param GCAM_ReadFile:
-    :param AggRes:
+    :param GCAM_ReadWriteDir: Directory that the landcover data exists in?
+    :param GCAM_ReadFile:     The specific file to aggregate?
+    :param AggRes:            Resolution to aggregate data to in meters, suggested at 1000 or 3000
 
-    :return:
+    :return: 
 
     """
     
@@ -59,12 +57,12 @@ def aggregate_gcam_grid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
 
 
 def aggregate_gcam(AggRes, gcam_directory):
-    """
+    """Aggregate any landcover data from one scale to another 
 
-    :param AggRes:
-    :param gcam_directory:
+    :param AggRes: Resolution to aggregate data to in meters, suggested at 1000 or 3000
+    :param gcam_directory: Directory where all landcover data is stored
 
-    :return:
+    :return: saved landcover data at new resolution
 
     """
 

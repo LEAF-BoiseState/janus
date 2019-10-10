@@ -1,7 +1,7 @@
 
 
 class Urban:
-    """TODO:  Need description of class
+    """Holds definition of urban agent
 
     """
 

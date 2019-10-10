@@ -1,22 +1,22 @@
 # Configuration file for the ABM land use land cover change agent based model
 
 # full path with file name and extension to the counties shapefile
-f_counties_shp: '/Users/d3y010/projects/boise_state/Data/Counties/Counties_SRB_clip_SingleID.shp'
+f_counties_shp: '/Users/d3y010/repos/github/janus/janus/tests/data/shp/counties_srb.shp'
 
 # full path with file name and extension to the land class category key file
-f_key_file: '/Users/d3y010/projects/boise_state/Data/CDL2GCAM_SRP_categories.csv'
+f_key_file: '/Users/d3y010/repos/github/janus/janus/tests/data/CDL2GCAM_categories.csv'
 
 # gcam raster
-f_gcam_file: '/Users/d3y010/projects/boise_state/Data/GCAM/gcam_2010_domain_3000.tiff'
+f_gcam_file: '/Users/d3y010/repos/github/janus/janus/tests/data/gcam_2010_domain_3000.tiff'
+
+# profits file
+f_profits_file: '/Users/d3y010/repos/github/janus/janus/tests/data/GenerateSyntheticPrices_test_output.csv'
 
 # output directory
-output_directory: '/Users/d3y010/projects/boise_state/Data/outputs'
+output_directory: '/Users/d3y010/repos/github/janus/janus/tests/data/outputs'
 
 # TODO
 nt: 20
-
-# TODO:  there are actually 17 when the 1km is run, need random profit profiles for each of these
-nc: 4
 
 # list of lists for switching averse, tolerant parameters (alpha, beta)
 switch_params: [[4.5, 1.0], [0.5, 3.0]]

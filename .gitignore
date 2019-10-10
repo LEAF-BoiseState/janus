@@ -1,6 +1,5 @@
 # raster files
 *.asc
-*.tiff
 
 /Data/*
 /GCAM_SRP/*.*

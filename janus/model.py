@@ -56,11 +56,11 @@ class Janus:
     def initialize_landscape_domain(self):
         """Initialize landscape and domain.
 
-        :return: lc
-        :return: dist2city
-        :return: domain
-        :return: ny
-        :return: nx
+        :return: lc, numpy array of landcover categories within domain at scale of interest
+        :return: dist2city, numpy array of distance to nearest city cell
+        :return: domain, grid of dCell classes
+        :return: ny, number of rows in domain
+        :return: nx, number of columns in domain
         """
 
         # select initial gcam data from initial year
@@ -77,10 +77,18 @@ class Janus:
 
     def initialize_crops(self):
         """Initialize crops
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6a08f1e8f7522c6e47654da5c3a074a2593236a9
         :return: crop_ids, numpy array of the crop IDs that are in the domain
         :return: crop_id_all, numpy array of landcover categories through time
         :return: ag, numpy array of where agricultural cells exist in the domain
         :return: num_crops, integer og the number of crops being assessed
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6a08f1e8f7522c6e47654da5c3a074a2593236a9
         """
 
         ag = np.where(self.c.key_file['local_cat'] == 'ag')
@@ -99,13 +107,12 @@ class Janus:
         return crop_ids, crop_id_all, ag, num_crops
 
     def initialize_profit(self):
-        """Initialize profits.
+        """Initialize profits based on profit signals csv that is either generated or input from other model output
 
-        :return:                        TODO:  add return descriptions for each variable
+        :return: profits_actual is the profit signal with a random variation 
+        :return: profit_signals is the transposed profit signals cleaned to be used in other functions
 
         """
-
-        # initializes profits based on profit signals from csv output from generate synthetic prices
         profit_signals = np.transpose(self.c.profits_file.as_matrix())
 
         assert np.all([profit_signals[:, 0], self.crop_ids[:, 0]]), 'Crop IDs in profit signals do not match Crop IDs from landcover'
@@ -119,10 +126,11 @@ class Janus:
         return profits_actual, profit_signals
 
     def initialize_agents(self, id_field='ID', cat_option='local'):
-        """Initialize agents.
+        """Initialize agents based on nass data and initial landcover
 
 
-        :return:                        TODO:  add return descriptions for each variable
+        :return: agent_domain is the domain with agent cell classes filled with agent information 
+        :return: agent_array is a numpy array of strings that define which agent is in each location
 
         """
 
@@ -136,7 +144,7 @@ class Janus:
 
         agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, cat_option)
 
-        # replace
+        # TODO: replace (dont know what this refers to)
         agent_domain = init_agent.agents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf, self.c.switch,
                                          self.Ny, self.Nx, self.lc, self.c.p)
 
@@ -145,7 +153,7 @@ class Janus:
     def decisions(self):
         """Decision process.
 
-        :return:                        TODO:  add return descriptions for each variable
+        :return:    Updated domain with agent information and landcover choice
 
         """
         for i in np.arange(1, self.c.Nt):
@@ -217,20 +225,22 @@ if __name__ == '__main__':
     parser.add_argument('-key', '--f_key_file', type=str, help='Full path with file name and extension to the input land class category key file.')
     parser.add_argument('-gcam', '--f_gcam_file', type=str, help='Full path with file name and extension to the input GCAM raster file.')
     parser.add_argument('-s', '--switch_params', type=list, help='List of lists for switching averse, tolerant parameters (alpha, beta)')
-    parser.add_argument('-nt', '--nt', type=int, help='Need description')
-    parser.add_argument('-nc', '--nc', type=int, help='Need description')
+    parser.add_argument('-nt', '--nt', type=int, help='Number of timesteps')
+    # TODO: number of crops is calculated after doing the GIS pre-processing, if nc is needed for price generation, we might need to adjust this
+    parser.add_argument('-nc', '--nc', type=int, help='Number of crops')
     parser.add_argument('-fmin', '--fmin', type=float, help='Need description')
     parser.add_argument('-fmax', '--fmax', type=float, help='Need description')
     parser.add_argument('-f0', '--f0', type=float, help='Need description')
     parser.add_argument('-n', '--n', type=int, help='Need description')
-    parser.add_argument('-seed', '--crop_seed_size', type=int, help='Need description')
-    parser.add_argument('-yr', '--target_yr', type=int, help='Need description')
-    parser.add_argument('-sc', '--scale', type=int, help='Need description')
+    parser.add_argument('-seed', '--crop_seed_size', type=int, help='Seed to set for random number generators for unit testing')
+    # TODO: can we rename this to initalization_yr ? target_yr seems more like the last timestep than the first
+    parser.add_argument('-yr', '--target_yr', type=int, help='Initialization year assocciated with landcover input')
+    parser.add_argument('-sc', '--scale', type=int, help='Scale of landcover grid in meters. Current options are 1000 and 3000 m')
     parser.add_argument('-cl', '--county_list', type=list, help='List of county names to evaluate from the input shapefile.')
-    parser.add_argument('-av', '--agent_variables', type=list, help='Need description')
-    parser.add_argument('-nyr', '--nass_year', type=int, help='Need description')
-    parser.add_argument('-ncy', '--nass_county_list', type=list, help='Need description')
-    parser.add_argument('-api', '--nass_api_key', type=int, help='Need description')
+    parser.add_argument('-av', '--agent_variables', type=list, help='NASS variables to characterize agents with. Currently set to use "TENURE" and "AREA OPERATED"')
+    parser.add_argument('-nyr', '--nass_year', type=int, help='Year that NASS data are pulled from. This data is collected every 5 years, with the inital year here being 2007')
+    parser.add_argument('-ncy', '--nass_county_list', type=list, help='List of counties in the domain that NASS data is collected from, these have to be entirely capatalized')
+    parser.add_argument('-api', '--nass_api_key', type=int, help='A NASS API is needed to access the NASS data, get yours here https://quickstats.nass.usda.gov/api')
 
     args = parser.parse_args()
 
