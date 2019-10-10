@@ -15,7 +15,7 @@ f_profits_file: '/Users/d3y010/projects/boise_state/Data/GenerateSyntheticPrices
 # output directory
 output_directory: '/Users/d3y010/projects/boise_state/Data/outputs'
 
-# TODO
+# number of time steps
 nt: 20
 
 # list of lists for switching averse, tolerant parameters (alpha, beta)
@@ -33,8 +33,8 @@ n: 100
 # TODO:  Crop random seed size
 crop_seed_size: 5
 
-# initalization year
-initalization_yr: 2010
+# initialization year
+initialization_yr: 2010
 
 # scale of grid in meters
 scale: 3000

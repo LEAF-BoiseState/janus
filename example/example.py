@@ -14,6 +14,6 @@ def run_example(f):
 
 if __name__ == '__main__':
 
-    config_file = "<full path with file name and extension to your config.yml file>"
+    config_file = "<Full path with file name and extension to a config.yml file>"
 
     janus_run = run_example(config_file)

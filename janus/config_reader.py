@@ -21,7 +21,7 @@ class ConfigReader:
     F0 = 'f0'
     N = 'n'
     CROP_SEED_SIZE = 'crop_seed_size'
-    TARGET_YR = 'initalization_yr'
+    TARGET_YR = 'initialization_yr'
     SCALE = 'scale'
     COUNTY_LIST = 'county_list'
     AGENT_VARS = 'agent_variables'
