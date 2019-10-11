@@ -36,7 +36,7 @@ def create_animation(crop_id_all, nt):
 
 
 def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_file, ag_cats):
-    """Stackplot of crops over time; automate stackplot naming conventions
+    """Stackplot of crops over time
 
     :param crop_id_all:  numpy array of gridded landcover over time
     :param CropIDs:      numpy array of the crop identification numbers
@@ -47,7 +47,7 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     :param key_file:     key file that has conversions from CDL to GCAM or local categories
     :param ag_cats:      categories that are agricultural
 
-    :return:  image saved to results folder of the percentag of each crop over time
+    :return:  image saved to results folder of the percentage of each crop over time
 
     """
     # TODO:  This value need to be de-hard-coded
@@ -56,7 +56,6 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
        cur_crop = crop_id_all[t,:,:]
        for c in np.arange(nc):
            bools=(cur_crop == CropIDs[c])
-           #unq, counts=np.unique(cur_crop, return_counts=True)
            ag_area[c,t]=np.sum(bools)
         
     agTot = np.sum(ag_area, axis=0)
@@ -94,14 +93,14 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
 
 
 def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, nc, scale, results_path):
-    """
+    """Histogram of agent ages at end of model run
 
-    :param domain:
-    :param AgentArray:
-    :param Ny:
-    :param Nx:
+    :param domain: domain with agent data
+    :param AgentArray: numpy array with identifiers of which agent is in each cell
+    :param Ny: Number of rows
+    :param Nx: Number of columns
 
-    :return:
+    :return: Image saved to results folder of a histogram of farmer ages at the end of the model run
 
     """
 
@@ -114,7 +113,7 @@ def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, nc, scale, results_path):
 
                 FarmerAges = np.append(FarmerAges, domain[i, j].FarmerAgents[0].Age)
 
-
+    plt.rcParams.update({'font.size': 16})
     fig, ax = plt.hist(FarmerAges)
     ax.set_ylabel('')
     ax.set_xlabel('Age')
