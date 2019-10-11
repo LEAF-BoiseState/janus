@@ -61,29 +61,30 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
         
     agTot = np.sum(ag_area, axis=0)
 
-    names = [key_file['local_GCAM_Name'][ag_cats[0]]]
+    names = []
     percentages = np.zeros((nc, nt))
+    data = []
     for c in np.arange(nc):
         name = 'percentages[' + str(c) + ',:]'
         names.append(name)
         for t in np.arange(nt):
             CropIx = CropIDs[c]
             percentages[c, t] = np.sum((crop_id_all[t, :, :] == CropIx)) / agTot[t] * 100.0
-
+        data.append(percentages[c, :])
+    
+    y = np.vstack(data)
+    
     t = np.arange(nt)
     plt.rcParams.update({'font.size': 16})
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(12, 12))
-
+    
     # set colors to come color scheme w nc colors
-    # figure out how to automate the number of percentages in the stackplot
-    ax.stackplot(t, percentages[0, :], percentages[1, :], percentages[2, :], percentages[3, :],
-                 labels=key_file['local_GCAM_Name'][ag_cats[0]])
+    ax.stackplot(t,y, labels=[])#key_file['local_GCAM_Name'][ag_cats[0]]
     ax.set_xlim([0, nt - 1])
     ax.set_ylim([0, 100])
     ax.grid()
     ax.legend(loc='lower left')
 
-    ax.set_ylabel('Percent Crop Choice')
     ax.set_ylabel('Percent Crop Choice')
     ax.set_xlabel('Time [yr]')
 
