@@ -120,4 +120,4 @@ def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, nc, scale, results_path):
     
     output_figure = os.path.join(results_path, 'AgentAges_{}m_{}yr.png'.format(scale, nt))
 
-    fig.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
+    plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
