@@ -50,7 +50,6 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     :return:  image saved to results folder of the percentage of each crop over time
 
     """
-    # TODO:  This value need to be de-hard-coded
     ag_area=np.empty(shape=(nc, nt))
     for t in np.arange(nt):
        cur_crop = crop_id_all[t,:,:]
@@ -77,7 +76,7 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     plt.rcParams.update({'font.size': 16})
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(12, 12))
     
-    # set colors to come color scheme w nc colors
+    # set colors to some color scheme w nc colors
     ax.stackplot(t,y)#, labels=[] key_file['local_GCAM_Name'][ag_cats[0]]
     ax.set_xlim([0, nt - 1])
     ax.set_ylim([0, 100])
