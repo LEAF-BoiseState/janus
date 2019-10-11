@@ -114,9 +114,7 @@ def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, nc, scale, results_path):
                 FarmerAges = np.append(FarmerAges, domain[i, j].FarmerAgents[0].Age)
 
     plt.rcParams.update({'font.size': 16})
-    fig, ax = plt.hist(FarmerAges)
-    ax.set_ylabel('')
-    ax.set_xlabel('Age')
+    plt.hist(FarmerAges)
     
     output_figure = os.path.join(results_path, 'AgentAges_{}m_{}yr.png'.format(scale, nt))
     plt.gcf()
