@@ -82,7 +82,7 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     ax.set_xlim([0, nt - 1])
     ax.set_ylim([0, 100])
     ax.grid()
-    ax.legend(loc='lower left')
+    #ax.legend(loc='lower left')
 
     ax.set_ylabel('Percent Crop Choice')
     ax.set_xlabel('Time [yr]')
@@ -119,5 +119,5 @@ def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, nc, scale, results_path):
     ax.set_xlabel('Age')
     
     output_figure = os.path.join(results_path, 'AgentAges_{}m_{}yr.png'.format(scale, nt))
-
+    plt.gcf()
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
