@@ -16,10 +16,10 @@ class Dcell:
     :param perClay: The soill percent clay
     :param nUrbAgent: The number of urban agents in the cell (initialized to 0)
     :param nFarmAgent: The number of farmer agents in the cell (initialized to 0)
-    :param UrbanAgents: An empty container in which to store UrbanAgent class types
-    :param FarmerAgents: An empty container in which to store FarmerAgent class types
+    :param UrbanAgents: An empty container in which to store UrbanAgent class types (initialized as empty)
+    :param FarmerAgents: An empty container in which to store FarmerAgent class types (initialized as empty)
         
-        
+    :return: A pointer to a Dcell object with the above attributes. 
 
     """
     def __init__(self, **kwargs):
@@ -42,9 +42,9 @@ class Dcell:
         pre: agentStruct has been instantiated with init.Agents and is a valid agent type
         post: agent has been added to an array
 
-        :param agent_struct:
+        :param agent_struct: a structure of agent type that will be added to the Dcell
 
-        :return:
+        :return: null
 
         """
         agent_type = type(agent_struct).__name__
