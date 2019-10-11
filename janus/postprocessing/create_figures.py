@@ -79,7 +79,7 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(12, 12))
     
     # set colors to come color scheme w nc colors
-    ax.stackplot(t,y, labels=[])#key_file['local_GCAM_Name'][ag_cats[0]]
+    ax.stackplot(t,y)#, labels=[] key_file['local_GCAM_Name'][ag_cats[0]]
     ax.set_xlim([0, nt - 1])
     ax.set_ylim([0, 100])
     ax.grid()
@@ -115,7 +115,7 @@ def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, nc, scale, results_path):
                 FarmerAges = np.append(FarmerAges, domain[i, j].FarmerAgents[0].Age)
 
 
-    plt.hist(FarmerAges)
+    fig = plt.hist(FarmerAges)
    
     output_figure = os.path.join(results_path, 'AgentAges_{}m_{}yr.png'.format(scale, nt))
 
