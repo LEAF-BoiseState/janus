@@ -115,8 +115,10 @@ def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, nc, scale, results_path):
                 FarmerAges = np.append(FarmerAges, domain[i, j].FarmerAgents[0].Age)
 
 
-    fig = plt.hist(FarmerAges)
-   
+    fig, ax = plt.hist(FarmerAges)
+    ax.set_ylabel('')
+    ax.set_xlabel('Age')
+    
     output_figure = os.path.join(results_path, 'AgentAges_{}m_{}yr.png'.format(scale, nt))
 
-    plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
+    fig.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
