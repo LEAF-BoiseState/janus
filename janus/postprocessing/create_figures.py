@@ -51,16 +51,24 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
 
     """
     # TODO:  This value need to be de-hard-coded
-    agTot = 59  # need to automate what the total area in crops is - this will be a unit test when urban isnt changing
+    ag_area=np.empty(shape=(nc, nt))
+    for t in np.arange(nt):
+       cur_crop = crop_id_all[t,:,:]
+       for c in np.arange(nc):
+           bools=(cur_crop == CropIDs[c])
+           #unq, counts=np.unique(cur_crop, return_counts=True)
+           ag_area[c,t]=np.sum(bools)
+        
+    agTot = np.sum(ag_area, axis=0)
 
-    names = []
+    names = [key_file['local_GCAM_Name'][ag_cats[0]]]
     percentages = np.zeros((nc, nt))
     for c in np.arange(nc):
         name = 'percentages[' + str(c) + ',:]'
         names.append(name)
         for t in np.arange(nt):
             CropIx = CropIDs[c]
-            percentages[c, t] = np.sum((crop_id_all[t, :, :] == CropIx)) / agTot * 100.0
+            percentages[c, t] = np.sum((crop_id_all[t, :, :] == CropIx)) / agTot[t] * 100.0
 
     t = np.arange(nt)
     plt.rcParams.update({'font.size': 16})
