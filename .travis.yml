@@ -15,7 +15,6 @@ addons:
       - libgeos-dev
       - gdal-bin
       - libgdal-dev
-      - libgdal1h
 cache: pip
 install:
   - pip install GDAL==$(gdal-config --version) --global-option=build_ext --global-option="-I/usr/include/gdal"
