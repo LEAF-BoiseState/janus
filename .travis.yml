@@ -4,6 +4,8 @@ matrix:
     - python: 3.6
       dist: xenial
 warnings_are_errors: false
+before_install:
+  sudo apt-get install -y gdal-bin
 sudo: required
 addons:
   apt:
@@ -11,7 +13,6 @@ addons:
       - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
     packages:
       - libudunits2-dev
-      - libnetcdf-dev
       - libproj-dev
       - libgeos-dev
       - libgdal-dev
