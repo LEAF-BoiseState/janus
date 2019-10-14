@@ -10,8 +10,6 @@ class TestEqualOutputs(unittest.TestCase):
     """Test that the default outputs do not change."""
 
     DEFAULT_CONFIG_FILE = pkg_resources.resource_filename('janus', 'tests/data/config.yml')
-    COMP_OUTPUTS_DIR = pkg_resources.resource_filename('janus', 'tests/data/comp_outputs')
-    DEFAULT_OUTPUTS_DIR = pkg_resources.resource_filename('janus', 'tests/data/outputs')
 
     COMP_OUTPUT_DOMAIN = pkg_resources.resource_filename('janus', 'tests/data/comp_outputs/domain_3000m_20yr.npy')
     COMP_OUTPUT_LANDCOVER = pkg_resources.resource_filename('janus', 'tests/data/comp_outputs/landcover_3000m_20yr.npy')
