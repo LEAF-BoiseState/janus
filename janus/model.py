@@ -119,7 +119,7 @@ class Janus:
         :return: profit_signals is the transposed profit signals cleaned to be used in other functions
 
         """
-        profit_signals = np.transpose(self.c.profits_file.as_matrix())
+        profit_signals = np.transpose(self.c.profits_file.values)
 
         assert np.all([profit_signals[:, 0], self.crop_ids[:, 0]]), 'Crop IDs in profit signals do not match Crop IDs from landcover'
 
