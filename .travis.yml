@@ -16,6 +16,8 @@ addons:
       - libgdal-dev
       - python-gdal
 cache: pip
+before_install:
+  - pip install gdal==2.2.2
 install:
   - pip install -r requirements.txt
   - python setup.py -q install
