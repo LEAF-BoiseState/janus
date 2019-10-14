@@ -5,7 +5,8 @@ matrix:
       dist: xenial
 warnings_are_errors: false
 before_install:
-  sudo apt-get install -y gdal-bin
+  sudo apt-get update
+  sudo apt-get install python-gdal
 sudo: required
 addons:
   apt:
