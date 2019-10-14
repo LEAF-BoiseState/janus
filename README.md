@@ -58,12 +58,12 @@ There is an example config file in the `janus/example` directory of this package
 | `f0` | Need description |
 | `n` | Need description |
 | `crop_seed_size` | Seed to set for random number generators for unit testing |
-| `target_yr` | Initialization year assocciated with landcover input |
+| `target_yr` | Initialization year associated with landcover input |
 | `scale` | Scale of landcover grid in meters. Current options are 1000 and 3000 m |
 | `county_list` | List of counties to evaluate |
 | `agent_variables` | NASS variables to characterize agents with. Currently set to use "TENURE" and "AREA OPERATED" |
-| `nass_year` | Year that NASS data are pulled from. This data is collected every 5 years, with the inital year here being 2007 |
-| `nass_county_list` | List of counties in the domain that NASS data is collected from, these have to be capatalized |
+| `nass_year` | Year that NASS data are pulled from. This data is collected every 5 years, with the Initialization year here being 2007 |
+| `nass_county_list` | List of counties in the domain that NASS data is collected from, these have to be capitalized |
 | `nass_api_key` | A NASS API is needed to access the NASS data, get yours here https://quickstats.nass.usda.gov/api |
 
 ### Setup the input files
@@ -74,7 +74,7 @@ There is an example config file in the `janus/example` directory of this package
 
 - `key_file.csv`:  This file must have the following column titles 'CDL_id',	'CDL_name',	'GCAM_id',	'local_GCAM_id', 'GCAM_id_list',	'GCAM_name',	'GCAM_cat',	'local_GCAM_id_list',	'local_GCAM_name',	'local_cat'.
 
-	'GCAM_id' and	'local_GCAM_id' are the coversion columns where the destination id is matched with each original CDL id.
+	'GCAM_id' and	'local_GCAM_id' are the conversion columns where the destination id is matched with each original CDL id.
 
 	CDL_id, CDL_name, GCAM_id and GCAM_name are set based on the original CDL data and GCAM categorization.
 
@@ -82,7 +82,7 @@ There is an example config file in the `janus/example` directory of this package
 
 	Columns that start with 'local' are where the file can be modified to create location specific landcover categories.
 
-	'cat' is the generic category for assigning agents.'ag' for agricultural, 'nat' for natural (e.g. water, wetland), or 'urb' for urban landcovers.
+	'cat' is the generic category for assigning agents.'ag' for agricultural, 'nat' for natural (e.g. water, wetland), or 'urb' for urban land covers.
 
 - `profits_file.csv`:  csv with the number of rows equal to number of crops. This contains the crop name, crop ID number, price function of choice and parameters for that function.
 
