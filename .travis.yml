@@ -4,9 +4,6 @@ matrix:
     - python: 3.6
       dist: xenial
 warnings_are_errors: false
-before_install:
-  sudo apt-get update
-  sudo apt-get install python-gdal
 sudo: required
 addons:
   apt:
@@ -17,6 +14,7 @@ addons:
       - libproj-dev
       - libgeos-dev
       - libgdal-dev
+      - python-gdal
 cache: pip
 install:
   - pip install -r requirements.txt

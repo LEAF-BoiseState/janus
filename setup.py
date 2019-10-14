@@ -1,4 +1,5 @@
-import pip
+import subprocess
+import sys
 
 try:
     from setuptools import setup, find_packages
@@ -14,6 +15,20 @@ def readme():
 def get_requirements():
     with open('requirements.txt') as f:
         return f.read().split()
+
+
+# get gdal version on machine
+gdal_sys_call = subprocess.Popen('gdal-config --version', stdout=subprocess.PIPE, shell=True)
+gdal_system_version = gdal_sys_call.stdout.read().decode('UTF-8').strip()
+
+if gdal_system_version != '':
+
+    # install gdal version matching gdal libs on machine
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'gdal=={}'.format(gdal_system_version)])
+
+else:
+
+    raise ImportError('GDAL version >= 2.1.0 required to run Janus.  Please install GDAL with Python bindings and retry.')
 
 setup(
     name='janus',
