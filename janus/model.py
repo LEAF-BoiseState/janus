@@ -107,7 +107,6 @@ class Janus:
 
         crop_id_all = np.zeros((self.c.Nt, self.Ny, self.Nx))
 
-        # TODO: this will be added into the cell class
         crop_id_all[0, :, :] = self.lc
 
         return crop_ids, crop_id_all, ag, num_crops
@@ -131,18 +130,18 @@ class Janus:
 
         return profits_actual, profit_signals
 
-    def initialize_agents(self, id_field='ID', cat_option='local'):
+    def initialize_agents(self, state ='ID', cat_option='local'):
         """Initialize agents based on nass data and initial landcover
-
-
+        :param state: Capatalized abbreviation of state that the domain is in
+        :param cat_option: Denotes which categorization option is used, 'GCAM', 'local', or user defined
         :return: agent_domain is the domain with agent cell classes filled with agent information 
         :return: agent_array is a numpy array of strings that define which agent is in each location
 
         """
 
-        tenure = get_nass.tenure_area(id_field, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables, self.c.nass_api_key)
+        tenure = get_nass.tenure_area(state, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables, self.c.nass_api_key)
 
-        ages = get_nass.ages(self.c.nass_year, id_field, self.c.nass_api_key)
+        ages = get_nass.ages(self.c.nass_year, state, self.c.nass_api_key)
 
         age_cdf = get_nass.make_age_cdf(ages)
 
