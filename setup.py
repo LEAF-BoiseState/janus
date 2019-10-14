@@ -16,23 +16,27 @@ def get_requirements():
     with open('requirements.txt') as f:
         return f.read().split()
 
-
-# get gdal version on machine
-# gdal_sys_call = subprocess.Popen('gdal-config --version', stdout=subprocess.PIPE, shell=True)
-# gdal_system_version = gdal_sys_call.stdout.read().decode('UTF-8').strip()
+# try:
+#     import gdal
 #
-# gdal_split = gdal_system_version.split('.')
-# gdal_major = int(gdal_split[0])
-# gdal_minor = int(gdal_split[1])
+# except ImportError:
 #
-# if (gdal_system_version != '') and (gdal_major >= 2) and (gdal_minor >= 1):
+#     # get gdal version on machine
+#     gdal_sys_call = subprocess.Popen('gdal-config --version', stdout=subprocess.PIPE, shell=True)
+#     gdal_system_version = gdal_sys_call.stdout.read().decode('UTF-8').strip()
 #
-#     # install gdal version matching gdal libs on machine
-#     subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'gdal=={}'.format(gdal_system_version)])
+#     gdal_split = gdal_system_version.split('.')
+#     gdal_major = int(gdal_split[0])
+#     gdal_minor = int(gdal_split[1])
 #
-# else:
+#     if (gdal_system_version != '') and (gdal_major >= 2) and (gdal_minor >= 1):
 #
-#     raise ImportError('GDAL version >= 2.1.0 required to run Janus.  Please install GDAL with Python bindings and retry.')
+#         # install gdal version matching gdal libs on machine
+#         subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'gdal=={}'.format(gdal_system_version)])
+#
+#     else:
+#
+#         raise ImportError('GDAL version >= 2.1.0 required to run Janus.  Please install GDAL with Python bindings and retry.')
 
 setup(
     name='janus',
