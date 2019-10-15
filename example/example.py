@@ -14,6 +14,6 @@ def run_example(f):
 
 if __name__ == '__main__':
 
-    config_file = '/Users/kek25/Documents/GitRepos/IM3-BoiseState/example/config_kek.yml'
+    config_file = '<full path with file name and extension to the input config.yml file>'
 
     janus_run = run_example(config_file)
