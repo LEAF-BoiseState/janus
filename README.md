@@ -42,29 +42,29 @@ InstallSupplement(<directory you wish to install the data to>)
 ## Setting up a run
 
 ### Setup the `config.yml` file
-There is an example config file in the `janus/example` directory of this package that describes each input.
+There is an example config file in the `janus/example` directory of this package that describes each input.  To conduct a test run, install the data supplement as described above and replace the paths in the example config file with the location of where you installed the example data.  See the description below to match the example data file name with what is included with the package.
 
-| key | description |
+| Key | Description | Example Data Name
 | -- | -- |
-| `f_counties_shp` | full path with file name and extension to the counties shapefile |
-| `f_key_file` | full path with file name and extension to the land class category key file |
-| `f_gcam_file` | GCAM raster file |
-| `f_profits_file` | Profits file |
-| `nt` | Number of timesteps |
-| `switch_params` | list of lists for switching averse, tolerant parameters (alpha, beta) |
-| `p` | proportion of each switching type, lower than p is averse, higher is tolerant |
-| `fmin` | Need description |
-| `fmax` | Need description |
-| `f0` | Need description |
-| `n` | Need description |
-| `crop_seed_size` | Seed to set for random number generators for unit testing |
-| `target_yr` | Initialization year associated with landcover input |
-| `scale` | Scale of landcover grid in meters. Current options are 1000 and 3000 m |
-| `county_list` | List of counties to evaluate |
-| `agent_variables` | NASS variables to characterize agents with. Currently set to use "TENURE" and "AREA OPERATED" |
-| `nass_year` | Year that NASS data are pulled from. This data is collected every 5 years, with the Initialization year here being 2007 |
-| `nass_county_list` | List of counties in the domain that NASS data is collected from, these have to be capitalized |
-| `nass_api_key` | A NASS API is needed to access the NASS data, get yours here https://quickstats.nass.usda.gov/api |
+| `f_counties_shp` | full path with file name and extension to the counties shapefile | `shp/counties_srb.shp` |
+| `f_key_file` | full path with file name and extension to the land class category key file | `data/CDL2GCAM_categories.csv` |
+| `f_gcam_file` | GCAM raster file | `data/gcam_2010_domain_3000.tiff` |
+| `f_profits_file` | Profits file | `data/GenerateSyntheticPrices_test_output.csv` |
+| `nt` | Number of timesteps | |
+| `switch_params` | list of lists for switching averse, tolerant parameters (alpha, beta) | |
+| `p` | proportion of each switching type, lower than p is averse, higher is tolerant | |
+| `fmin` | Need description | |
+| `fmax` | Need description | |
+| `f0` | Need description | |
+| `n` | Need description | |
+| `crop_seed_size` | Seed to set for random number generators for unit testing | |
+| `target_yr` | Initialization year associated with landcover input | |
+| `scale` | Scale of landcover grid in meters. Current options are 1000 and 3000 m | |
+| `county_list` | List of counties to evaluate | |
+| `agent_variables` | NASS variables to characterize agents with. Currently set to use "TENURE" and "AREA OPERATED" | |
+| `nass_year` | Year that NASS data are pulled from. This data is collected every 5 years, with the Initialization year here being 2007 | |
+| `nass_county_list` | List of counties in the domain that NASS data is collected from, these have to be capitalized | |
+| `nass_api_key` | A NASS API is needed to access the NASS data, get yours here https://quickstats.nass.usda.gov/api | |
 
 ### Setup the input files
 
