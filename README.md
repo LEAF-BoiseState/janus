@@ -54,9 +54,8 @@ There is an example config file in the `janus/example` directory of this package
 | `switch_params` | list of lists for switching averse, tolerant parameters (alpha, beta) | |
 | `p` | Proportion of each switching type, lower than p is averse, higher is tolerant | |
 | `fmin` | The fraction of current profit at which the CDF of the beta distribution is zero | |
-| `fmax` | The fraction of current profit at which the | |
-| `f0` | Need description | |
-| `n` | The number of points to generate | |
+| `fmax` | The fraction of current profit at which the CDF of the beta distribution is one | |
+| `n` | The number of points to generate in the CDF | |
 | `crop_seed_size` | Seed to set for random number generators for unit testing | |
 | `target_yr` | Initialization year associated with landcover input | |
 | `scale` | Scale of landcover grid in meters. Current options are 1000 and 3000 m | |

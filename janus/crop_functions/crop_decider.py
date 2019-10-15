@@ -27,8 +27,8 @@ def switching_prob_curve(alpha, beta, fmin, fmax, n, profit):
     :param alpha: The alpha parameter for the incomplete beta distribution 
     :param beta: The beta parameter for the incomplete beta distribution
     :param fmin: The fraction of current profit at which the CDF of the beta distribution is zero
-    :param fmax: The fraction of current profit at which the 
-    :param n: The number of points to generate
+    :param fmax: The fraction of current profit at which the CDF of the beta distribution is one
+    :param n: The number of points to generate in the CDF 
     :param profit: The current profit of the farmer
 
     :return: Two (n x 1) numpy arrays containing, respectively n points spaced 
@@ -51,8 +51,8 @@ def decide(alpha, beta, fmin, fmax, n, profit, profit_p):
     :param alpha: The alpha parameter for the incomplete beta distribution
     :param beta: The beta parameter for the incomplete beta distribution
     :param fmin: The fraction of current profit at which the CDF of the beta distribution is zero
-    :param fmax: The fraction of current profit at which the 
-    :param n: The number of points along the beta distribution to generate
+    :param fmax: The fraction of current profit at which the CDF of the beta distribution is one
+    :param n: The number of points to generate in the CDF 
     :param profit: The current profit the farmer experiences
     :param profit_p: The potential profit of the alternative crop being evaluated
 
@@ -82,8 +82,8 @@ def decide_n(alpha, beta, fmin, fmax, n, Profits_current, vec_crops,
     :param alpha: The alpha parameter for the incomplete beta distribution
     :param beta: The beta parameter for the incomplete beta distribution
     :param fmin: The fraction of current profit at which the CDF of the beta distribution is zero
-    :param fmax: The fraction of current profit at which the 
-    :param n: The number of points along the beta distribution to generate
+    :param fmax: The fraction of current profit at which the CDF of the beta distribution is one
+    :param n: The number of points ato generate in the CDF 
     :param current_profit: The current profit the farmer experiences
     :param vec_crops: A vector of potential alternative crops
     :param vec_profit_p: A vector of potential profits associated with the alternatives contained in vec_crops
