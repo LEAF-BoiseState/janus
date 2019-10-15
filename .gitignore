@@ -1,11 +1,30 @@
-*.txt
+# raster files
 *.asc
-*.tiff
+
 /Data/*
-.DS_Store
 /GCAM_SRP/*.*
 /GCAM_SRP/**/*.*
-*.pyc
+abm/postprocessing/__pycache__/*.pyc
 */__pycache__/*
 *.zip
 */*/__pycache__/*
+
+# OS-specific files
+.DS_Store
+
+# python pyc files
+*.pyc
+
+# exclude .idea dir
+.idea
+
+# ignore .mat files
+*.mat
+
+# log files
+*.log
+
+# ignore build
+build
+dist
+janus.egg-info

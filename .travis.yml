@@ -1,0 +1,24 @@
+language: python
+matrix:
+  include:
+    - python: 3.6
+      dist: xenial
+warnings_are_errors: false
+sudo: required
+addons:
+  apt:
+    sources:
+      - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
+    packages:
+      - libudunits2-dev
+      - libproj-dev
+      - libgeos-dev
+      - gdal-bin
+      - libgdal-dev
+cache: pip
+install:
+  - pip install GDAL==$(gdal-config --version) --global-option=build_ext --global-option="-I/usr/include/gdal"
+  - pip install -r requirements.txt
+  - python setup.py -q install
+script:
+  - travis_wait 35 python -m unittest discover

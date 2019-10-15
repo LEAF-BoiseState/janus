@@ -1,0 +1,55 @@
+# Configuration file for Janus
+
+# full path with file name and extension to the counties shapefile
+f_counties_shp: 'janus/tests/data/shp/counties_srb.shp'
+
+# full path with file name and extension to the land class category key file
+f_key_file: 'janus/tests/data/CDL2GCAM_categories.csv'
+
+# gcam raster
+f_gcam_file: 'janus/tests/data/gcam_2010_domain_3000.tiff'
+
+# profits file
+f_profits_file: 'janus/tests/data/GenerateSyntheticPrices_test_output.csv'
+
+# output directory
+output_directory: None
+
+# number of time steps
+nt: 20
+
+# list of lists for switching averse, tolerant parameters (alpha, beta)
+switch_params: [[4.5, 1.0], [0.5, 3.0]]
+
+# proportion of each switching type, lower than p is averse, higher is tolerant
+p: 0.5
+
+# TODO:  Max and min .... total Profit, percent profit?
+fmin: 1.0
+fmax: 1.5
+f0: 1.2
+n: 100
+
+# TODO:  Crop random seed size
+crop_seed_size: 5
+
+# initialization year
+initialization_yr: 2010
+
+# scale of grid in meters
+scale: 3000
+
+# list of counties to evaluate
+county_list: ['Ada', 'Canyon']
+
+# TODO
+agent_variables: ["TENURE", "AREA OPERATED"]
+
+# TODO:  NASS year; 2007, 2012 are available
+nass_year: 2007
+
+# TODO:  NASS county list
+nass_county_list: ['ADA', 'CANYON']
+
+# NASS API key
+nass_api_key:  'B5240598-2A7D-38EE-BF8D-816A27BEF504'
