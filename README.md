@@ -1,5 +1,8 @@
 [![Build Status](https://travis-ci.org/LEAF-BoiseState/janus.svg?branch=master)](https://travis-ci.org/LEAF-BoiseState/janus)
 
+[![DOI](https://zenodo.org/badge/157612222.svg)](https://zenodo.org/badge/latestdoi/157612222)
+
+
 # janus
 
 `janus` was designed to simulate land cover changes over time. These landcover changes are carried out by individual agents that choose to either continue planting the same crop, or choose to switch to a new crop based on expected profits.
