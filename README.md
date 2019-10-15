@@ -52,11 +52,11 @@ There is an example config file in the `janus/example` directory of this package
 | `f_profits_file` | Profits file | `data/GenerateSyntheticPrices_test_output.csv` |
 | `nt` | Number of timesteps | |
 | `switch_params` | list of lists for switching averse, tolerant parameters (alpha, beta) | |
-| `p` | proportion of each switching type, lower than p is averse, higher is tolerant | |
-| `fmin` | Need description | |
-| `fmax` | Need description | |
+| `p` | Proportion of each switching type, lower than p is averse, higher is tolerant | |
+| `fmin` | The fraction of current profit at which the CDF of the beta distribution is zero | |
+| `fmax` | The fraction of current profit at which the | |
 | `f0` | Need description | |
-| `n` | Need description | |
+| `n` | The number of points to generate | |
 | `crop_seed_size` | Seed to set for random number generators for unit testing | |
 | `target_yr` | Initialization year associated with landcover input | |
 | `scale` | Scale of landcover grid in meters. Current options are 1000 and 3000 m | |
@@ -107,9 +107,9 @@ Janus('<path-to-config-file>')
 
 ## Outputs
 
-- `landcover.npy`:  Numpy array of landcover through time
-- `domain.npy`:  Numpy array of class type dcell that contain information about agents
-- `profits.npy`:  Numpy array of profits through time
+- `landcover.npy`:  Numpy array of landcover through time [Nt, Ny, Nx]
+- `domain.npy`:  Numpy array of class type dcell that contain information about agents [Nt, Ny, Nx]
+- `profits.npy`:  Numpy array of profits through time [Nt, Ny, Nx]
 
 
 ## Community involvement

@@ -208,7 +208,10 @@ class Janus:
                             self.num_crops, self.c.scale, self.c.output_dir)
 
     def save_outputs(self):
-        """Save outputs as NumPy arrays."""
+        """Save outputs as NumPy arrays.
+        
+        The dimensions of each output NumPy array are [Number of timesteps, Ny, Nx]
+        """
 
         out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr.npy')
 
