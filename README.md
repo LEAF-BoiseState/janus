@@ -45,7 +45,7 @@ InstallSupplement(<directory you wish to install the data to>)
 There is an example config file in the `janus/example` directory of this package that describes each input.  To conduct a test run, install the data supplement as described above and replace the paths in the example config file with the location of where you installed the example data.  See the description below to match the example data file name with what is included with the package.
 
 | Key | Description | Example Data Name
-| -- | -- |
+| -- | -- | -- |
 | `f_counties_shp` | full path with file name and extension to the counties shapefile | `shp/counties_srb.shp` |
 | `f_key_file` | full path with file name and extension to the land class category key file | `data/CDL2GCAM_categories.csv` |
 | `f_gcam_file` | GCAM raster file | `data/gcam_2010_domain_3000.tiff` |
