@@ -2,6 +2,8 @@
 Agent Based Model of Land Use and Land Cover Change 
 
 @author: lejoflores & kendrakaiser
+
+@license: BSD 2-Clause
 """
 
 import argparse
