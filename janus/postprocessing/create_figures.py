@@ -81,7 +81,7 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     ag=np.transpose(np.array(ag_cats))
     ac=np.array(ag[active_crops]).flatten()
     
-    ax.stackplot(t,y, labels=key_file['GCAM_SRB_Name'][ac])
+    ax.stackplot(t,y, labels=key_file['local_GCAM_Name'][ac])
     ax.set_xlim([0, nt - 1])
     ax.set_ylim([0, 100])
     ax.grid()
@@ -93,7 +93,7 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     output_figure = os.path.join(results_path, 'CropPercentages_{}m_{}yr.png'.format(scale, nt))
 
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
-    plt.close(fig=None)
+    plt.close()
 
 def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, nc, scale, results_path):
     """Histogram of agent ages at end of model run
@@ -121,4 +121,4 @@ def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, nc, scale, results_path):
     
     output_figure = os.path.join(results_path, 'AgentAges_{}m_{}yr.png'.format(scale, nt))
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
-    plt.close(fig=None)
+    plt.close()
