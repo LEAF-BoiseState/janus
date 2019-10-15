@@ -76,12 +76,16 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     plt.rcParams.update({'font.size': 16})
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(12, 12))
     
-    # set colors to some color scheme w nc colors
-    ax.stackplot(t,y)#, labels=[] key_file['local_GCAM_Name'][ag_cats[0]]
+    #pull out any crops planted in the timeseries for legend
+    active_crops=np.any(percentages, axis=1)
+    ag=np.transpose(np.array(ag_cats))
+    ac=np.array(ag[active_crops]).flatten()
+    
+    ax.stackplot(t,y, labels=key_file['GCAM_SRB_Name'][ac])
     ax.set_xlim([0, nt - 1])
     ax.set_ylim([0, 100])
     ax.grid()
-    #ax.legend(loc='lower left')
+    ax.legend(loc='lower right')
 
     ax.set_ylabel('Percent Crop Choice')
     ax.set_xlabel('Time [yr]')
@@ -89,7 +93,7 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     output_figure = os.path.join(results_path, 'CropPercentages_{}m_{}yr.png'.format(scale, nt))
 
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
-
+    plt.close(fig=None)
 
 def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, nc, scale, results_path):
     """Histogram of agent ages at end of model run
@@ -116,5 +120,5 @@ def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, nc, scale, results_path):
     plt.hist(FarmerAges)
     
     output_figure = os.path.join(results_path, 'AgentAges_{}m_{}yr.png'.format(scale, nt))
-    plt.gcf()
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
+    plt.close(fig=None)
