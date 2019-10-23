@@ -94,7 +94,7 @@ There is an example config file in the `janus/example` directory of this package
 ### Running from terminal or command line
 Ensure that you are using the desired `python` instance then run:
 
-`python <path-to-janus-module>/model.py config_file=<path-to-the-config-file>`
+`python <path-to-janus-module>/model.py --config_file <path-to-the-config-file>`
 
 All parameters can be passed to the `Janus` class using terminal or command line instead of by a configuration file if you so desire.  Simply exclude the `config_file` argument from the required parameters. Run the following for assistance:
 
