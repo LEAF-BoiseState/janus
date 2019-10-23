@@ -14,10 +14,10 @@ import janus.agents.farmer as farmer
 
 
 def create_animation(crop_id_all, nt):
-    """ Create gif of landcover over time
+    """ Create gif of land cover over time
 
-    :param crop_id_all: numpy array of landcover over time
-    :param nt:          number of timesteps
+    :param crop_id_all: numpy array of land cover over time
+    :param nt:          number of time steps
 
     :return: Animation of crops over time
 
@@ -40,10 +40,10 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
 
     :param crop_id_all:  numpy array of gridded landcover over time
     :param CropIDs:      numpy array of the crop identification numbers
-    :param nt:           number of timesteps
+    :param nt:           number of time steps
     :param nc:           number of crops
     :param scale:        scale of cells within domain
-    :param results_path: path to loacl results folder
+    :param results_path: path to local results folder
     :param key_file:     key file that has conversions from CDL to GCAM or local categories
     :param ag_cats:      categories that are agricultural
 
@@ -95,13 +95,15 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
 
-def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, nc, scale, results_path):
+def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, scale, results_path):
     """Histogram of agent ages at end of model run
 
     :param domain: domain with agent data
     :param AgentArray: numpy array with identifiers of which agent is in each cell
     :param Ny: Number of rows
     :param Nx: Number of columns
+    :param nt: Number of time steps
+    :param results_path: path to local results folder
 
     :return: Image saved to results folder of a histogram of farmer ages at the end of the model run
 
