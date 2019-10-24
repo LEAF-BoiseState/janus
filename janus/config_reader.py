@@ -18,7 +18,6 @@ class ConfigReader:
     P = 'p'
     FMIN = 'fmin'
     FMAX = 'fmax'
-    F0 = 'f0'
     N = 'n'
     CROP_SEED_SIZE = 'crop_seed_size'
     TARGET_YR = 'initialization_yr'
@@ -26,6 +25,7 @@ class ConfigReader:
     COUNTY_LIST = 'county_list'
     AGENT_VARS = 'agent_variables'
     NASS_YR = 'nass_year'
+    STATE = 'state'
     NASS_COUNTY_LIST = 'nass_county_list'
     NASS_API_KEY = 'nass_api_key'
     OUTPUT_DIR = 'output_directory'
@@ -56,10 +56,9 @@ class ConfigReader:
         # proportion of each switching type, lower than p is averse, higher is tolerant
         self.p = c[ConfigReader.P]
 
-        # Max and min .... total Profit, percent profit?
+        # fraction of current profit at which the CDF is zero and one, and number of points to generate
         self.fmin = c[ConfigReader.FMIN]
         self.fmax = c[ConfigReader.FMAX]
-        self.f0 = c[ConfigReader.F0]
         self.n = c[ConfigReader.N]
 
         # TODO:  define seed for crop decider; This is not used in this script but is set as `global`
@@ -79,6 +78,9 @@ class ConfigReader:
 
         # NASS year
         self.nass_year = c[ConfigReader.NASS_YR]
+
+        # NASS state
+        self.state = c[ConfigReader.STATE]
 
         # NASS county list
         self.nass_county_list = [i.upper() for i in c[ConfigReader.NASS_COUNTY_LIST]]
