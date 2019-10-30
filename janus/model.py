@@ -132,18 +132,17 @@ class Janus:
 
         return profits_actual, profit_signals
 
-    def initialize_agents(self, state ='ID', cat_option='local'):
-        """Initialize agents based on nass data and initial landcover
-        :param state: Capatalized abbreviation of state that the domain is in
+    def initialize_agents(self, cat_option='local'):
+        """Initialize agents based on NASS data and initial land cover
         :param cat_option: Denotes which categorization option is used, 'GCAM', 'local', or user defined
         :return: agent_domain is the domain with agent cell classes filled with agent information 
         :return: agent_array is a numpy array of strings that define which agent is in each location
 
         """
 
-        tenure = get_nass.tenure_area(state, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables, self.c.nass_api_key)
+        tenure = get_nass.tenure_area(self.c.state, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables, self.c.nass_api_key)
 
-        ages = get_nass.ages(self.c.nass_year, state, self.c.nass_api_key)
+        ages = get_nass.ages(self.c.nass_year, self.c.state, self.c.nass_api_key)
 
         age_cdf = get_nass.make_age_cdf(ages)
 
@@ -205,7 +204,7 @@ class Janus:
                               self.c.output_dir, self.c.key_file, self.ag)
 
         ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx, self.c.Nt, 
-                            self.num_crops, self.c.scale, self.c.output_dir)
+                            self.c.scale, self.c.output_dir)
 
     def save_outputs(self):
         """Save outputs as NumPy arrays.
@@ -238,12 +237,12 @@ if __name__ == '__main__':
 
     # TODO: number of crops is calculated after doing the GIS pre-processing, if nc is needed for price generation, we might need to adjust this
     parser.add_argument('-nc', '--nc', type=int, help='Number of crops')
-    parser.add_argument('-fmin', '--fmin', type=float, help='Need description')
-    parser.add_argument('-fmax', '--fmax', type=float, help='Need description')
-    parser.add_argument('-f0', '--f0', type=float, help='Need description')
-    parser.add_argument('-n', '--n', type=int, help='Need description')
+    parser.add_argument('-fmin', '--fmin', type=float, help='The fraction of current profit at which the CDF of the beta distribution is zero')
+    parser.add_argument('-fmax', '--fmax', type=float, help='The fraction of current profit at which the CDF of the beta distribution is one')
+    parser.add_argument('-n', '--n', type=int, help='The number of points to generate in the CDF')
     parser.add_argument('-seed', '--crop_seed_size', type=int, help='Seed to set for random number generators for unit testing')
     parser.add_argument('-yr', '--initalization_yr', type=int, help='Initialization year assocciated with landcover input')
+    parser.add_argument('-state', '--state', type=str, help='State where NASS data is pulled from, capitalized acronym')
     parser.add_argument('-sc', '--scale', type=int, help='Scale of landcover grid in meters. Current options are 1000 and 3000 m')
     parser.add_argument('-cl', '--county_list', type=list, help='List of county names to evaluate from the input shapefile.')
     parser.add_argument('-av', '--agent_variables', type=list, help='NASS variables to characterize agents with. Currently set to use "TENURE" and "AREA OPERATED"')

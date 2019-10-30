@@ -24,13 +24,13 @@ switch_params: [[4.5, 1.0], [0.5, 3.0]]
 # proportion of each switching type, lower than p is averse, higher is tolerant
 p: 0.5
 
-# TODO:  Max and min .... total Profit, percent profit?
+# fraction of current profit at which the CDF is zero and one, and number of points to generate
 fmin: 1.0
 fmax: 1.5
-f0: 1.2
 n: 100
 
-# TODO:  Crop random seed size
+# TODO:  Set seed for test data
+# Seed for random number generator
 crop_seed_size: 5
 
 # initialization year
@@ -42,13 +42,16 @@ scale: 3000
 # list of counties to evaluate
 county_list: ['Ada', 'Canyon']
 
-# TODO
+# Currently available agent attributes, tenure status and area operated
 agent_variables: ["TENURE", "AREA OPERATED"]
 
-# TODO:  NASS year; 2007, 2012 are available
+# NASS years that are available are 2007, 2012
 nass_year: 2007
 
-# TODO:  NASS county list
+# state where NASS data is pulled from, as capatalized acronym
+state: 'ID'
+
+# List of counties used to gather NASS data, must be capitalized
 nass_county_list: ['ADA', 'CANYON']
 
 # NASS API key
