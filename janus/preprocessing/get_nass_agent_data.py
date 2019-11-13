@@ -189,7 +189,7 @@ def farmer_data(TenureCDF, AgeCDF, switch, p, d2c):
     #else if tenStat == TenureCDF[2, [0]]:
      #   k=2
 
-    
+    # add some fraction of being risk averse based on initial age? e.g. a Full Owner will have lower and lower risk tolerance w age
     AgentData = {
             "AgeInit": ageI,
             "LandStatus": tenStat,
