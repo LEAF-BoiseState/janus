@@ -81,7 +81,7 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
     """Place agent structures onto landscape and define attributes.
 
     :param AgentArray: Numpy array of strings of location of each agent type
-    :param domain:     Inital domain
+    :param domain:     Initial domain
     :param dist2city:  Numpy array of distance to city
     :param TenureCDF:  CDF of tenure type in the domain
     :param AgeCDF:     CDF of ages in the domain
