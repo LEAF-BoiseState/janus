@@ -81,15 +81,15 @@ def tenure_area(state, county_list, NASS_yr, variables, nass_api_key):
     # prepare lists for data
     area_cat = ["AREA OPERATED: (1.0 TO 9.9 ACRES)","AREA OPERATED: (10.0 TO 49.9 ACRES)", "AREA OPERATED: (50.0 TO 69.9 ACRES)", "AREA OPERATED: (70.0 TO 99.9 ACRES)", "AREA OPERATED: (100 TO 139 ACRES)","AREA OPERATED: (140 TO 179 ACRES)", "AREA OPERATED: (180 TO 219 ACRES)", "AREA OPERATED: (220 TO 259 ACRES)", "AREA OPERATED: (260 TO 499 ACRES)", "AREA OPERATED: (500 TO 999 ACRES)", "AREA OPERATED: (1,000 TO 1,999 ACRES)", "AREA OPERATED: (2,000 OR MORE ACRES)"]#, "AREA OPERATED: (50 TO 179 ACRES)", "AREA OPERATED: (180 TO 499 ACRES)", "AREA OPERATED: (1,000 OR MORE ACRES)"]
     tenure_cat = ["TENURE: (FULL OWNER)", "TENURE: (PART OWNER)", "TENURE: (TENANT)" ]
-    cat=tenure_cat + area_cat
+    cat = tenure_cat + area_cat
     
-    farms=pd.DataFrame(0, index=np.arange(len(cat)), columns=('category', 'acres', 'operations'))
+    farms = pd.DataFrame(0, index=np.arange(len(cat)), columns=('category', 'acres', 'operations'))
     farms['category'] = cat
     
     for i in range(len(cat)):
-        sub=dataF[(dataF['domaincat_desc'] == farms.loc[i,'category']) & (dataF['unit_desc'] == 'ACRES')]
+        sub = dataF[(dataF['domaincat_desc'] == farms.loc[i,'category']) & (dataF['unit_desc'] == 'ACRES')]
         farms.loc[i, 'acres'] = sum(sub['Value']) # acres
-        sub2=dataF[(dataF['domaincat_desc'] == farms['category'][i]) & (dataF['unit_desc'] == 'OPERATIONS')]
+        sub2 = dataF[(dataF['domaincat_desc'] == farms['category'][i]) & (dataF['unit_desc'] == 'OPERATIONS')]
 
         # operations
         farms.loc[i, 'operations'] = sum(sub2['Value'])
@@ -108,8 +108,8 @@ def make_age_cdf(var_array):
     
     ser_full = np.zeros(0)
 
-    var_array['low'] =[18, 25, 35, 45, 55, 65, 75]
-    var_array['high'] =[25, 35, 45, 55, 65, 75, 86]
+    var_array['low'] = [18, 25, 35, 45, 55, 65, 75]
+    var_array['high'] = [25, 35, 45, 55, 65, 75, 86]
 
     # create a full series of ages based on number in each category
     for i in np.arange(7):
@@ -131,7 +131,7 @@ def make_tenure_cdf(var_array):
 
     :param var_array:    Numpy array returned from tenure_area function
 
-    :return:             Numpy array of each tenure status and percent liklihood of being in that category
+    :return:             Numpy array of each tenure status and percent likelihood of being in that category
 
     """
 
@@ -156,22 +156,17 @@ def farmer_data(TenureCDF, AgeCDF, switch, p, d2c):
     """Collect agent data from NASS distributions and place in dictionary.
 
     :param TenureCDF:  Numpy array from make_tenure_cdf function
-    :param AgeCDF:     Numpy array from make_tage_cdf function
-    :param switch:     List of lists of alpha beta parameters describing liklihood of switching crops
+    :param AgeCDF:     Numpy array from make_age_cdf function
+    :param switch:     List of lists of alpha beta parameters describing likelihood of switching crops
     :param p:          Percentage of farming agents that are switching averse
     :param d2c:        Numpy array of distance to city
 
     :return: Dictionary with farmer data based on NASS data
 
     """
-    ss=np.random.random_sample()
+    ss = np.random.random_sample()
     ts = np.random.random_sample() 
     ageS = np.random.random_sample()
-
-    if ss >= p:
-        k= 0
-    else:
-        k =1
     
     if ageS < AgeCDF[0, 1]:
         ageI = 18
@@ -181,10 +176,23 @@ def farmer_data(TenureCDF, AgeCDF, switch, p, d2c):
             
     tt = np.where(TenureCDF[:, [1]] >= ts)
     tenStat = min(tt[0])
+
+    if ss >= p:
+        k = 0
+    else:
+        k = 1
+
+    # if tenStat == TenureCDF[0, [0]]:
+     #   k=0
+    #else if tenStat == TenureCDF[1, [0]]:
+     #   k=1
+    #else if tenStat == TenureCDF[2, [0]]:
+     #   k=2
+
     
     AgentData = {
-            "AgeInit" : ageI,
-            "LandStatus" : tenStat,
+            "AgeInit": ageI,
+            "LandStatus": tenStat,
             "Alpha": switch[k][0],
             "Beta": switch[k][1],
             "nFields": 1,
@@ -194,11 +202,11 @@ def farmer_data(TenureCDF, AgeCDF, switch, p, d2c):
 
 
 def urban_data(lc):
-    """Pull the landcover category from lc, set this so it's 0 =open space, 1=low density, 2=medium density, 3=high density
-    this needs to be set by user based on what their landcover classes are, e.g. denisty would not
+    """Pull the land cover category from lc, set this so it's 0 =open space, 1=low density, 2=medium density, 3=high density
+    this needs to be set by user based on what their land cover classes are, e.g. density would not
     be a category with original GCAM categories. If these are changed from the local_GCAM categorization they will all be set to medium density
 
-    :param lc: numpy array of landcover data
+    :param lc: numpy array of land cover data
 
     :return: Dictionary of urban agent attributes, currently only density
 
