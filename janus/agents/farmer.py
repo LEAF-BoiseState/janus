@@ -25,3 +25,6 @@ class Farmer:
 
     def update_dist2city(self, new_dist):
         self.Dist2city = new_dist
+
+    #def update_alpha(selfself):
+     #   self.alpha += 0.01 add a small amount to parameter to increase risk averse - ness with age
