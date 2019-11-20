@@ -207,16 +207,18 @@ class Janus:
 
         ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx, self.c.Nt, 
                             self.c.scale, self.c.output_dir)
-
+        
+        ppf.plot_switching_curves(self.agent_domain, self.agent_array, self.fmin, self.fmax, self.Ny, self.Nx,
+                                  self.c.Nt, self.n, self.c.scale, self.c.output_dir)
     def save_outputs(self):
         """Save outputs as NumPy arrays.
         
-        The dimensions of each output NumPy array are [Number of timesteps, Ny, Nx]
+        The dimensions of each output NumPy array are [Number of time steps, Ny, Nx]
         """
 
         out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr.npy')
 
-        # save time series of landcover coverage
+        # save time series of land cover coverage
         np.save(out_file.format('landcover', self.c.scale, self.c.Nt), self.crop_id_all)
 
         # save time series of profits
@@ -234,8 +236,9 @@ if __name__ == '__main__':
     parser.add_argument('-shp', '--f_counties_shp', type=str, help='Full path with file name and extension to the input counties shapefile.')
     parser.add_argument('-key', '--f_key_file', type=str, help='Full path with file name and extension to the input land class category key file.')
     parser.add_argument('-gcam', '--f_gcam_file', type=str, help='Full path with file name and extension to the input GCAM raster file.')
-    parser.add_argument('-s', '--switch_params', type=list, help='List of lists for switching averse, tolerant parameters (alpha, beta)')
-    parser.add_argument('-nt', '--nt', type=int, help='Number of timesteps')
+    parser.add_argument('-s', '--switch_params', type=list, help='List of lists for switching averse, tolerant, and neutral parameters (alpha, beta)')
+    parser.add_argument('-nt', '--nt', type=int, help='Number of time steps')
+    parser.add_argument('-attr', '--attr', type=str, help='Boolean that determines if switching parameters are based on attributes')
 
     # TODO: number of crops is calculated after doing the GIS pre-processing, if nc is needed for price generation, we might need to adjust this
     parser.add_argument('-nc', '--nc', type=int, help='Number of crops')
