@@ -207,9 +207,9 @@ class Janus:
 
         ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx, self.c.Nt, 
                             self.c.scale, self.c.output_dir)
-        
-        ppf.plot_switching_curves(self.agent_domain, self.agent_array, self.fmin, self.fmax, self.Ny, self.Nx,
-                                  self.c.Nt, self.n, self.c.scale, self.c.output_dir)
+
+        ppf.plot_switching_curves(self.agent_domain, self.agent_array, self.c.fmin, self.c.fmax, self.Ny, self.Nx,
+                                  self.c.Nt, self.c.n, self.c.scale, self.c.output_dir, self.profits_actual[self.c.Nt-1, :, :])
     def save_outputs(self):
         """Save outputs as NumPy arrays.
         
