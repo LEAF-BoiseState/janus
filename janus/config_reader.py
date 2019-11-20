@@ -54,6 +54,9 @@ class ConfigReader:
         # set agent switching parameters (alpha, beta) [[switching averse], [switching tolerant]]
         self.switch = np.array(c[ConfigReader.SWITCH_PARAMS])
 
+        # boolean that sets whether to base switching parameters on age and tenure (True) or not
+        self.attr = c[ConfigReader.ATTR]
+
         # proportion of each switching type, lower than p is averse, higher is tolerant
         self.p = c[ConfigReader.P]
 
