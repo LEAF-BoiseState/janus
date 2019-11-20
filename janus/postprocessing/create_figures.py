@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 import janus.agents.farmer as farmer
-
+import janus.crop_functions.crop_decider as crpdec
 
 def create_animation(crop_id_all, nt):
     """ Create gif of land cover over time
@@ -36,9 +36,9 @@ def create_animation(crop_id_all, nt):
 
 
 def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_file, ag_cats):
-    """Stackplot of crops over time
+    """Stack plot of crops over time
 
-    :param crop_id_all:  numpy array of gridded landcover over time
+    :param crop_id_all:  numpy array of gridded land cover over time
     :param CropIDs:      numpy array of the crop identification numbers
     :param nt:           number of time steps
     :param nc:           number of crops
@@ -50,12 +50,12 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     :return:  image saved to results folder of the percentage of each crop over time
 
     """
-    ag_area=np.empty(shape=(nc, nt))
+    ag_area = np.empty(shape=(nc, nt))
     for t in np.arange(nt):
-       cur_crop = crop_id_all[t,:,:]
+       cur_crop = crop_id_all[t, :, :]
        for c in np.arange(nc):
-           bools=(cur_crop == CropIDs[c])
-           ag_area[c,t]=np.sum(bools)
+           bools = (cur_crop == CropIDs[c])
+           ag_area[c, t] = np.sum(bools)
         
     agTot = np.sum(ag_area, axis=0)
 
@@ -76,10 +76,10 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     plt.rcParams.update({'font.size': 16})
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(12, 12))
     
-    #pull out any crops planted in the timeseries for legend
-    active_crops=np.any(percentages, axis=1)
-    ag=np.transpose(np.array(ag_cats))
-    ac=np.array(ag[active_crops]).flatten()
+    # pull any crops planted in the time series for legend
+    active_crops = np.any(percentages, axis=1)
+    ag = np.transpose(np.array(ag_cats))
+    ac = np.array(ag[active_crops]).flatten()
     
     ax.stackplot(t,y, labels=key_file['local_GCAM_Name'][ac])
     ax.set_xlim([0, nt - 1])
@@ -95,15 +95,17 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
 
+
 def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, scale, results_path):
     """Histogram of agent ages at end of model run
 
-    :param domain: domain with agent data
-    :param AgentArray: numpy array with identifiers of which agent is in each cell
-    :param Ny: Number of rows
-    :param Nx: Number of columns
-    :param nt: Number of time steps
-    :param results_path: path to local results folder
+    :param domain:       Domain with agent data
+    :param AgentArray:   Numpy array with identifiers of which agent is in each cell
+    :param Ny:           Number of rows
+    :param Nx:           Number of columns
+    :param nt:           Number of time steps
+    :param scale:        Scale of cells within domain
+    :param results_path: Path to local results folder
 
     :return: Image saved to results folder of a histogram of farmer ages at the end of the model run
 
@@ -122,5 +124,49 @@ def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, scale, results_path):
     plt.hist(FarmerAges)
     
     output_figure = os.path.join(results_path, 'AgentAges_{}m_{}yr.png'.format(scale, nt))
+    plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
+    plt.close()
+
+
+def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, results_path):
+    """Histogram of agent ages at end of model run
+
+    :param domain:       Domain with agent data
+    :param AgentArray:   Numpy array with identifiers of which agent is in each cell
+    :param fmin:         The fraction of current profit at which the CDF of the beta distribution is zero
+    :param fmax:         The fraction of current profit at which the CDF of the beta distribution is one
+    :param Ny:           Number of rows
+    :param Nx:           Number of columns
+    :param nt:           Number of time steps
+    :param n:            The number of points to generate in the CDF
+    :param scale:        Scale of cells within domain
+    :param results_path: path to local results folder
+
+    :return: Image saved to results folder of a histogram of farmer ages at the end of the model run
+
+    """
+
+    alpha_params = []
+    beta_params = []
+
+    for i in np.arange(Ny):
+
+        for j in np.arange(Nx):
+
+            if AgentArray[i, j] == farmer.Farmer.__name__:
+                alpha_params = np.append(alpha_params, domain[i, j].FarmerAgents[0].alpha)
+                beta_params = np.append(beta_params, domain[i, j].FarmerAgents[0].beta)
+                profit_act = np.append(profit_act, domain[i, j].FarmerAgents[0].profits_actual[i, j, nt])
+
+    out = [0] * len(alpha_params)
+    for i in np.arange(len(alpha_params)):
+        out[i] = crpdec.switching_prob_curve(alpha_params[i], beta_params[i], fmin, fmax, n, profit_act[i])
+
+    plt.rcParams.update({'font.size': 16})
+    ax = plt.axes()
+    for i in np.arange(len(out)):
+        ax.plot(out[i][0], out[i][1])
+
+    output_figure = os.path.join(results_path, 'Switching_curves_{}m_{}yr.png'.format(scale, nt))
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
