@@ -151,7 +151,7 @@ class Janus:
         agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, cat_option)
 
         agent_domain = init_agent.agents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf, self.c.switch,
-                                         self.Ny, self.Nx, self.lc, self.c.p)
+                                         self.Ny, self.Nx, self.lc, self.c.p, self.c.attr)
 
         return agent_domain, agent_array
 
@@ -196,6 +196,8 @@ class Janus:
 
                         # update agent attributes
                         self.agent_domain[j, k].FarmerAgents[0].update_age()
+                        if self.agent_domain[j, k].FarmerAgents[0].LandStatus != 2:
+                            self.agent_domain[j,k].FarmerAgents[0].update_switch()
 
     def plot_results(self):
         """Create result plots and save them."""
