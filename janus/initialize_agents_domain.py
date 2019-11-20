@@ -77,7 +77,7 @@ def place_agents(Ny, Nx, lc, key_file, cat_option):
     return AgentArray
 
 
-def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p):
+def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p, attr):
     """Place agent structures onto landscape and define attributes.
 
     :param AgentArray: Numpy array of strings of location of each agent type
@@ -88,8 +88,9 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
     :param switch:     List of lists of parameter sets to describe agent switching behavior
     :param Ny:         Number of columns in domain
     :param Nx:         Number of rows in domain
-    :param lc:         Initial landcover numpy array
+    :param lc:         Initial land cover numpy array
     :param p:          Percentage of switching averse farming agents
+    :param attr:       A boolean indicating whether or not to use switching curves based on tenure and age attributes
 
     :return:           Domain with agents in each dCell
 
@@ -100,7 +101,7 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
 
             if AgentArray[i][j] == farmer.Farmer.__name__:
 
-                AgentData = getNASS.farmer_data(TenureCDF, AgeCDF, switch, p, dist2city[i][j])
+                AgentData = getNASS.farmer_data(TenureCDF, AgeCDF, switch, dist2city[i][j], p=p, attr=attr)
                 NewAgent = farmer.Farmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"],
                                           Dist2city=AgentData["Dist2city"], nFields=AgentData['nFields'],
                                           alpha=AgentData['Alpha'],
