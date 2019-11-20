@@ -152,15 +152,15 @@ def make_tenure_cdf(var_array):
     return perc
     
 
-def farmer_data(TenureCDF, AgeCDF, switch, p, d2c):
+def farmer_data(TenureCDF, AgeCDF, switch, d2c, p=0.5, attr=True):
     """Collect agent data from NASS distributions and place in dictionary.
 
-    :param TenureCDF:  Numpy array from make_tenure_cdf function
+    :param TenureCDF:  Numpy array from make_tenure_cdf function. Full owner, Part Owner, Tenant
     :param AgeCDF:     Numpy array from make_age_cdf function
     :param switch:     List of lists of alpha beta parameters describing likelihood of switching crops
     :param p:          Percentage of farming agents that are switching averse
     :param d2c:        Numpy array of distance to city
-
+    :param attr:       A boolean indicating whether or not to use switching curves based on tenure and age attributes
     :return: Dictionary with farmer data based on NASS data
 
     """
@@ -177,24 +177,28 @@ def farmer_data(TenureCDF, AgeCDF, switch, p, d2c):
     tt = np.where(TenureCDF[:, [1]] >= ts)
     tenStat = min(tt[0])
 
-    if ss >= p:
-        k = 0
+    if attr:
+        if tenStat == TenureCDF[0, [0]]:  # full owner, switching averse
+            k = 0
+        elif tenStat == TenureCDF[1, [0]]:  # part owner, switching neutral
+            k = 2
+        elif tenStat == TenureCDF[2, [0]]:  # tenant, switching tolerant
+            k = 1
+        a_alpha = switch[k][0] + (ageI-18)*0.005  # initiate switching as a function of age
+        a_beta = switch[k][1] - (ageI-18)*0.0005  # initiate switching as a function of age
     else:
-        k = 1
+        if ss >= p:
+            k = 0  # switching averse
+        else:
+            k = 1  # switching tolerant
+        a_alpha = switch[k][0]
+        a_beta = switch[k][1]
 
-    # if tenStat == TenureCDF[0, [0]]:
-     #   k=0
-    #else if tenStat == TenureCDF[1, [0]]:
-     #   k=1
-    #else if tenStat == TenureCDF[2, [0]]:
-     #   k=2
-
-    # add some fraction of being risk averse based on initial age? e.g. a Full Owner will have lower and lower risk tolerance w age
     AgentData = {
             "AgeInit": ageI,
             "LandStatus": tenStat,
-            "Alpha": switch[k][0],
-            "Beta": switch[k][1],
+            "Alpha": a_alpha,
+            "Beta": a_beta,
             "nFields": 1,
             "Dist2city": d2c
                 }
