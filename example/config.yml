@@ -1,25 +1,28 @@
 # Configuration file for the ABM land use land cover change agent based model
 
 # full path with file name and extension to the counties shapefile
-f_counties_shp: '<Full path with file name and extension to the counties shapefile>'
+f_counties_shp: '/Users/kek25/Desktop/Data/shp/counties_srb.shp'
 
 # full path with file name and extension to the land class category key file
-f_key_file: '<Full path with file name and extension to the land class category key file>'
+f_key_file: '/Users/kek25/Desktop/Data/CDL2GCAM_categories.csv'
 
 # gcam raster
-f_gcam_file: '<Full path with file name and extension to the GCAM raster>'
+f_gcam_file: '/Users/kek25/Desktop/Data/gcam_2010_domain_3000.tiff'
 
 # profits file
-f_profits_file: '<Full path with file name and extension to the profits csv file>'
+f_profits_file: '/Users/kek25/Desktop/Data/GenerateSyntheticPrices_test_output.csv'
 
 # output directory
-output_directory: '<Full path with file name and extension to the output directory>'
+output_directory: '/Users/kek25/Desktop/Data/Results'
 
 # number of time steps
 nt: 20
 
-# list of lists for switching averse, tolerant parameters (alpha, beta)
-switch_params: [[4.5, 1.0], [0.5, 3.0]]
+# list of lists for switching averse, tolerant, and neutral parameters (alpha, beta)
+switch_params: [[4.5, 1.0], [0.5, 3.0], [2.0, 2.0]]
+
+# boolean of whether to base switching parameters on farmer attributes or not
+attr: True
 
 # proportion of each switching type, lower than p is averse, higher is tolerant
 p: 0.5
