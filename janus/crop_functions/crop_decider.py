@@ -84,7 +84,7 @@ def decide_n(alpha, beta, fmin, fmax, n, Profits_current, vec_crops,
     :param fmin: The fraction of current profit at which the CDF of the beta distribution is zero
     :param fmax: The fraction of current profit at which the CDF of the beta distribution is one
     :param n: The number of points ato generate in the CDF 
-    :param current_profit: The current profit the farmer experiences
+    :param Profits_current: The current profit the farmer experiences
     :param vec_crops: A vector of potential alternative crops
     :param vec_profit_p: A vector of potential profits associated with the alternatives contained in vec_crops
     :param rule: A boolean indicating whether, if multiple alternative crops are viably \
