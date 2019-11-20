@@ -128,7 +128,7 @@ def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, scale, results_path):
     plt.close()
 
 
-def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, results_path):
+def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, results_path, profits):
     """Histogram of agent ages at end of model run
 
     :param domain:       Domain with agent data
@@ -140,6 +140,7 @@ def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, 
     :param nt:           Number of time steps
     :param n:            The number of points to generate in the CDF
     :param scale:        Scale of cells within domain
+    :param profits:      Numpy array of profits from the last time step
     :param results_path: path to local results folder
 
     :return: Image saved to results folder of a histogram of farmer ages at the end of the model run
@@ -148,6 +149,7 @@ def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, 
 
     alpha_params = []
     beta_params = []
+    profit_act = []
 
     for i in np.arange(Ny):
 
@@ -156,7 +158,7 @@ def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, 
             if AgentArray[i, j] == farmer.Farmer.__name__:
                 alpha_params = np.append(alpha_params, domain[i, j].FarmerAgents[0].alpha)
                 beta_params = np.append(beta_params, domain[i, j].FarmerAgents[0].beta)
-                profit_act = np.append(profit_act, domain[i, j].FarmerAgents[0].profits_actual[i, j, nt])
+                profit_act = np.append(profit_act, profits[i, j])
 
     out = [0] * len(alpha_params)
     for i in np.arange(len(alpha_params)):
