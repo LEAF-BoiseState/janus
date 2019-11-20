@@ -15,6 +15,7 @@ class ConfigReader:
     F_PROFITS_FILE = 'f_profits_file'
     NT = 'nt'
     SWITCH_PARAMS = 'switch_params'
+    ATTR = 'attr'
     P = 'p'
     FMIN = 'fmin'
     FMAX = 'fmax'
