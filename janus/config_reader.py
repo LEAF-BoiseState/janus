@@ -13,6 +13,7 @@ class ConfigReader:
     F_KEY_FILE = 'f_key_file'
     F_GCAM_FILE = 'f_gcam_file'
     F_PROFITS_FILE = 'f_profits_file'
+    F_GCAM_PROFITS_FILE = 'f_gcam_profits_file'
     NT = 'nt'
     SWITCH_PARAMS = 'switch_params'
     ATTR = 'attr'
@@ -46,6 +47,8 @@ class ConfigReader:
         self.gcam_file = c[ConfigReader.F_GCAM_FILE]
 
         self.profits_file = pd.read_csv(c[ConfigReader.F_PROFITS_FILE], header=None)
+
+        self.gcam_profits_file = pd.read_csv(c[ConfigReader.F_GCAM_PROFITS_FILE], header=0)
 
         self.output_dir = c[ConfigReader.OUTPUT_DIR]
 
