@@ -113,18 +113,25 @@ class Janus:
 
         return crop_ids, crop_id_all, ag, num_crops
 
-    def initialize_profit(self):
+    def initialize_profit(self, profit ='GCAM'):
         """Initialize profits based on profit signals csv that is either generated or input from other model output
 
         :return: profits_actual is the profit signal with a random variation 
         :return: profit_signals is the transposed profit signals cleaned to be used in other functions
 
         """
-        profit_signals = np.transpose(self.c.profits_file.values)
+        if profit == 'generated':
 
-        assert np.all([profit_signals[:, 0], self.crop_ids[:, 0]]), 'Crop IDs in profit signals do not match Crop IDs from landcover'
+            profit_signals = np.transpose(self.c.profits_file.values)
 
-        profit_signals = profit_signals[:, 1:]
+            assert np.all([profit_signals[:, 0], self.crop_ids[:, 0]]), 'Crop IDs in profit signals do not match Crop IDs from landcover'
+
+            profit_signals = profit_signals[:, 1:]
+
+        elif profit == 'GCAM':
+            profit_signals = np(self.c.gcam_profits_file.values)
+        else:
+            print("Profit type not supported")
 
         assert profit_signals.shape[1] == self.c.Nt, 'The number of timesteps in the profit signals do not match the number of model timesteps'
 
