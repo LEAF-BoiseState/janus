@@ -11,13 +11,14 @@ Read in GCAMland output, convert to categories used in this instance for profit 
 import numpy as np
 import sys
 import pandas as pd
+from scipy.stats import linregress
 
 def main(argv):
     """Description
 
     :param argv: Array of 5 command line arguments passed from the __main__ function
     :param argv[0]: Name of this function (convert_gcamland_prices)
-    :param argv[1]: Number of crops expect to create profit time series for
+    :param argv[1]: Number of crops to create profit time series for
     :param argv[2]: Number of time steps in the time series
     :param argv[3]: Name of CSV file with GCAMland outputs including path if CSV file is in a different directory
     :param argv[4]: Name of CSV file to which profit time series will be written, including path to output if in a different directory than the script
@@ -51,36 +52,46 @@ def main(argv):
     assert Nt > 0, 'convert_gcamland_prices.py ERROR: Negative number of time steps encountered'
     assert Nc <= 28, 'convert_gcamland_prices.py ERROR: Too many crops encountered'
 
-    df=pd.read_csv(CropFileIn)
+    def find_nearest(array, value):
+        array = np.asarray(array)
+        idx = (np.abs(array - value)).argmin()
+        return array[idx]
+
+    df = pd.read_csv(CropFileIn)
     key = pd.read_csv(key_file)
+
     crop_names = df.name.unique()
     crop_ids = key['GCAM_SRB_id'][0:len(crop_names)]
-    SRB_ids=np.where(key['GCAM_price_id'].notna())
+    valid_crops = np.where(key['GCAM_price_id'].notna())
 
-# TODO: this is where im working ...
-    for row in csv_fp:
+    srb_ids = key['local_GCAM_id_list'][valid_crops[0]]
+    gcam_price_ids = key['GCAM_price_id'][valid_crops[0]].astype(int)
+    int_yrs = np.where(df['year'] == year)
+    end_yrs = np.where(df['year'] == find_nearest(df['year'], (year+Nt)))
 
-        CropCount += 1
+    # setup output array
+    out = np.zeros([Nt+1, len(valid_crops[0])])
+    out[0, :] = np.transpose(srb_ids)
 
-        assert isinstance(row[0], str), 'convert_gcamland_prices.py ERROR: Crop name not string'
+    for c in np.arange(len(crop_names)):
+        yrs = df['year'][np.arange(int_yrs[0][c], end_yrs[0][c]+1)]
+        yrs_ser = np.arange(yrs.iloc[0], yrs.iloc[-1])
+        # TODO: potentially use profit calculated as profit / km2
+        prices = df['expectedPrice'][np.arange(int_yrs[0][c], end_yrs[0][c]+1)]
+        m, b, r_val, p_val, stderr = linregress(yrs, prices)
+        price_pred = m*yrs_ser + b
+        conversion = np.where(gcam_price_ids == crop_ids[c])
+        out[1:, conversion[0][0]] = np.transpose(price_pred)
 
-
-
-
-        if (CropCount == 1):
-            P_allcrops = P
-        else:
-            P_allcrops = np.column_stack((P_allcrops, P))
-
-    if (CropCount != Nc):
+    if out.shape[1] != Nc:
         print('\nERROR: Mismatch in number of crops read and provided as input\n')
-        print(str(Nc) + ' crops were expected, ' + str(CropCount) + ' were read. Check input\n')
+        print(str(Nc) + ' crops were expected, ' + str(out.shape[1]) + ' were read. Check key file\n')
         sys.exit()
 
     with open(CropFileOut, 'w') as fp:
 
-        np.savetxt(fp, np.asarray(crop_ids, dtype=np.int32).reshape((1, Nc)), delimiter=',', fmt='%d')
-        np.savetxt(fp, P_allcrops, delimiter=',', fmt='%.2f')
+        #np.savetxt(fp, np.asarray(crop_ids, dtype=np.int32).reshape((1, Nc)), delimiter=',', fmt='%d')
+        np.savetxt(fp, out, delimiter=',', fmt='%.2f')
 
         fp.close()
 
