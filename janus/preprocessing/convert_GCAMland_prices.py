@@ -99,10 +99,7 @@ def main(argv):
         sys.exit()
 
     with open(CropFileOut, 'w') as fp:
-
-        #np.savetxt(fp, np.asarray(crop_ids, dtype=np.int32).reshape((1, Nc)), delimiter=',', fmt='%d')
         np.savetxt(fp, out, delimiter=',', fmt='%.2f')
-
         fp.close()
 
 
