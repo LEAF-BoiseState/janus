@@ -31,8 +31,7 @@ def main(argv):
 
     if len(argv) != 7:
         print('\nERROR: Incorrect number of command line arguments\n')
-        print(
-            'Usage: convert_gcamland_prices.py <no. crops> <no. time steps> <Input CSV file> <Output CSV file> <Key file>\n')
+        print('Usage: convert_gcamland_prices.py <no. crops> <no. time steps> <Input CSV file> <Output CSV file> <Key file>\n')
         print('\tconvert_gcamland_prices.py   = Name of this python script')
         print('\t<no. crops>                  = Number of crops to synthesize prices for')
         print('\t<no. time steps>             = Number of time steps to generate prices for')
