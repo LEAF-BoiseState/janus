@@ -21,7 +21,8 @@ def main(argv):
     :param argv[1]: Number of crops to create profit time series for
     :param argv[2]: Number of time steps in the time series
     :param argv[3]: Name of CSV file with GCAMland outputs including path if CSV file is in a different directory
-    :param argv[4]: Name of CSV file to which profit time series will be written, including path to output if in a different directory than the script
+    :param argv[4]: Name of CSV file to which profit time series will be written, including path to output if in
+    a different directory than the script
     :param argv[5]: Start year of model run
     :param argv[6]: Name of key file including path if not in directory
     :return: null (output written to file)
@@ -52,36 +53,45 @@ def main(argv):
     assert Nt > 0, 'convert_gcamland_prices.py ERROR: Negative number of time steps encountered'
     assert Nc <= 28, 'convert_gcamland_prices.py ERROR: Too many crops encountered'
 
+    # function to find nearest value
     def find_nearest(array, value):
         array = np.asarray(array)
         idx = (np.abs(array - value)).argmin()
         return array[idx]
-
-    df = pd.read_csv(CropFileIn)
+    # read input data
+    gcam_dat = pd.read_csv(CropFileIn)
     key = pd.read_csv(key_file)
 
-    crop_names = df.name.unique()
-    crop_ids = key['GCAM_SRB_id'][0:len(crop_names)]
-    valid_crops = np.where(key['GCAM_price_id'].notna())
-
+    # parse input data
+    crop_names = gcam_dat.name.unique()
+    valid_crops = np.where(key['GCAM_price_id'].notna())  # SRB LU categories with crop prices
+    gcam_srb_names = key['GCAM_price_id'][valid_crops[0]]  # crop categories from GCAMland to use for SRB crop prices
     srb_ids = key['local_GCAM_id_list'][valid_crops[0]]
-    gcam_price_ids = key['GCAM_price_id'][valid_crops[0]].astype(int)
-    int_yrs = np.where(df['year'] == year)
-    end_yrs = np.where(df['year'] == find_nearest(df['year'], (year+Nt)))
+
+    assert all(np.sort(gcam_srb_names.unique()) == np.sort(crop_names)), 'convert_gcamland_prices.py ERROR: Crop ' \
+                                                                         'names from GCAMland do not match keyfile'
+
+    # find start and end years from gcam data
+    int_yrs = np.where(gcam_dat['year'] == year)
+    end_yrs = np.where(gcam_dat['year'] == find_nearest(gcam_dat['year'], (year+Nt)))
 
     # setup output array
     out = np.zeros([Nt+1, len(valid_crops[0])])
     out[0, :] = np.transpose(srb_ids)
 
     for c in np.arange(len(crop_names)):
-        yrs = df['year'][np.arange(int_yrs[0][c], end_yrs[0][c]+1)]
+        yrs = gcam_dat['year'][np.arange(int_yrs[0][c], end_yrs[0][c]+1)]
         yrs_ser = np.arange(yrs.iloc[0], yrs.iloc[-1])
         # TODO: potentially use profit calculated as profit / km2
-        prices = df['expectedPrice'][np.arange(int_yrs[0][c], end_yrs[0][c]+1)]
+        prices = gcam_dat['expectedPrice'][np.arange(int_yrs[0][c], end_yrs[0][c]+1)]
+        # create regression based off of GCAM data
         m, b, r_val, p_val, stderr = linregress(yrs, prices)
+        # predict prices for every year
         price_pred = m*yrs_ser + b
-        conversion = np.where(gcam_price_ids == crop_ids[c])
-        out[1:, conversion[0][0]] = np.transpose(price_pred)
+
+        gcam_srb_idx = np.where(gcam_srb_names == crop_names[c])
+        for i in np.arange(len(gcam_srb_idx[0])):
+            out[1:, gcam_srb_idx[0][i]] = np.transpose(price_pred)
 
     if out.shape[1] != Nc:
         print('\nERROR: Mismatch in number of crops read and provided as input\n')
