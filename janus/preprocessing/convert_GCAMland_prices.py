@@ -13,6 +13,7 @@ import sys
 import pandas as pd
 from scipy.stats import linregress
 
+
 def main(argv):
     """Description
 
@@ -28,9 +29,10 @@ def main(argv):
     :return: null (output written to file)
     """
 
-    if (len(argv) != 7):
+    if len(argv) != 7:
         print('\nERROR: Incorrect number of command line arguments\n')
-        print('Usage: convert_gcamland_prices.py <no. crops> <no. time steps> <Input CSV file> <Output CSV file> <Key file>\n')
+        print(
+            'Usage: convert_gcamland_prices.py <no. crops> <no. time steps> <Input CSV file> <Output CSV file> <Key file>\n')
         print('\tconvert_gcamland_prices.py   = Name of this python script')
         print('\t<no. crops>                  = Number of crops to synthesize prices for')
         print('\t<no. time steps>             = Number of time steps to generate prices for')
@@ -58,6 +60,7 @@ def main(argv):
         array = np.asarray(array)
         idx = (np.abs(array - value)).argmin()
         return array[idx]
+
     # read input data
     gcam_dat = pd.read_csv(CropFileIn)
     key = pd.read_csv(key_file)
@@ -73,22 +76,22 @@ def main(argv):
 
     # find start and end years from gcam data
     int_yrs = np.where(gcam_dat['year'] == year)
-    end_yrs = np.where(gcam_dat['year'] == find_nearest(gcam_dat['year'], (year+Nt)))
+    end_yrs = np.where(gcam_dat['year'] == find_nearest(gcam_dat['year'], (year + Nt)))
 
     # setup output array
-    out = np.zeros([Nt+1, len(valid_crops[0])])
+    out = np.zeros([Nt + 1, len(valid_crops[0])])
     out[0, :] = np.transpose(srb_ids)
 
     for c in np.arange(len(crop_names)):
-        yrs = gcam_dat['year'][np.arange(int_yrs[0][c], end_yrs[0][c]+1)]
+        yrs = gcam_dat['year'][np.arange(int_yrs[0][c], end_yrs[0][c] + 1)]
         yrs_ser = np.arange(yrs.iloc[0], yrs.iloc[-1])
-        # TODO: potentially use profit calculated as profit / km2
-        prices = gcam_dat['expectedPrice'][np.arange(int_yrs[0][c], end_yrs[0][c]+1)]
+        # TODO: confirm use of GCAM profit (e.g. alt calculate as profit / km2)
+        prices = gcam_dat['expectedPrice'][np.arange(int_yrs[0][c], end_yrs[0][c] + 1)]
         # create regression based off of GCAM data
         m, b, r_val, p_val, stderr = linregress(yrs, prices)
         # predict prices for every year
-        price_pred = m*yrs_ser + b
-
+        price_pred = m * yrs_ser + b
+        # find corresponding SRB crop to place prices in outfile
         gcam_srb_idx = np.where(gcam_srb_names == crop_names[c])
         for i in np.arange(len(gcam_srb_idx[0])):
             out[1:, gcam_srb_idx[0][i]] = np.transpose(price_pred)
