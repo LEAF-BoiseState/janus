@@ -26,6 +26,7 @@ def main(argv):
     a different directory than the script
     :param argv[5]: Start year of model run
     :param argv[6]: Name of key file including path if not in directory
+    :param argv[7]: Resolution of model in km
     :return: null (output written to file)
     """
 
@@ -42,17 +43,18 @@ def main(argv):
         print('\t<Key file>                   = Key file that contains conversions between GCAM and janus\n')
         sys.exit()
 
-    Nc = int(argv[1])
-    Nt = int(argv[2])
+    nc = int(argv[1])
+    nt = int(argv[2])
     CropFileIn = argv[3]
     CropFileOut = argv[4]
     year = argv[5]
     key_file = argv[6]
+    res = argv[7]
 
     # Error traps
-    assert Nc > 0, 'convert_gcamland_prices.py ERROR: Negative number of crops encountered'
-    assert Nt > 0, 'convert_gcamland_prices.py ERROR: Negative number of time steps encountered'
-    assert Nc <= 28, 'convert_gcamland_prices.py ERROR: Too many crops encountered'
+    assert nc > 0, 'convert_gcamland_prices.py ERROR: Negative number of crops encountered'
+    assert nt > 0, 'convert_gcamland_prices.py ERROR: Negative number of time steps encountered'
+    assert nc <= 28, 'convert_gcamland_prices.py ERROR: Too many crops encountered'
 
     # function to find nearest value
     def find_nearest(array, value):
@@ -75,17 +77,17 @@ def main(argv):
 
     # find start and end years from gcam data
     int_yrs = np.where(gcam_dat['year'] == year)
-    end_yrs = np.where(gcam_dat['year'] == find_nearest(gcam_dat['year'], (year + Nt)))
+    end_yrs = np.where(gcam_dat['year'] == find_nearest(gcam_dat['year'], (year + nt)))
 
     # setup output array
-    out = np.zeros([Nt + 1, len(valid_crops[0])])
+    out = np.zeros([nt + 1, len(valid_crops[0])])
     out[0, :] = np.transpose(srb_ids)
 
     for c in np.arange(len(crop_names)):
         yrs = gcam_dat['year'][np.arange(int_yrs[0][c], end_yrs[0][c] + 1)]
         yrs_ser = np.arange(yrs.iloc[0], yrs.iloc[-1])
-        # TODO: confirm use of GCAM profit (e.g. alt calculate as profit / km2)
-        prices = gcam_dat['expectedPrice'][np.arange(int_yrs[0][c], end_yrs[0][c] + 1)]
+        gcam_dat['value'] = gcam_dat['expectedPrice']*gcam_dat['expectedYield']*247.2*907.185
+        prices = gcam_dat['value'][np.arange(int_yrs[0][c], end_yrs[0][c] + 1)]
         # create regression based off of GCAM data
         m, b, r_val, p_val, stderr = linregress(yrs, prices)
         # predict prices for every year
@@ -95,11 +97,11 @@ def main(argv):
         for i in np.arange(len(gcam_srb_idx[0])):
             out[1:, gcam_srb_idx[0][i]] = np.transpose(price_pred)
 
-    if out.shape[1] != Nc:
+    if out.shape[1] != nc:
         print('\nERROR: Mismatch in number of crops read and provided as input\n')
-        print(str(Nc) + ' crops were expected, ' + str(out.shape[1]) + ' were read. Check key file\n')
+        print(str(nc) + ' crops were expected, ' + str(out.shape[1]) + ' were read. Check key file\n')
         sys.exit()
-
+    # TODO: fix the warning here
     with open(CropFileOut, 'w') as fp:
         np.savetxt(fp, out, delimiter=',', fmt='%.2f')
         fp.close()
