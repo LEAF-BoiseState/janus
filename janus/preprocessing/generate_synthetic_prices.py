@@ -7,7 +7,7 @@ Created on Mon Sep 16 14:23:05 2019
 """
 
 # TODO: Need to create RunProfitGenerator in config file. If value 0 = do not run GenerateSyntheticProfits.
-#      If 0 = do not run this script (must specify profit profiles to read in). If 1 = run ihis script
+#      (must specify profit profiles to read in). If 1 = run this script
 #      (must specify profit generator parameter input file AND associate output file, which will then be
 #      used to run the actual model)
 
@@ -20,7 +20,7 @@ NPRICE_FUNCTIONS = 3  # Number of profit functions in this script. If the user
 # to reflect the total number of synthetic profit functions
 # in this script.
 
-#=============================================================================#
+# =========================================================================== #
 #                                                                             #
 #             GeneratePrice_linear(Nt, Pi, Pf, perturb, s_p=0.0)              #
 #                                                                             #
@@ -147,7 +147,7 @@ def GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p=0.0):
 
     return P
 
-# TODO: have Lejo double checj n_period description
+# TODO: have Lejo double check n_period description
 #=============================================================================#
 #                                                                             #
 #      GeneratePrice_periodic(Nt, Pmag, Pamp, n_period, perturb, s_p=0.0)     #
