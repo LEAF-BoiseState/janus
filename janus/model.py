@@ -223,6 +223,8 @@ class Janus:
                                   self.c.Nt, self.c.n, self.c.scale, self.c.output_dir,
                                   self.profits_actual[self.c.Nt-1, :, :])
 
+        ppf.plot_lc(self.crop_id_all, 2, self.c.target_year, self.c.output_dir)
+
     def save_outputs(self):
         """Save outputs as NumPy arrays.
         
@@ -239,6 +241,8 @@ class Janus:
 
         # save domain, can be used for initialization
         np.save(out_file.format('domain', self.c.scale, self.c.Nt), self.agent_domain)
+
+
 
 
 if __name__ == '__main__':
