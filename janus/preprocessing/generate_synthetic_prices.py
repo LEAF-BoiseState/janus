@@ -136,7 +136,7 @@ def GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p=0.0):
     assert Pi >= 0.0, 'generate_synthetic_prices.py ERROR: Pi must be greater than or equal to 0.0'
     assert Pf >= 0.0, 'generate_synthetic_prices.py ERROR: Pf must be greater than or equal to 0.0'
     assert t_step > 0.0, 'generate_synthetic_prices.py ERROR: Step price change time is less than 0.0'
-    assert t_step < 1.0, 'generate_synthetic_prices.py ERROR: Step price change time is greeater than 1.0'
+    assert t_step < 1.0, 'generate_synthetic_prices.py ERROR: Step price change time is greater than 1.0'
 
     P = np.zeros((Nt, 1))
     P[0:(int(t_step * Nt))] = Pi
@@ -182,7 +182,7 @@ def GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p=0.0):
 #                                                                             #
 #          (1) Error trap to ensure that Pmag and Pamp are greater than 0.    #
 #          (2) Create an (Nt x 1) numpy array that is a sinusoidal signal     #
-#              with  n_period periods over Nt timesteps.                      #
+#              with  n_period periods over Nt time steps.                      #
 #          (3) Scale and shift the sinusoid such that it fluctuates about     #
 #              Pmag with an amplitude Pamp.                                   #
 #          (4) Check if the perturb flag is set to true                       #
@@ -194,10 +194,10 @@ def GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p=0.0):
 def GeneratePrice_periodic(Nt, Pmag, Pamp, n_period, perturb, s_p=0.0):
     """Description
 
-    :param Nt: Number of timesteps in the model
+    :param Nt: Number of time steps in the model
     :param Pmag: Level about which profit fluctuates through time
     :param Pamp: Amplitude of profit fluctuation
-    :param n_period: Number of periods during the Nt timesteps. Can be negative to reflect sinusoid about Y axis.
+    :param n_period: Number of periods during the Nt time steps. Can be negative to reflect sinusoid about Y axis.
     :param perturb: Perturbation flag. 0 = no random perturbations to profit. 1 = add zero mean, uncorrelated noise to every time step
     :param s_p: Standard deviation of noise added to profit signal at each time step (default = 0.0)
 
@@ -234,7 +234,7 @@ def GeneratePrice_periodic(Nt, Pmag, Pamp, n_period, perturb, s_p=0.0):
 #          argv[0] = The name of this function (generate_synthetic_prices).   #
 #          argv[1] = The string representation of the number of crops for     #
 #                    which prices will be synthesized.                        #
-#          argv[2] = The string representation of the number of timesteps for #
+#          argv[2] = The string representation of the number of time steps for#
 #                    which prices will be generated for every crop.           #
 #          argv[3] = The string containing the name of the CSV file that      #
 #                    contains information on what mathematical form crop      #
@@ -250,7 +250,7 @@ def GeneratePrice_periodic(Nt, Pmag, Pamp, n_period, perturb, s_p=0.0):
 #                                                                             #
 #          (1) Error trap for correct number of command line arguments, print #
 #              usage statement.                                               #
-#          (2) Save command line arguments to variablles, and error trap for  #
+#          (2) Save command line arguments to variables, and error trap for  #
 #              validity of input.                                             #
 #          (3) Open the input file containing information on how prices will  #
 #              be generated, error trap.                                      #
@@ -331,7 +331,7 @@ def main(argv):
 
         price_fxn_type = int(row[2])
 
-        if (price_fxn_type == 1):  # Linear ramp (use for linearlly increasing, decreasing, constant prices)
+        if price_fxn_type == 1:  # Linear ramp (use for linearly increasing, decreasing, constant prices)
             assert len(
                 row) == 7, 'generate_synthetic_prices.py ERROR: Incorrect number of parameters for linear ramp in row ' + str(
                 CropCount)
@@ -339,14 +339,14 @@ def main(argv):
             Pi = float(row[3])
             Pf = float(row[4])
             perturb = int(row[5])
-            if (perturb == 1):
+            if perturb == 1:
                 s_p = float(row[6])
             else:
                 s_p = 0.0
 
             P = GeneratePrice_linear(Nt, Pi, Pf, perturb, s_p)
 
-        elif (price_fxn_type == 2):  # Step function (use for step increase or decrease in price)
+        elif price_fxn_type == 2:  # Step function (use for step increase or decrease in price)
             assert len(
                 row) == 8, 'generate_synthetic_prices.py ERROR: Incorrect number of parameters for step change in row ' + str(
                 CropCount)
@@ -355,14 +355,14 @@ def main(argv):
             Pf = float(row[4])
             t_step = float(row[5])
             perturb = int(row[6])
-            if (perturb == 1):
+            if perturb == 1:
                 s_p = float(row[7])
             else:
                 s_p = 0.0
 
             P = GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p)
 
-        elif (price_fxn_type == 3):  # Sinusoidal fluctuation in price
+        elif price_fxn_type == 3:  # Sinusoidal fluctuation in price
             assert len(
                 row) == 8, 'generate_synthetic_prices.py ERROR: Incorrect number of parameters for periodic price in row ' + str(
                 CropCount)
@@ -371,26 +371,26 @@ def main(argv):
             Pamp = float(row[4])
             n_period = float(row[5])
             perturb = int(row[6])
-            if (perturb == 1):
+            if perturb == 1:
                 s_p = float(row[7])
             else:
                 s_p = 0.0
 
             P = GeneratePrice_periodic(Nt, Pmag, Pamp, n_period, perturb, s_p)
 
-        if (CropCount == 1):
+        if CropCount == 1:
             P_allcrops = P
         else:
             P_allcrops = np.column_stack((P_allcrops, P))
 
-    if (CropCount != Nc):
+    if CropCount != Nc:
         print('\nERROR: Mismatch in number of crops read and provided as input\n')
         print(str(Nc) + ' crops were expected, ' + str(CropCount) + ' were read. Check input\n')
         sys.exit()
 
     with open(CropFileOut, 'w') as fp:
 
-        np.savetxt(fp, np.asarray(crop_ids, dtype=np.int32).reshape((1, Nc)), delimiter=',', fmt='%d')
+       # np.savetxt(fp, np.asarray(crop_ids, dtype=np.int32).reshape((1, Nc)), delimiter=',', fmt='%d')
         np.savetxt(fp, P_allcrops, delimiter=',', fmt='%.2f')
 
         fp.close()
