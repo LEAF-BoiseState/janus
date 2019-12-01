@@ -32,7 +32,7 @@ def main(argv):
 
     if len(argv) != 7:
         print('\nERROR: Incorrect number of command line arguments\n')
-        print('Usage: convert_gcamland_prices.py <no. crops> <no. time steps> <Input CSV file> <Output CSV file> <Key file>\n')
+        print('Usage: convert_gcamland_prices.py <no. crops> <no. time steps> <Input CSV file> <Output CSV file> <Key file> <Resolution km>\n')
         print('\tconvert_gcamland_prices.py   = Name of this python script')
         print('\t<no. crops>                  = Number of crops to synthesize prices for')
         print('\t<no. time steps>             = Number of time steps to generate prices for')
@@ -86,7 +86,7 @@ def main(argv):
     for c in np.arange(len(crop_names)):
         yrs = gcam_dat['year'][np.arange(int_yrs[0][c], end_yrs[0][c] + 1)]
         yrs_ser = np.arange(yrs.iloc[0], yrs.iloc[-1])
-        gcam_dat['value'] = gcam_dat['expectedPrice']*gcam_dat['expectedYield']*247.2*907.185
+        gcam_dat['value'] = gcam_dat['expectedPrice']*gcam_dat['expectedYield']*247.2*907.185*res
         prices = gcam_dat['value'][np.arange(int_yrs[0][c], end_yrs[0][c] + 1)]
         # create regression based off of GCAM data
         m, b, r_val, p_val, stderr = linregress(yrs, prices)
@@ -101,6 +101,7 @@ def main(argv):
         print('\nERROR: Mismatch in number of crops read and provided as input\n')
         print(str(nc) + ' crops were expected, ' + str(out.shape[1]) + ' were read. Check key file\n')
         sys.exit()
+
     # TODO: fix the warning here
     with open(CropFileOut, 'w') as fp:
         np.savetxt(fp, out, delimiter=',', fmt='%.2f')
