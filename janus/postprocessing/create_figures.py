@@ -7,6 +7,7 @@ Created on Mon Aug 12 15:35:49 2019
 import os
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
@@ -170,5 +171,22 @@ def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, 
         ax.plot(out[i][0], out[i][1])
 
     output_figure = os.path.join(results_path, 'Switching_curves_{}m_{}yr.png'.format(scale, nt))
+    plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
+    plt.close()
+
+def plot_price_signals(price_file, key_file, year, nt, results_path):
+
+    prices = pd.read_csv(price_file)
+    key = pd.read_csv(key_file)
+    labs = key['local_GCAM_Name'][key['GCAM_price_id'].notna()]
+    ts = np.arange(year, year+nt)
+
+    ax = plt.axes()
+    ax.plot(ts, prices)  # TODO: add legend in
+    # ax.legend(loc='lower right')
+    ax.set_ylabel('Crop Price $ per km2')
+    ax.set_xlabel('Time [yr]')
+
+    output_figure = os.path.join(results_path, '{}_price_signals.png'.format(price_file))
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
