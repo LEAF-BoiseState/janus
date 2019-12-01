@@ -1,7 +1,7 @@
 """
 Agent Based Model of Land Use and Land Cover Change 
 
-@author: lejoflores & kendrakaiser
+@author: Kendra Kaiser & Lejo Flores
 
 @license: BSD 2-Clause
 """
@@ -70,7 +70,7 @@ class Janus:
     def initialize_landscape_domain(self):
         """Initialize landscape and domain.
 
-        :return: lc, numpy array of landcover categories within domain at scale of interest
+        :return: lc, numpy array of land cover categories within domain at scale of interest
         :return: dist2city, numpy array of distance to nearest city cell
         :return: domain, grid of dCell classes
         :return: ny, number of rows in domain
@@ -93,7 +93,7 @@ class Janus:
         """Initialize crops
 
         :return: crop_ids, numpy array of the crop IDs that are in the domain
-        :return: crop_id_all, numpy array of landcover categories through time
+        :return: crop_id_all, numpy array of land cover categories through time
         :return: ag, numpy array of where agricultural cells exist in the domain
         :return: num_crops, integer og the number of crops being assessed
 
@@ -113,27 +113,30 @@ class Janus:
 
         return crop_ids, crop_id_all, ag, num_crops
 
-    def initialize_profit(self, profit ='GCAM'):
+    def initialize_profit(self):
         """Initialize profits based on profit signals csv that is either generated or input from other model output
+        :param profit: Choice between using generated price signals, or prices from GCAM
 
         :return: profits_actual is the profit signal with a random variation 
         :return: profit_signals is the transposed profit signals cleaned to be used in other functions
 
         """
-        if profit == 'generated':
+        if self.c.profits == 'generated':
 
             profit_signals = np.transpose(self.c.profits_file.values)
 
-            assert np.all([profit_signals[:, 0], self.crop_ids[:, 0]]), 'Crop IDs in profit signals do not match Crop IDs from landcover'
+            assert np.all([profit_signals[:, 0], self.crop_ids[:, 0]]), 'Crop IDs in profit signals do not match ' \
+                                                                        'Crop IDs from land cover'
 
             profit_signals = profit_signals[:, 1:]
 
-        elif profit == 'GCAM':
-            profit_signals = np(self.c.gcam_profits_file.values)
+        elif self.c.profits == 'gcam':
+            profit_signals = np.transpose(self.c.gcam_profits_file.values)
         else:
             print("Profit type not supported")
 
-        assert profit_signals.shape[1] == self.c.Nt, 'The number of timesteps in the profit signals do not match the number of model timesteps'
+        assert profit_signals.shape[1] == self.c.Nt, 'The number of time steps in the profit signals do not ' \
+                                                       'match the number of model time steps'
 
         profits_actual = init_agent.profits(profit_signals, self.c.Nt, self.Ny, self.Nx, self.crop_id_all, self.crop_ids)
 
@@ -147,7 +150,8 @@ class Janus:
 
         """
 
-        tenure = get_nass.tenure_area(self.c.state, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables, self.c.nass_api_key)
+        tenure = get_nass.tenure_area(self.c.state, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables,
+                                      self.c.nass_api_key)
 
         ages = get_nass.ages(self.c.nass_year, self.c.state, self.c.nass_api_key)
 
@@ -199,12 +203,12 @@ class Janus:
                                                                                                     profit_last,
                                                                                                     crop_choice,
                                                                                                     profit_choice,
-                                                                                                    seed=False)
+                                                                                                    seed = False)
 
                         # update agent attributes
                         self.agent_domain[j, k].FarmerAgents[0].update_age()
                         if self.agent_domain[j, k].FarmerAgents[0].LandStatus != 2:
-                            self.agent_domain[j,k].FarmerAgents[0].update_switch()
+                            self.agent_domain[j, k].FarmerAgents[0].update_switch()
 
     def plot_results(self):
         """Create result plots and save them."""
@@ -216,7 +220,9 @@ class Janus:
                             self.c.scale, self.c.output_dir)
 
         ppf.plot_switching_curves(self.agent_domain, self.agent_array, self.c.fmin, self.c.fmax, self.Ny, self.Nx,
-                                  self.c.Nt, self.c.n, self.c.scale, self.c.output_dir, self.profits_actual[self.c.Nt-1, :, :])
+                                  self.c.Nt, self.c.n, self.c.scale, self.c.output_dir,
+                                  self.profits_actual[self.c.Nt-1, :, :])
+
     def save_outputs(self):
         """Save outputs as NumPy arrays.
         
@@ -253,7 +259,7 @@ if __name__ == '__main__':
     parser.add_argument('-fmax', '--fmax', type=float, help='The fraction of current profit at which the CDF of the beta distribution is one')
     parser.add_argument('-n', '--n', type=int, help='The number of points to generate in the CDF')
     parser.add_argument('-seed', '--crop_seed_size', type=int, help='Seed to set for random number generators for unit testing')
-    parser.add_argument('-yr', '--initalization_yr', type=int, help='Initialization year assocciated with landcover input')
+    parser.add_argument('-yr', '--initialization_yr', type=int, help='Initialization year assocciated with landcover input')
     parser.add_argument('-state', '--state', type=str, help='State where NASS data is pulled from, capitalized acronym')
     parser.add_argument('-sc', '--scale', type=int, help='Scale of landcover grid in meters. Current options are 1000 and 3000 m')
     parser.add_argument('-cl', '--county_list', type=list, help='List of county names to evaluate from the input shapefile.')
