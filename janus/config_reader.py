@@ -12,6 +12,7 @@ class ConfigReader:
     F_COUNTIES_SHP = 'f_counties_shp'
     F_KEY_FILE = 'f_key_file'
     F_GCAM_FILE = 'f_gcam_file'
+    PROFITS = 'profits'
     F_PROFITS_FILE = 'f_profits_file'
     F_GCAM_PROFITS_FILE = 'f_gcam_profits_file'
     NT = 'nt'
@@ -45,6 +46,8 @@ class ConfigReader:
         self.key_file = pd.read_csv(c[ConfigReader.F_KEY_FILE])
 
         self.gcam_file = c[ConfigReader.F_GCAM_FILE]
+
+        self.profits = c[ConfigReader.PROFITS]
 
         self.profits_file = pd.read_csv(c[ConfigReader.F_PROFITS_FILE], header=None)
 
