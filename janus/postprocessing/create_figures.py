@@ -128,7 +128,7 @@ def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, scale, results_path):
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
 
-
+# TODO: make these plot based on category, or histogram or each parameter?
 def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, results_path, profits):
     """Histogram of agent ages at end of model run
 
@@ -189,4 +189,21 @@ def plot_price_signals(price_file, key_file, year, nt, results_path):
 
     output_figure = os.path.join(results_path, '{}_price_signals.png'.format(price_file))
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
+    plt.close()
+
+def plot_lc(crop_id_all, t, year, results_path):
+    """ Create spatial plot of land cover at a certain time
+
+    :param crop_id_all: numpy array of land cover over time
+    :param t:          time step to plot
+
+    :return: Spatial plot of land cover
+
+    """
+
+    plt.figure(figsize=(12, 12))
+    plt.imshow(crop_id_all[t, :, :], interpolation='none')
+
+    output_figure = os.path.join(results_path, 'landcover_{}.png'.format(year+t))
+    plt.savefig(output_figure, dpi=300)
     plt.close()
