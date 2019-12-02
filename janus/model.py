@@ -162,7 +162,7 @@ class Janus:
         agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, cat_option)
 
         agent_domain = init_agent.agents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf, self.c.switch,
-                                         self.Ny, self.Nx, self.lc, self.c.p, self.c.attr)
+                                         self.Ny, self.Nx, self.lc, self.c.attr, self.c.p)
 
         return agent_domain, agent_array
 
@@ -207,8 +207,9 @@ class Janus:
 
                         # update agent attributes
                         self.agent_domain[j, k].FarmerAgents[0].update_age()
-                        if self.agent_domain[j, k].FarmerAgents[0].LandStatus != 2:
-                            self.agent_domain[j, k].FarmerAgents[0].update_switch()
+                        if self.c.attr:
+                            if self.agent_domain[j, k].FarmerAgents[0].LandStatus != 2:
+                                self.agent_domain[j, k].FarmerAgents[0].update_switch()
 
     def plot_results(self):
         """Create result plots and save them."""
@@ -221,7 +222,7 @@ class Janus:
 
         ppf.plot_switching_curves(self.agent_domain, self.agent_array, self.c.fmin, self.c.fmax, self.Ny, self.Nx,
                                   self.c.Nt, self.c.n, self.c.scale, self.c.output_dir,
-                                  self.profits_actual[self.c.Nt-1, :, :])
+                                  self.profits_actual[self.c.Nt-1, :, :], self.c.switch)
 
         ppf.plot_lc(self.crop_id_all, 2, self.c.target_year, self.c.output_dir)
 

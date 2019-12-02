@@ -152,7 +152,7 @@ def make_tenure_cdf(var_array):
     return perc
     
 
-def farmer_data(TenureCDF, AgeCDF, switch, d2c, p=0.5, attr=True):
+def farmer_data(TenureCDF, AgeCDF, switch, d2c, attr, p):
     """Collect agent data from NASS distributions and place in dictionary.
 
     :param TenureCDF:  Numpy array from make_tenure_cdf function. Full owner, Part Owner, Tenant
@@ -164,8 +164,7 @@ def farmer_data(TenureCDF, AgeCDF, switch, d2c, p=0.5, attr=True):
     :return: Dictionary with farmer data based on NASS data
 
     """
-    ss = np.random.random_sample()
-    ts = np.random.random_sample() 
+    ts = np.random.random_sample()
     ageS = np.random.random_sample()
     
     if ageS < AgeCDF[0, 1]:
@@ -187,6 +186,7 @@ def farmer_data(TenureCDF, AgeCDF, switch, d2c, p=0.5, attr=True):
         a_alpha = switch[k][0] + (ageI-18)*0.005  # initiate switching as a function of age
         a_beta = switch[k][1] - (ageI-18)*0.0005  # initiate switching as a function of age
     else:
+        ss = np.random.random_sample()
         if ss >= p:
             k = 0  # switching averse
         else:

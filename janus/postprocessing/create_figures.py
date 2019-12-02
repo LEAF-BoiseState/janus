@@ -13,6 +13,7 @@ import matplotlib.animation as animation
 
 import janus.agents.farmer as farmer
 import janus.crop_functions.crop_decider as crpdec
+from collections import Counter
 
 def create_animation(crop_id_all, nt):
     """ Create gif of land cover over time
@@ -128,8 +129,9 @@ def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, scale, results_path):
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
 
+
 # TODO: make these plot based on category, or histogram or each parameter?
-def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, results_path, profits):
+def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, results_path, profits, switch_params):
     """Histogram of agent ages at end of model run
 
     :param domain:       Domain with agent data
@@ -153,7 +155,6 @@ def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, 
     profit_act = []
 
     for i in np.arange(Ny):
-
         for j in np.arange(Nx):
             # TODO: set flag for whether they are switching averse or not so they can be color coded
             if AgentArray[i, j] == farmer.Farmer.__name__:
@@ -161,19 +162,29 @@ def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, 
                 beta_params = np.append(beta_params, domain[i, j].FarmerAgents[0].beta)
                 profit_act = np.append(profit_act, profits[i, j])
 
+    col = [0] * len(alpha_params)
+    for i in np.arange(len(alpha_params)):
+        if alpha_params[i] >= switch_params[0][0]:
+            col[i] = 'k'
+        else:
+            col[i] = 'b'
+
     out = [0] * len(alpha_params)
     for i in np.arange(len(alpha_params)):
         out[i] = crpdec.switching_prob_curve(alpha_params[i], beta_params[i], fmin, fmax, n, profit_act[i])
-
+    print(len(col))
+    print(Counter(col).keys())
+    print(Counter(col).values())
 # TODO: Why is the x scale so large?
     plt.rcParams.update({'font.size': 16})
-    ax = plt.axes()
-    for i in np.arange(len(out)):
-        ax.plot(out[i][0], out[i][1])
+    #ax = plt.axes()
+    #for i in np.arange(len(out)):
+     #   ax.plot(out[i][0], out[i][1], color=col[i])
 
-    ax.set_ylabel('Probability of switching')
-    ax.set_xlabel('Profit')
+    #ax.set_ylabel('Probability of switching')
+    #ax.set_xlabel('Profit')
 
+    plt.hist(col)
     output_figure = os.path.join(results_path, 'Switching_curves_{}m_{}yr.png'.format(scale, nt))
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
