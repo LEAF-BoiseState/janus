@@ -130,7 +130,6 @@ def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, scale, results_path):
     plt.close()
 
 
-# TODO: make these plot based on category, or histogram or each parameter?
 def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, results_path, profits, switch_params):
     """Histogram of agent ages at end of model run
 
@@ -156,7 +155,6 @@ def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, 
 
     for i in np.arange(Ny):
         for j in np.arange(Nx):
-            # TODO: set flag for whether they are switching averse or not so they can be color coded
             if AgentArray[i, j] == farmer.Farmer.__name__:
                 alpha_params = np.append(alpha_params, domain[i, j].FarmerAgents[0].alpha)
                 beta_params = np.append(beta_params, domain[i, j].FarmerAgents[0].beta)
@@ -177,14 +175,18 @@ def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, 
     print(Counter(col).values())
 # TODO: Why is the x scale so large?
     plt.rcParams.update({'font.size': 16})
+    # TODO: make these a multi-plot
     #ax = plt.axes()
     #for i in np.arange(len(out)):
      #   ax.plot(out[i][0], out[i][1], color=col[i])
 
     #ax.set_ylabel('Probability of switching')
     #ax.set_xlabel('Profit')
+    plt.hist(alpha_params)
+    #plt.text(250, 4, Counter(col).keys()[0]':'Counter(col).values())
+    ax.set_ylabel('Alpha')
+    ax.set_xlabel('Count')
 
-    plt.hist(col)
     output_figure = os.path.join(results_path, 'Switching_curves_{}m_{}yr.png'.format(scale, nt))
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
