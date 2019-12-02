@@ -9,23 +9,29 @@ f_key_file: '/Users/kek25/Desktop/Data/CDL2GCAM_categories.csv'
 # gcam raster
 f_gcam_file: '/Users/kek25/Desktop/Data/gcam_2010_domain_3000.tiff'
 
+# TODO: add a profits choice flag to wherever it needs to be to set to one or the other
+#profit choice flag, gcam or generated
+profits: 'generated'
+
+# TODO have these run from within this script, taking in nt and setting nc
 # profits file
-f_profits_file: '/Users/kek25/Desktop/Data/GenerateSyntheticPrices_test_output.csv'
+f_profits_file: '/Users/kek25/Desktop/Data/out_ts2.csv'
+f_gcam_profits_file: '/Users/kek25/Desktop/Data/GCAMvalues.csv'
 
 # output directory
 output_directory: '/Users/kek25/Desktop/Data/Results'
 
 # number of time steps
-nt: 20
+nt: 30
 
 # list of lists for switching averse, tolerant, and neutral parameters (alpha, beta)
-switch_params: [[4.5, 1.0], [0.5, 3.0], [2.0, 2.0]]
+switch_params: [[4.5, 0.5], [0.25, 4.0], [2.0, 2.0]]
 
 # boolean of whether to base switching parameters on farmer attributes or not
-attr: True
+attr: False
 
-# proportion of each switching type, lower than p is averse, higher is tolerant
-p: 0.5
+# proportion of each switching type (0.95 = switching tolerant)
+p: 0.95
 
 # fraction of current profit at which the CDF is zero and one, and number of points to generate
 fmin: 1.0
