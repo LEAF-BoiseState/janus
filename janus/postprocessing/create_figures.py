@@ -155,7 +155,7 @@ def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, 
     for i in np.arange(Ny):
 
         for j in np.arange(Nx):
-
+            # TODO: set flag for whether they are switching averse or not so they can be color coded
             if AgentArray[i, j] == farmer.Farmer.__name__:
                 alpha_params = np.append(alpha_params, domain[i, j].FarmerAgents[0].alpha)
                 beta_params = np.append(beta_params, domain[i, j].FarmerAgents[0].beta)
@@ -165,10 +165,14 @@ def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, 
     for i in np.arange(len(alpha_params)):
         out[i] = crpdec.switching_prob_curve(alpha_params[i], beta_params[i], fmin, fmax, n, profit_act[i])
 
+# TODO: Why is the x scale so large?
     plt.rcParams.update({'font.size': 16})
     ax = plt.axes()
     for i in np.arange(len(out)):
         ax.plot(out[i][0], out[i][1])
+
+    ax.set_ylabel('Probability of switching')
+    ax.set_xlabel('Profit')
 
     output_figure = os.path.join(results_path, 'Switching_curves_{}m_{}yr.png'.format(scale, nt))
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
