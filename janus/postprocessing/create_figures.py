@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import seaborn as sns
 
 import janus.agents.farmer as farmer
 import janus.crop_functions.crop_decider as crpdec
@@ -71,10 +72,11 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
             CropIx = CropIDs[c]
             percentages[c, t] = np.sum((crop_id_all[t, :, :] == CropIx)) / agTot[t] * 100.0
         data.append(percentages[c, :])
-    
+    #print(CropIDs)
+    #print(percentages[:, -1])
     y = np.vstack(data)
-    
     t = np.arange(nt)
+
     plt.rcParams.update({'font.size': 16})
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(12, 12))
     
@@ -82,12 +84,24 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     active_crops = np.any(percentages, axis=1)
     ag = np.transpose(np.array(ag_cats))
     ac = np.array(ag[active_crops]).flatten()
-    
-    ax.stackplot(t,y, labels=key_file['local_GCAM_Name'][ac])
+
+    print(ac)
+    print(key_file['local_GCAM_Name'][ac])
+
+    clrs = ["powder blue", "windows blue", "royal blue", "amber", "ochre", "greyish", "faded green", "dark teal", "jungle green", "dusty purple", "bright purple",  "crimson", "red orange", "coral", ]
+    col = sns.xkcd_palette(clrs)
+    #col = sns.color_palette("Paired", len(ac))
+    ax.stackplot(t, y, colors=col)
+
+    #palette = plt.get_cmap('Set1', len(ac))
+    #num=0
+    #for c in np.arange(len(y)):
+     #  ax.plot(t, y[c, :], linewidth=2, color=palette(num))
+
     ax.set_xlim([0, nt - 1])
-    ax.set_ylim([0, 100])
+    ax.set_ylim([0, 90])
     ax.grid()
-    ax.legend(loc='lower right')
+    ax.legend(loc='upper right', labels=key_file['local_GCAM_Name'][ac])
 
     ax.set_ylabel('Percent Crop Choice')
     ax.set_xlabel('Time [yr]')
@@ -169,42 +183,42 @@ def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, 
 
     out = [0] * len(alpha_params)
     for i in np.arange(len(alpha_params)):
-        out[i] = crpdec.switching_prob_curve(alpha_params[i], beta_params[i], fmin, fmax, n, profit_act[i])
+        out[i] = crpdec.switching_prob_curve(alpha_params[i], beta_params[i], fmin, fmax, n, 1000) #profit_act[i]
     print(len(col))
     print(Counter(col).keys())
     print(Counter(col).values())
 # TODO: Why is the x scale so large?
     plt.rcParams.update({'font.size': 16})
     # TODO: make these a multi-plot
-    #ax = plt.axes()
-    #for i in np.arange(len(out)):
-     #   ax.plot(out[i][0], out[i][1], color=col[i])
+    ax = plt.axes()
+    for i in np.arange(len(out)):
+        ax.plot(out[i][0], out[i][1], color=col[i])
 
-    #ax.set_ylabel('Probability of switching')
-    #ax.set_xlabel('Profit')
-    plt.hist(alpha_params)
+    ax.set_ylabel('Probability of switching')
+    ax.set_xlabel('Profit')
+    #plt.hist(alpha_params)
     #plt.text(250, 4, Counter(col).keys()[0]':'Counter(col).values())
-    ax.set_ylabel('Alpha')
-    ax.set_xlabel('Count')
+    #plt.set_ylabel('Alpha')
+    #plt.set_xlabel('Count')
 
     output_figure = os.path.join(results_path, 'Switching_curves_{}m_{}yr.png'.format(scale, nt))
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
 
-def plot_price_signals(price_file, key_file, year, nt, results_path):
+def plot_price_signals(price_file, key, year, nt, results_path, profits_type):
 
-    prices = pd.read_csv(price_file)
-    key = pd.read_csv(key_file)
     labs = key['local_GCAM_Name'][key['GCAM_price_id'].notna()]
     ts = np.arange(year, year+nt)
 
     ax = plt.axes()
-    ax.plot(ts, prices)  # TODO: add legend in
+    for i in np.arange(len(price_file)):
+        ax.plot(ts, price_file[i, :]) #  , color=col[i])
+    # TODO: add legend in
     # ax.legend(loc='lower right')
     ax.set_ylabel('Crop Price $ per km2')
     ax.set_xlabel('Time [yr]')
 
-    output_figure = os.path.join(results_path, '{}_price_signals.png'.format(price_file))
+    output_figure = os.path.join(results_path, '{}_price_signals.png'.format(profits_type))
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
 
