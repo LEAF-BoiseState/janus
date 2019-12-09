@@ -226,6 +226,8 @@ class Janus:
 
         ppf.plot_lc(self.crop_id_all, 2, self.c.target_year, self.c.output_dir)
 
+        ppf.plot_price_signals(self.profit_signals, self.c.key_file, self.c.target_year, self.c.Nt, self.c.output_dir, self.c.profits)
+
     def save_outputs(self):
         """Save outputs as NumPy arrays.
         
