@@ -16,6 +16,7 @@ import janus.agents.farmer as farmer
 import janus.crop_functions.crop_decider as crpdec
 from collections import Counter
 
+
 def create_animation(crop_id_all, nt):
     """ Create gif of land cover over time
 
@@ -30,7 +31,7 @@ def create_animation(crop_id_all, nt):
     fig = plt.figure(figsize=(12, 12))
 
     for t in np.arange(nt):
-        im = plt.imshow(crop_id_all[t,:,:], interpolation='none')
+        im = plt.imshow(crop_id_all[t, :, :], interpolation='none')
         ims.append([im])
 
     ani = animation.ArtistAnimation(fig, ims, interval=50, blit=True, repeat_delay=1000)
@@ -55,53 +56,49 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     """
     ag_area = np.empty(shape=(nc, nt))
     for t in np.arange(nt):
-       cur_crop = crop_id_all[t, :, :]
-       for c in np.arange(nc):
-           bools = (cur_crop == CropIDs[c])
-           ag_area[c, t] = np.sum(bools)
-        
+        cur_crop = crop_id_all[t, :, :]
+        for c in np.arange(nc):
+            bools = (cur_crop == CropIDs[c])
+            ag_area[c, t] = np.sum(bools)
+
     agTot = np.sum(ag_area, axis=0)
 
-    names = []
     percentages = np.zeros((nc, nt))
-    data = []
     for c in np.arange(nc):
-        name = 'percentages[' + str(c) + ',:]'
-        names.append(name)
         for t in np.arange(nt):
             CropIx = CropIDs[c]
             percentages[c, t] = np.sum((crop_id_all[t, :, :] == CropIx)) / agTot[t] * 100.0
-        data.append(percentages[c, :])
-    #print(CropIDs)
-    #print(percentages[:, -1])
-    y = np.vstack(data)
     t = np.arange(nt)
 
     plt.rcParams.update({'font.size': 16})
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(12, 12))
-    
+
     # pull any crops planted in the time series for legend
     active_crops = np.any(percentages, axis=1)
     ag = np.transpose(np.array(ag_cats))
     ac = np.array(ag[active_crops]).flatten()
-
+    print(active_crops)
     print(ac)
+    print(CropIx)
+    print(CropIDs)
     print(key_file['local_GCAM_Name'][ac])
+    print(percentages)
+    # TODO: hard code color to crop,
+    clrs = ["powder blue", "windows blue", "royal blue", "sand", "grey blue", "spring green", "amber", "ochre",
+            "greyish", "faded green", "light grey", "light grey", "light grey", "dark teal", "jungle green",
+            "dusty purple", "light grey", "bright purple", "crimson", "red orange", "coral", 'purplish blue']
+    cc = dict(enumerate(clrs))
+    names = dict(enumerate(key_file['local_GCAM_Name'][ac]))
+    print(names)
+    cl = [cc[x] for x in ac]
+    col = sns.xkcd_palette(cl)
 
-    clrs = ["powder blue", "windows blue", "royal blue", "amber", "ochre", "greyish", "faded green", "dark teal", "jungle green", "dusty purple", "bright purple",  "crimson", "red orange", "coral", ]
-    col = sns.xkcd_palette(clrs)
-    #col = sns.color_palette("Paired", len(ac))
-    ax.stackplot(t, y, colors=col)
-
-    #palette = plt.get_cmap('Set1', len(ac))
-    #num=0
-    #for c in np.arange(len(y)):
-     #  ax.plot(t, y[c, :], linewidth=2, color=palette(num))
+    ax.stackplot(t, percentages, labels=key_file['local_GCAM_Name'][ac], colors=col)
 
     ax.set_xlim([0, nt - 1])
     ax.set_ylim([0, 90])
     ax.grid()
-    ax.legend(loc='upper right', labels=key_file['local_GCAM_Name'][ac])
+    ax.legend(loc='upper right')
 
     ax.set_ylabel('Percent Crop Choice')
     ax.set_xlabel('Time [yr]')
@@ -133,12 +130,11 @@ def plot_agent_ages(domain, AgentArray, Ny, Nx, nt, scale, results_path):
         for j in np.arange(Nx):
 
             if AgentArray[i, j] == farmer.Farmer.__name__:
-
                 FarmerAges = np.append(FarmerAges, domain[i, j].FarmerAgents[0].Age)
 
     plt.rcParams.update({'font.size': 16})
     plt.hist(FarmerAges)
-    
+
     output_figure = os.path.join(results_path, 'AgentAges_{}m_{}yr.png'.format(scale, nt))
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
@@ -183,11 +179,11 @@ def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, 
 
     out = [0] * len(alpha_params)
     for i in np.arange(len(alpha_params)):
-        out[i] = crpdec.switching_prob_curve(alpha_params[i], beta_params[i], fmin, fmax, n, 1000) #profit_act[i]
+        out[i] = crpdec.switching_prob_curve(alpha_params[i], beta_params[i], fmin, fmax, n, 1000)  # profit_act[i]
     print(len(col))
     print(Counter(col).keys())
     print(Counter(col).values())
-# TODO: Why is the x scale so large?
+    # TODO: Why is the x scale so large?
     plt.rcParams.update({'font.size': 16})
     # TODO: make these a multi-plot
     ax = plt.axes()
@@ -196,23 +192,23 @@ def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, 
 
     ax.set_ylabel('Probability of switching')
     ax.set_xlabel('Profit')
-    #plt.hist(alpha_params)
-    #plt.text(250, 4, Counter(col).keys()[0]':'Counter(col).values())
-    #plt.set_ylabel('Alpha')
-    #plt.set_xlabel('Count')
+    # plt.hist(alpha_params)
+    # plt.text(250, 4, Counter(col).keys()[0]':'Counter(col).values())
+    # plt.set_ylabel('Alpha')
+    # plt.set_xlabel('Count')
 
     output_figure = os.path.join(results_path, 'Switching_curves_{}m_{}yr.png'.format(scale, nt))
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
 
-def plot_price_signals(price_file, key, year, nt, results_path, profits_type):
 
+def plot_price_signals(price_file, key, year, nt, results_path, profits_type):
     labs = key['local_GCAM_Name'][key['GCAM_price_id'].notna()]
-    ts = np.arange(year, year+nt)
+    ts = np.arange(year, year + nt)
 
     ax = plt.axes()
     for i in np.arange(len(price_file)):
-        ax.plot(ts, price_file[i, :]) #  , color=col[i])
+        ax.plot(ts, price_file[i, :])  # , color=col[i])
     # TODO: add legend in
     # ax.legend(loc='lower right')
     ax.set_ylabel('Crop Price $ per km2')
@@ -221,6 +217,7 @@ def plot_price_signals(price_file, key, year, nt, results_path, profits_type):
     output_figure = os.path.join(results_path, '{}_price_signals.png'.format(profits_type))
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
+
 
 def plot_lc(crop_id_all, t, year, results_path):
     """ Create spatial plot of land cover at a certain time
@@ -235,6 +232,6 @@ def plot_lc(crop_id_all, t, year, results_path):
     plt.figure(figsize=(12, 12))
     plt.imshow(crop_id_all[t, :, :], interpolation='none')
 
-    output_figure = os.path.join(results_path, 'landcover_{}.png'.format(year+t))
+    output_figure = os.path.join(results_path, 'landcover_{}.png'.format(year + t))
     plt.savefig(output_figure, dpi=300)
     plt.close()
