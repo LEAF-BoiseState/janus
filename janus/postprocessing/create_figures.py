@@ -11,6 +11,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import seaborn as sns
+from matplotlib.colors import ListedColormap
+from matplotlib.patches import Patch
 
 import janus.agents.farmer as farmer
 import janus.crop_functions.crop_decider as crpdec
@@ -62,7 +64,6 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
             ag_area[c, t] = np.sum(bools)
 
     agTot = np.sum(ag_area, axis=0)
-
     percentages = np.zeros((nc, nt))
     for c in np.arange(nc):
         for t in np.arange(nt):
@@ -77,33 +78,26 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     active_crops = np.any(percentages, axis=1)
     ag = np.transpose(np.array(ag_cats))
     ac = np.array(ag[active_crops]).flatten()
-    print(active_crops)
-    print(ac)
-    print(CropIx)
-    print(CropIDs)
-    print(key_file['local_GCAM_Name'][ac])
-    print(percentages)
-    # TODO: hard code color to crop,
-    clrs = ["powder blue", "windows blue", "royal blue", "sand", "grey blue", "spring green", "amber", "ochre",
-            "greyish", "faded green", "light grey", "light grey", "light grey", "dark teal", "jungle green",
-            "dusty purple", "light grey", "bright purple", "crimson", "red orange", "coral", 'purplish blue']
+
+    clrs = ["powder blue", "windows blue", "royal blue", "sand", "grey blue", "greyish", "amber", "light gold",
+            "faded green", "washed out green", "pea soup", "rose", "light grey", "dark teal", "jungle green",
+            "dusty purple", "black", "bright purple", "green", "crimson", "eggshell","red orange", "burple",
+            "battleship grey","black", 'black']
     cc = dict(enumerate(clrs))
-    names = dict(enumerate(key_file['local_GCAM_Name'][ac]))
-    print(names)
     cl = [cc[x] for x in ac]
     col = sns.xkcd_palette(cl)
 
-    ax.stackplot(t, percentages, labels=key_file['local_GCAM_Name'][ac], colors=col)
+    ax.stackplot(t, percentages[active_crops, :], baseline='wiggle', labels=key_file['local_GCAM_Name'][ac], colors=col)
 
     ax.set_xlim([0, nt - 1])
-    ax.set_ylim([0, 90])
+    # ax.set_ylim([0, 90])
     ax.grid()
     ax.legend(loc='upper right')
 
     ax.set_ylabel('Percent Crop Choice')
     ax.set_xlabel('Time [yr]')
 
-    output_figure = os.path.join(results_path, 'CropPercentages_{}m_{}yr.png'.format(scale, nt))
+    output_figure = os.path.join(results_path, 'CropPercentages_{}m_{}yr.pdf'.format(scale, nt))
 
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
@@ -180,9 +174,7 @@ def plot_switching_curves(domain, AgentArray, fmin, fmax, Ny, Nx, nt, n, scale, 
     out = [0] * len(alpha_params)
     for i in np.arange(len(alpha_params)):
         out[i] = crpdec.switching_prob_curve(alpha_params[i], beta_params[i], fmin, fmax, n, 1000)  # profit_act[i]
-    print(len(col))
-    print(Counter(col).keys())
-    print(Counter(col).values())
+
     # TODO: Why is the x scale so large?
     plt.rcParams.update({'font.size': 16})
     # TODO: make these a multi-plot
@@ -214,12 +206,12 @@ def plot_price_signals(price_file, key, year, nt, results_path, profits_type):
     ax.set_ylabel('Crop Price $ per km2')
     ax.set_xlabel('Time [yr]')
 
-    output_figure = os.path.join(results_path, '{}_price_signals.png'.format(profits_type))
+    output_figure = os.path.join(results_path, '{}_price_signals.pdf'.format(profits_type))
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
 
 
-def plot_lc(crop_id_all, t, year, results_path):
+def plot_lc(crop_id_all, t, year, results_path, ag_cats, CropIDs, nc, nt, key_file):
     """ Create spatial plot of land cover at a certain time
 
     :param crop_id_all: numpy array of land cover over time
@@ -228,10 +220,47 @@ def plot_lc(crop_id_all, t, year, results_path):
     :return: Spatial plot of land cover
 
     """
+    percentages = np.zeros((nc, nt))
+    print(CropIDs)
+    for c in np.arange(nc):
+        for j in np.arange(nt):
+            CropIx = CropIDs[c]
+            percentages[c, j] = np.sum((crop_id_all[j, :, :] == CropIx))
+    # pull any crops planted in the time series for plotting
+    active_crops = np.any(percentages, axis=1)
+    active_crops.astype(np.int)
+    sub = CropIDs[active_crops]
+    print(sub)
+    ac = np.array(sub).flatten()
+    print(ac)
 
-    plt.figure(figsize=(12, 12))
-    plt.imshow(crop_id_all[t, :, :], interpolation='none')
+    #ag = np.transpose(np.array(ag_cats))
+    #ac = np.array(ag[active_crops]).flatten()
 
-    output_figure = os.path.join(results_path, 'landcover_{}.png'.format(year + t))
+    clrs = ["white", "powder blue", "windows blue", "royal blue", "sand", "grey blue", "greyish", "amber", "light gold",
+            "faded green", "washed out green", "pea soup", "rose", "light grey", "dark teal", "jungle green",
+            "dusty purple", "black", "bright purple", "crimson", "red orange"]
+    cc = dict(enumerate(clrs))
+    print(cc)
+    cl = [cc[x] for x in ac]
+
+    legend_labels = {"Corn":"xkcd:powder blue", "Wheat":"xkcd:windows blue", "Dry Beans": "xkcd:royal blue", "Root/Tuber": "xkcd:sand", "Oil Crop":"xkcd:grey blue", "Sugar Crop": "xkcd:greyish", "Other Grain":"xkcd:amber", "Onions":"xkcd:light gold", "Fodder Grass": "xkcd:faded green","FodderHerb": "xkcd:washed out green", "Peas":"xkcd:pea soup", "Misc crop": "xkcd:rose", "Other":"xkcd:light grey", "Sod":"xkcd:dark teal", "Pasture":"xkcd:jungle green", "Hops":"xkcd:dusty purple", "Stone/Pomme Fruit":"xkcd:bright purple", "Urban":"xkcd:black","Grapes":"xkcd:crimson", "Mint":"xkcd:red orange"}
+
+    xcol = sns.xkcd_palette(cl)
+    col = ListedColormap(xcol.as_hex())
+    crops = crop_id_all[t, :, :]
+    crops = crops.astype('float')
+    crops[crops == 0] = 'nan'
+
+    plt.rcParams.update({'font.size': 16})
+    fig, ax = plt.subplots(figsize=(14, 12))
+    ax.imshow(crops, interpolation='none', cmap=col)
+    patches = [Patch(color=color, label=label)
+               for label, color in legend_labels.items()]
+
+    ax.legend(handles=patches,
+              bbox_to_anchor=(1.35, 1),
+              facecolor="white")
+    output_figure = os.path.join(results_path, 'landcover_{}.pdf'.format(year + t))
     plt.savefig(output_figure, dpi=300)
     plt.close()
