@@ -68,11 +68,11 @@ def main(argv):
 
     # parse input data
     crop_names = gcam_dat.name.unique()
-    valid_crops = np.where(key['GCAM_price_id'].notna())  # SRB LU categories with crop prices
-    gcam_srb_names = key['GCAM_price_id'][valid_crops[0]]  # crop categories from GCAMland to use for SRB crop prices
+    valid_crops = np.where(key['GCAM_USA_price_id'].notna())  # SRB LU categories with crop prices
+    gcam_usa_names = key['GCAM_USA_price_id'][valid_crops[0]]  # crop categories from GCAMland to use for SRB crop prices
     srb_ids = key['local_GCAM_id_list'][valid_crops[0]]
 
-    assert all(np.sort(gcam_srb_names.unique()) == np.sort(crop_names)), 'convert_gcamland_prices.py ERROR: Crop ' \
+    assert all(np.sort(gcam_usa_names.unique()) == np.sort(crop_names)), 'convert_gcamland_prices.py ERROR: Crop ' \
                                                                          'names from GCAMland do not match keyfile'
 
     # find start and end years from gcam data
