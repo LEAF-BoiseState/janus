@@ -3,7 +3,7 @@ Created on Sun Nov 22, 2019
 
 @author: Kendra Kaiser
 
-Setup input files to convert prices from GCAM-USA into a format that is readable by Janus (22 rows and nt columns)
+Setup input files to convert prices from GCAM into a format that is readable by Janus (22 rows and nt columns)
 """
 
 CropFileIn ='/Users/kek25/Desktop/Data/output_SRB_Reference_Perfect.csv'
