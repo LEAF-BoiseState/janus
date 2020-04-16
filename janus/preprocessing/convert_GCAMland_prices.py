@@ -5,7 +5,7 @@ Created on Sun Nov 22, 2019
 
 @author: Kendra Kaiser
 
-Read in GCAM-USA output, convert to categories used in this instance for profit signal generation
+Read in GCAMland output, convert to categories used in this instance for profit signal generation
 """
 
 import numpy as np
@@ -68,22 +68,21 @@ def main(argv):
 
     # parse input data
     crop_names = gcam_dat.name.unique()
-    valid_crops = np.where(key['GCAM_USA_price_id'].notna())  # SRB LU categories with crop prices
-    gcam_usa_names = key['GCAM_USA_price_id'][valid_crops[0]]  # crop categories from GCAMland to use for SRB crop prices
+    valid_crops = np.where(key['GCAM_price_id'].notna())  # SRB LU categories with crop prices
+    gcam_srb_names = key['GCAM_price_id'][valid_crops[0]]  # crop categories from GCAMland to use for SRB crop prices
     srb_ids = key['local_GCAM_id_list'][valid_crops[0]]
 
-    assert all(np.sort(gcam_usa_names.unique()) == np.sort(crop_names)), 'convert_gcamland_prices.py ERROR: Crop ' \
+    assert all(np.sort(gcam_srb_names.unique()) == np.sort(crop_names)), 'convert_gcamland_prices.py ERROR: Crop ' \
                                                                          'names from GCAMland do not match keyfile'
-#need to check this to make sure that it is indexing into the new file correctly
+
     # find start and end years from gcam data
-    int_yrs = np.where(gcam_dat[2] == year)
-    end_yrs = np.where(gcam_dat[2] == find_nearest(gcam_dat[2], (year + nt)))
+    int_yrs = np.where(gcam_dat['year'] == year)
+    end_yrs = np.where(gcam_dat['year'] == find_nearest(gcam_dat['year'], (year + nt)))
 
     # setup output array
     out = np.zeros([nt + 1, len(valid_crops[0])])
     out[0, :] = np.transpose(srb_ids)
 
-#TODO fix this, the new output file from gcam -usa is quite different
     for c in np.arange(len(crop_names)):
         yrs = gcam_dat['year'][np.arange(int_yrs[0][c], end_yrs[0][c] + 1)]
         yrs_ser = np.arange(yrs.iloc[0], yrs.iloc[-1])
