@@ -222,6 +222,7 @@ def plot_lc(crop_id_all, t, year, results_path, ag_cats, CropIDs, nc, nt, key_fi
     """
     percentages = np.zeros((nc, nt))
     print(CropIDs)
+    key_file['local_GCAM_id_list']
     for c in np.arange(nc):
         for j in np.arange(nt):
             CropIx = CropIDs[c]
@@ -236,13 +237,16 @@ def plot_lc(crop_id_all, t, year, results_path, ag_cats, CropIDs, nc, nt, key_fi
 
     #ag = np.transpose(np.array(ag_cats))
     #ac = np.array(ag[active_crops]).flatten()
-
+    xclrs = ["white", "powder blue", "windows blue", "royal blue", "sand", "grey blue", "greyish", "amber", "light gold",
+            "faded green", "washed out green", "pea soup", "rose", "light grey", "dark teal", "jungle green",
+            "dusty purple", "black", "bright purple", "jungle green", "crimson", "egg shell","red orange"]
     clrs = ["white", "powder blue", "windows blue", "royal blue", "sand", "grey blue", "greyish", "amber", "light gold",
             "faded green", "washed out green", "pea soup", "rose", "light grey", "dark teal", "jungle green",
-            "dusty purple", "black", "bright purple", "crimson", "red orange"]
+            "dusty purple", "black", "bright purple", "jungle green", "crimson", "egg shell","red orange"]
     cc = dict(enumerate(clrs))
     print(cc)
     cl = [cc[x] for x in ac]
+    print(cl)
 
     legend_labels = {"Corn":"xkcd:powder blue", "Wheat":"xkcd:windows blue", "Dry Beans": "xkcd:royal blue", "Root/Tuber": "xkcd:sand", "Oil Crop":"xkcd:grey blue", "Sugar Crop": "xkcd:greyish", "Other Grain":"xkcd:amber", "Onions":"xkcd:light gold", "Fodder Grass": "xkcd:faded green","FodderHerb": "xkcd:washed out green", "Peas":"xkcd:pea soup", "Misc crop": "xkcd:rose", "Other":"xkcd:light grey", "Sod":"xkcd:dark teal", "Pasture":"xkcd:jungle green", "Hops":"xkcd:dusty purple", "Stone/Pomme Fruit":"xkcd:bright purple", "Urban":"xkcd:black","Grapes":"xkcd:crimson", "Mint":"xkcd:red orange"}
 
