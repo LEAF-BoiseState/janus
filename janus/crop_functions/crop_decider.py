@@ -93,7 +93,9 @@ def decide_n(alpha, beta, fmin, fmax, n, Profits_current, vec_crops,
 
     :return: integer denoting crop choice and float of the associated profit
     """
-
+    #print(['profits:' + str(Profits_current)])
+    #print(['alpha:' + str(alpha)])
+    #print(['beta:' + str(beta)])
     # Key assumptions: the vector of crop IDs and anticipated profits associated
     # with each crop must both be N x 1 column vectors. Error trap this below:
     assert (vec_crops.shape == vec_profit_p.shape), \
