@@ -224,7 +224,10 @@ class Janus:
                                   self.c.Nt, self.c.n, self.c.scale, self.c.output_dir,
                                   self.profits_actual[self.c.Nt-1, :, :], self.c.switch)
 
-        ppf.plot_lc(self.crop_id_all, 2, self.c.target_year, self.c.output_dir)
+        ppf.plot_lc(self.crop_id_all, 0, self.c.target_year, self.c.output_dir, self.ag, self.crop_ids, self.num_crops, self.c.Nt, self.c.key_file)
+
+        ppf.plot_lc(self.crop_id_all, 1, self.c.target_year, self.c.output_dir, self.ag, self.crop_ids, self.num_crops, self.c.Nt, self.c.key_file)
+        ppf.plot_lc(self.crop_id_all, 29, self.c.target_year, self.c.output_dir, self.ag, self.crop_ids, self.num_crops, self.c.Nt, self.c.key_file)
 
         ppf.plot_price_signals(self.profit_signals, self.c.key_file, self.c.target_year, self.c.Nt, self.c.output_dir, self.c.profits)
 
