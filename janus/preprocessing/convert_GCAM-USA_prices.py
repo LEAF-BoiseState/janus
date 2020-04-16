@@ -74,31 +74,33 @@ def main(argv):
         valid_crops[0]]  # crop categories from GCAM-USA to use for SRB crop prices
     srb_ids = key['local_GCAM_id_list'][valid_crops[0]]
 
-    assert all(np.sort(gcam_usa_names.unique()) == np.sort(crop_names)), 'convert_GCAM-USA_prices.py ERROR: Crop ' \
-                                                                         'names from GCAM-USA do not match keyfile'
+    # TODO fix this assert, need to drop crops that aren't in the SRB
+    #assert all(np.sort(gcam_usa_names.unique()) == np.sort(crop_names)), 'convert_GCAM-USA_prices.py ERROR: Crop ' \
+                                                                         #'names from GCAM-USA do not match keyfile'
 
-    # find start and end years from gcam data - results in a tuple, is there alt to int_yrs[0][0] to get that value?
-    int_yrs = np.where(gcam_dat.columns == str(year))
-    end_yrs = np.where(gcam_dat.columns == str(find_nearest(gcam_dat.columns[3:-1].astype(int), (year + nt))))
+    # find start and end years from gcam data
+    int_col = np.where(gcam_dat.columns == str(year))[0][0]
+    end_yr = find_nearest(gcam_dat.columns[3:-1].astype(int), (year + nt))
+    end_col = np.where(gcam_dat.columns == str(end_yr))[0][0]
+    years = np.arange(year, end_yr + 1)
 
     # setup output array
     out = np.zeros([nt + 1, len(valid_crops[0])])
     out[0, :] = np.transpose(srb_ids)
 
-    # TODO fix this, the new output file from gcam-usa is quite different
-    for c in np.arange(len(crop_names)):
-        yrs = gcam_dat['year'][np.arange(int_yrs[0][c], end_yrs[0][c] + 1)]
-        yrs_ser = np.arange(yrs.iloc[0], yrs.iloc[-1])
-        gcam_dat['value'] = gcam_dat['expectedPrice'] * gcam_dat['expectedYield'] * 247.2 * 907.185 * res
-        prices = gcam_dat['value'][np.arange(int_yrs[0][c], end_yrs[0][c] + 1)]
+    # Create linear regressions between each timestep
+    for c in np.arange(len(valid_crops[0])):
+        yrs = gcam_dat.columns[int_col: end_col+1].astype(int)
+        prices_usa = gcam_dat[gcam_dat['region'] == 'USA']
+        prices = prices_usa.iloc[:, int_col:(end_col+1)]
+    # TODO fix the linear regressions - it should be linear between each set of points, not through the entire timeseries
         # create regression based off of GCAM data
-        m, b, r_val, p_val, stderr = linregress(yrs, prices)
+        m, b, r_val, p_val, stderr = linregress(yrs, prices.iloc[c, :])
         # predict prices for every year
-        price_pred = m * yrs_ser + b
+        price_pred = m * years + b
         # find corresponding SRB crop to place prices in outfile
-        gcam_srb_idx = np.where(gcam_srb_names == crop_names[c])
-        for i in np.arange(len(gcam_srb_idx[0])):
-            out[1:, gcam_srb_idx[0][i]] = np.transpose(price_pred)
+        gcam_srb_idx = np.where(gcam_usa_names == crop_names[c])[0][0]
+        out[1:, gcam_srb_idx] = np.transpose(price_pred)
 
     if out.shape[1] != nc:
         print('\nERROR: Mismatch in number of crops read and provided as input\n')
