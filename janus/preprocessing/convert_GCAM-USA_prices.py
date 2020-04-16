@@ -93,11 +93,15 @@ def main(argv):
         yrs = gcam_dat.columns[int_col: end_col+1].astype(int)
         prices_usa = gcam_dat[gcam_dat['region'] == 'USA']
         prices = prices_usa.iloc[:, int_col:(end_col+1)]
-    # TODO fix the linear regressions - it should be linear between each set of points, not through the entire timeseries
-        # create regression based off of GCAM data
-        m, b, r_val, p_val, stderr = linregress(yrs, prices.iloc[c, :])
-        # predict prices for every year
-        price_pred = m * years + b
+    # TODO fix the linear regressions - need to save individual series properly with actual year data where it exists
+        for y in np.arange(yrs):
+            yrs_ser = np.arange(yrs[y], yrs[y+1])
+            x=[yrs[y],yrs[y+1]]
+            # create regression based off of GCAM data
+            m, b, r_val, p_val, stderr = linregress(x, prices.iloc[c, y: y+2]) # yrs should be [1,2]
+            # predict prices for every year
+            price_pred = m * yrs_ser + b
+
         # find corresponding SRB crop to place prices in outfile
         gcam_srb_idx = np.where(gcam_usa_names == crop_names[c])[0][0]
         out[1:, gcam_srb_idx] = np.transpose(price_pred)
