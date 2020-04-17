@@ -95,7 +95,6 @@ def main(argv):
 
     # Create linear regressions between each timestep
     for c in np.arange(len(crop_names)):
-    # TODO fix indexing between GCAM crops and SRB crops -- see gcamLand version
         for y in np.arange(len(yrs)-1):
             yrs_ser = np.arange(yrs[y], yrs[y]+intval)
             x = [yrs[y], (yrs[y] + intval)]
