@@ -88,23 +88,30 @@ def main(argv):
     out = np.zeros([nt + 1, len(valid_crops[0])])
     out[0, :] = np.transpose(srb_ids)
 
+    yrs = np.array(gcam_dat.columns[int_col: end_col + 1].astype(int))
+    intval = yrs[1] - yrs[0]  # interval between predicted prices
+    prices_usa = gcam_dat[gcam_dat['region'] == 'USA']
+    prices = prices_usa.iloc[:, int_col:(end_col + 1)]
+
     # Create linear regressions between each timestep
-    for c in np.arange(len(valid_crops[0])):
-        yrs = gcam_dat.columns[int_col: end_col+1].astype(int)
-        prices_usa = gcam_dat[gcam_dat['region'] == 'USA']
-        prices = prices_usa.iloc[:, int_col:(end_col+1)]
-    # TODO fix the linear regressions - need to save individual series properly with actual year data where it exists
-        for y in np.arange(yrs):
-            yrs_ser = np.arange(yrs[y], yrs[y+1])
-            x=[yrs[y],yrs[y+1]]
-            # create regression based off of GCAM data
-            m, b, r_val, p_val, stderr = linregress(x, prices.iloc[c, y: y+2]) # yrs should be [1,2]
+    for c in np.arange(len(crop_names)):
+    # TODO fix indexing between GCAM crops and SRB crops -- see gcamLand version
+        for y in np.arange(len(yrs)-1):
+            yrs_ser = np.arange(yrs[y], yrs[y]+intval)
+            x = [yrs[y], (yrs[y] + intval)]
+            # create regression between years of GCAM data
+            m, b, r_val, p_val, stderr = linregress(x, prices.iloc[c, y: y+2])
             # predict prices for every year
             price_pred = m * yrs_ser + b
+            if y == 0:
+                price_ts = price_pred
+            else:
+                price_ts = np.append(price_ts, price_pred)
 
         # find corresponding SRB crop to place prices in outfile
-        gcam_srb_idx = np.where(gcam_usa_names == crop_names[c])[0][0]
-        out[1:, gcam_srb_idx] = np.transpose(price_pred)
+        gcam_srb_idx = np.where(gcam_usa_names == crop_names[c])[0]
+        for i in np.arange(len(gcam_srb_idx)):
+            out[1:, gcam_srb_idx[i]] = np.transpose(price_ts)
 
     if out.shape[1] != nc:
         print('\nERROR: Mismatch in number of crops read and provided as input\n')
