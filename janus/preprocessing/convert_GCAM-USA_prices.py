@@ -26,14 +26,14 @@ def main(argv):
     a different directory than the script
     :param argv[5]: Start year of model run
     :param argv[6]: Name of key file including path if not in directory
-    :param argv[7]: Resolution of model in km
+
     :return: null (output written to file)
     """
 
     if len(argv) != 7:
         print('\nERROR: Incorrect number of command line arguments\n')
         print(
-            'Usage: convert_GCAM-USA_prices.py <no. crops> <no. time steps> <Input CSV file> <Output CSV file> <Key file> <Resolution km>\n')
+            'Usage: convert_GCAM-USA_prices.py <no. crops> <no. time steps> <Input CSV file> <Output CSV file> <Key file> \n')
         print('\tconvert_gcamland_prices.py   = Name of this python script')
         print('\t<no. crops>                  = Number of crops to synthesize prices for')
         print('\t<no. time steps>             = Number of time steps to generate prices for')
@@ -48,9 +48,8 @@ def main(argv):
     nt = int(argv[2])
     CropFileIn = argv[3]
     CropFileOut = argv[4]
-    year = argv[5]
+    year = int(argv[5])
     key_file = argv[6]
-    res = argv[7]
 
     # Error traps
     assert nc > 0, 'convert_GCAM-USA_prices.py ERROR: Negative number of crops encountered'
@@ -82,7 +81,6 @@ def main(argv):
     int_col = np.where(gcam_dat.columns == str(year))[0][0]
     end_yr = find_nearest(gcam_dat.columns[3:-1].astype(int), (year + nt))
     end_col = np.where(gcam_dat.columns == str(end_yr))[0][0]
-    years = np.arange(year, end_yr + 1)
 
     # setup output array
     out = np.zeros([nt + 1, len(valid_crops[0])])
@@ -119,7 +117,7 @@ def main(argv):
 
     # TODO: fix the warning here
     with open(CropFileOut, 'w') as fp:
-        np.savetxt(fp, out, delimiter=',', fmt='%.2f')
+        np.savetxt(fp, out, delimiter=',', fmt='%.5f')
         fp.close()
 
 
