@@ -2,6 +2,8 @@
 Created on Mon Nov 19 09:53:01 2018
 
 @author: kek25
+
+All functions necessary to do GIS preprocessing for Janus
 """
 
 import gdal
@@ -67,6 +69,7 @@ class GCAM_DataStruct:
 # FUNCTION DEFINITIONS  
 #=============================================================================#       
 def ReadArcGrid(CDL_struct):
+    """ Reads in ArcGrid file for processing """
     
     # Construct the full name of the CDL input ArcGrid file
     cdl_file = CDL_struct.cdl_path+'/'+CDL_struct.cdl_infile
@@ -85,6 +88,16 @@ def ReadArcGrid(CDL_struct):
     return
 
 def CDL2GCAM(CDL_struct,CDL_cat,GCAM_struct,GCAM_cat):
+    """ Convert raster of CDL landcover to GCAM categories
+
+    :param CDL_struct:      Raster of CDL Landcover
+    :param CDL_cat:         CDL input crop categories
+    :param GCAM_struct:     Raster for GCAM Landcover
+    :param GCAM_cat:        GCAM output crop categories
+    
+    :return:                New landcover raster with GCAM categories
+
+    """
 
     cdl_stats  = np.zeros(132)
     gcam_stats = np.zeros(28)
@@ -108,6 +121,13 @@ def CDL2GCAM(CDL_struct,CDL_cat,GCAM_struct,GCAM_cat):
     return
 
 def saveGCAMGrid(GCAM_struct):
+    """ Creates outfile name, applies correct projection and saves raster
+
+    :param GCAM_struct:      Input raster file
+
+    :return:                 Saved raster file 
+
+    """
 
     gcam_grid = GCAM_struct.gcam_grid
     nrows,ncols = np.shape(gcam_grid) 
@@ -131,6 +151,15 @@ def saveGCAMGrid(GCAM_struct):
 
 #Complilation of above functions to do conversion 
 def c2g(CDL_GCAM_keyfile, conversionID):
+    """ Converts CDL categories to GCAM categories
+
+    :param CDL_GCAM_keyfile: File that links CDL categories to new GCAM categories, users may modify this forinclusion of local crops
+    :param conversionID:     String specifiying which GCAM categories to use, options are 'local_GCAM_id' or 'GCAM_id' for regular GCAM categories
+
+    :return:                  Saved landcover rasters with user defined GCAM categoires
+
+    """
+        
     #=========================================================================#
     # 0. Read in category data and create vectors                             #
     #=========================================================================#
@@ -191,6 +220,15 @@ def c2g(CDL_GCAM_keyfile, conversionID):
 #=============================================================================#
     
 def AggregateGCAMGrid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
+    """ Create grid that landcover data is saved in when aggregating from smaller scale to larger scale
+
+    :param GCAM_ReadWriteDir: Directory that the landcover data exists in
+    :param GCAM_ReadFile:     The specific file to aggregate
+    :param AggRes:            Resolution to aggregate data to in meters, suggested at 1000 or 3000
+
+    :return:                  New landcover raster at a specified resolution
+
+    """
     
     # Open the GeoTiff based on the input path and file
     src_ds = gdal.Open(GCAM_ReadWriteDir+GCAM_ReadFile)
@@ -231,6 +269,14 @@ def AggregateGCAMGrid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
 #=============================================================================#
 
 def aggGCAM(AggRes, GCAM_Dir):
+    """Runs aggregation funciton in parallel
+
+    :param AggRes: Resolution to aggregate data to in meters, suggested at 1000 or 3000
+    :param gcam_directory: Directory where all landcover data is stored
+
+    :return: saved landcover data at new resolution
+    """
+        
     GCAM_ReadFiles = glob.glob(GCAM_Dir +'gcam*domain.tiff')
     
     Parallel(n_jobs=4, verbose=60, backend='threading')(delayed(AggregateGCAMGrid)(GCAM_Dir,os.path.basename(file),AggRes) \
@@ -241,6 +287,16 @@ def aggGCAM(AggRes, GCAM_Dir):
 #----------------------------------------------------------------------------
 
 def grid2poly(year, scale, GCAMpath, DataPath):
+    """Creates a grid of polygons for holding information in each cell
+
+    :param year:        Initiation year for identifying GCAM raster
+    :param scale:       Scale of grid for identifying correct GCAM raster
+    :param GCAMpath:    Location of GCAM file
+    :param DataPath:    path for output file
+    
+    :return: saved grid of polygon 
+    """
+        
     grid_file=GCAMpath+'gcam_'+str(int(year))+'_domain_'+str(int(scale))+'.tiff'
     OutFileName= 'domain_poly_'+str(int(scale))+'.shp'
     
