@@ -48,6 +48,7 @@ class CdlDataStruct:
 
 
 class GCAM_DataStruct:
+
     def __init__(self, gcam_path, gcam_outfile):
         self.gcam_path    = gcam_path
         self.gcam_outfile = gcam_outfile
@@ -130,7 +131,7 @@ def saveGCAMGrid(GCAM_struct):
     return
 
 #Complilation of above functions to do conversion 
-def c2g(CDL_GCAM_keyfile, conversionID):
+def c2g(CDL_GCAM_keyfile, conversionID, GCAMPath):
     #=========================================================================#
     # 0. Read in category data and create vectors                             #
     #=========================================================================#

@@ -53,9 +53,7 @@ def get_gcam(counties_shp, county_list, gcam_file):
     """Clip GCAM coverage to the counties of interest at scale of interest.
 
     :param counties_shp:                Geopandas data frame for counties data
-    :param countyList:                  List of counties in the domain of interest
-    :param year:                        Year of GCAM data to initalize with, used to identify file name
-    :param scale:                       Scale of grid cells, used to identify file name
+    :param county_list:                  List of counties in the domain of interest
     :param gcam_file:                   Full path with file name and extension to the GCAM raster
 
     :return:                            Landcover data clipped to domain of interest
