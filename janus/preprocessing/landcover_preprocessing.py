@@ -3,7 +3,7 @@ Created on Mon Nov 19 09:53:01 2018
 
 @author: kek25
 
-All functions necessary to do GIS preprocessing for Janus
+All functions necessary to do GIS pre-processing for Janus
 """
 
 import gdal
@@ -21,10 +21,9 @@ import geopandas as gp
 #=============================================================================#
 # PREAMBLE AND PATH DEFINITIONS
 #=============================================================================#
-CDLPath= '../../Data/CDL/'
-GCAMPath= '../../Data/GCAM/'
+CDLPath = '../../Data/CDL/'
 
-files = glob.glob(CDLPath+'cdl*.txt') 
+files = glob.glob(CDLPath+'cdl*.txt')
 
 
 class CdlDataStruct:
@@ -89,14 +88,14 @@ def ReadArcGrid(CDL_struct):
     return
 
 def CDL2GCAM(CDL_struct,CDL_cat,GCAM_struct,GCAM_cat):
-    """ Convert raster of CDL landcover to GCAM categories
+    """ Convert raster of CDL land cover to GCAM categories
 
-    :param CDL_struct:      Raster of CDL Landcover
+    :param CDL_struct:      Raster of CDL land cover
     :param CDL_cat:         CDL input crop categories
-    :param GCAM_struct:     Raster for GCAM Landcover
+    :param GCAM_struct:     Raster for GCAM land cover
     :param GCAM_cat:        GCAM output crop categories
     
-    :return:                New landcover raster with GCAM categories
+    :return:                New land cover raster with GCAM categories
 
     """
 
@@ -150,15 +149,16 @@ def saveGCAMGrid(GCAM_struct):
 
     return
 
-def c2g(CDL_GCAM_keyfile, conversionID, GCAMPath):
+def c2g(CDL_GCAM_keyfile, conversionID, gcam_output_path):
     """ Converts CDL categories to GCAM categories
 
-    :param CDL_GCAM_keyfile: File that links CDL categories to new GCAM categories, users may modify this forinclusion
-                            of local crops
-    :param conversionID:     String specifiying which GCAM categories to use, options are 'local_GCAM_id' or 'GCAM_id'
-                            for regular GCAM categories
-    :param GCAMPath:        Path to GCAM data
-    :return:                  Saved landcover rasters with user defined GCAM categoires
+    :param CDL_GCAM_keyfile:    File that links CDL categories to new GCAM categories, users may modify this forinclusion
+                                of local crops
+    :param conversionID:         String specifying which GCAM categories to use, options are 'local_GCAM_id' or 'GCAM_id'
+                                for regular GCAM categories
+    :param gcam_output_path:    Path to GCAM data
+
+    :return:                Saved land cover rasters with user defined GCAM categories
 
     """
 
@@ -181,10 +181,9 @@ def c2g(CDL_GCAM_keyfile, conversionID, GCAMPath):
         CDL_Data.append(CdlDataStruct(cdl_path,cdl_infile))
 
         # Initialize GCAM data structures with paths and file names
-        gcam_path    = GCAMPath
-        gcam_outfile = cdl_infile.replace('cdl','gcam')
-        gcam_outfile = gcam_outfile.replace('txt','tiff')
-        GCAM_Data.append(GCAM_DataStruct(gcam_path,gcam_outfile)) 
+        gcam_outfile = cdl_infile.replace('cdl', 'gcam')
+        gcam_outfile = gcam_outfile.replace('txt', 'tiff')
+        GCAM_Data.append(GCAM_DataStruct(gcam_output_path, gcam_outfile))
     
     #=========================================================================#
     # 2a. Read in all the CDL files and store data in CDL_DataStruct          #
@@ -199,7 +198,7 @@ def c2g(CDL_GCAM_keyfile, conversionID, GCAMPath):
              for i in np.arange(len(CDL_Data))) 
 
     #=========================================================================#
-    # 2c. Save recategorized GCAM grids to files                              #
+    # 2c. Save re categorized GCAM grids to files                              #
     #=========================================================================#
     Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(saveGCAMGrid)(GCAM_Data[i]) \
              for i in np.arange(len(CDL_Data))) 
@@ -222,13 +221,13 @@ def c2g(CDL_GCAM_keyfile, conversionID, GCAMPath):
 #=============================================================================#
     
 def AggregateGCAMGrid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
-    """ Create grid that landcover data is saved in when aggregating from smaller scale to larger scale
+    """ Create grid that land cover data is saved in when aggregating from smaller scale to larger scale
 
-    :param GCAM_ReadWriteDir: Directory that the landcover data exists in
+    :param GCAM_ReadWriteDir: Directory that the land cover data exists in
     :param GCAM_ReadFile:     The specific file to aggregate
     :param AggRes:            Resolution to aggregate data to in meters, suggested at 1000 or 3000
 
-    :return:                  New landcover raster at a specified resolution
+    :return:                  New land cover raster at a specified resolution
 
     """
     
@@ -274,7 +273,7 @@ def aggGCAM(AggRes, GCAM_Dir):
     """Runs aggregation funciton in parallel
 
     :param AggRes: Resolution to aggregate data to in meters, suggested at 1000 or 3000
-    :param gcam_directory: Directory where all landcover data is stored
+    :param gcam_directory: Directory where GCAM land cover data is stored
 
     :return: saved landcover data at new resolution
     """
