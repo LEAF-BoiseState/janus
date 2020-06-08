@@ -50,6 +50,7 @@ class CdlDataStruct:
 
 
 class GCAM_DataStruct:
+
     def __init__(self, gcam_path, gcam_outfile):
         self.gcam_path    = gcam_path
         self.gcam_outfile = gcam_outfile
@@ -149,17 +150,18 @@ def saveGCAMGrid(GCAM_struct):
 
     return
 
-#Complilation of above functions to do conversion 
-def c2g(CDL_GCAM_keyfile, conversionID):
+def c2g(CDL_GCAM_keyfile, conversionID, GCAMPath):
     """ Converts CDL categories to GCAM categories
 
-    :param CDL_GCAM_keyfile: File that links CDL categories to new GCAM categories, users may modify this forinclusion of local crops
-    :param conversionID:     String specifiying which GCAM categories to use, options are 'local_GCAM_id' or 'GCAM_id' for regular GCAM categories
-
+    :param CDL_GCAM_keyfile: File that links CDL categories to new GCAM categories, users may modify this forinclusion
+                            of local crops
+    :param conversionID:     String specifiying which GCAM categories to use, options are 'local_GCAM_id' or 'GCAM_id'
+                            for regular GCAM categories
+    :param GCAMPath:        Path to GCAM data
     :return:                  Saved landcover rasters with user defined GCAM categoires
 
     """
-        
+
     #=========================================================================#
     # 0. Read in category data and create vectors                             #
     #=========================================================================#

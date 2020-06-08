@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/LEAF-BoiseState/janus.svg?branch=master)](https://travis-ci.org/LEAF-BoiseState/janus)
-
 [![DOI](https://zenodo.org/badge/157612222.svg)](https://zenodo.org/badge/latestdoi/157612222)
+[![Build Status](https://travis-ci.org/LEAF-BoiseState/janus.svg?branch=master)](https://travis-ci.org/LEAF-BoiseState/janus)
+[![codecov](https://codecov.io/gh/LEAF-BoiseState/janus/branch/master/graph/badge.svg)](https://codecov.io/gh/LEAF-BoiseState/janus)
 
 
 # janus

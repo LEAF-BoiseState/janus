@@ -6,44 +6,68 @@ Created on Mon Apr  8 21:55:00 2019
 Pre-process GIS data based on counties, base year, and resolution
 """
 
+import os
+
 import geopandas as gp
 
 import janus.preprocessing.geofxns as gf
 import janus.preprocessing.landcover_preprocessing as lc
 
-# TODO:  this needs to be wrapped in a function that can be called
-userPath='/Users/kek25/Documents/GitRepos/'
-DataPath= userPath+'IM3-BoiseState/Data/'
-GCAMpath=DataPath+'GCAM/'
 
-counties_shp= gp.read_file(DataPath+'Counties/Counties_SRB_clip_SingleID.shp')
-counties_shp=counties_shp.set_index('county')
+def get_gis_data(counties_shp, categories_csv, county_list, scale, year, gcam_data_directory,
+                 gcam_category_type='local_GCAM_id'):
+    """Preprocess GIS data based on counties, base year, and resolution.
 
-key_file= gp.read_file(DataPath+'CDL2GCAM_categories.csv', sep=',')
+    :param counties_shp:                    Full path with file name and extension to the input counties shapefile.
+    :type counties_shp:                     str
 
-#------------------------------------------------------------------------
-# Select, crop and save npy file of specific initialization year and scale
-#------------------------------------------------------------------------
+    :param categories_csv:                  Full path with file name and extension to the input categories CSV file
+                                            that bins CDL landclasses to GCAM landclasses
+    :type categories_csv:                   str
 
-countyList=['Ada', 'Canyon']
-scale=3000 #scale of grid in meters
-year=2010
+    :param county_list:                     List of county names to process
+    :type county_list:                      list
 
-#convert cdl data to GCAM categories of choice, this will take a while depending on size of original dataset
-lc.c2g(key_file,'local_GCAM_id')
+    :param gcam_data_directory:             Full path to the directory containing the GCAM output raster
+    :param gcam_data_directory:             str
 
-#convert GCAM file to scale of interest
-lc.aggGCAM(scale, GCAMpath)
+    :param scale:                           resolution of grid cells in meters
+    :type scale:                            int
 
-#use the above file to create a polygon coverage
+    :param year:                            Four digit year to process (e.g., 2000)
+    :type year:                             int
 
-gf.grid2poly(year, scale, GCAMpath, DataPath)
+    :param gcam_category_type:              Convert CDL data to GCAM categories of choice, Default 'local_GCAM_id' which
+                                            is a set of ids that are specific to a local set of crop categories; where,
+                                            'GCAM_id_list' is the standard set of GCAM global categories.
+    :type gcam_category_type:               str
 
-#use the poly grid to create the extent for the model
-extent=gf.getExtent(counties_shp, countyList, scale, DataPath)
+    """
 
-#select initial gcam data from inital year
-lc = gf.getGCAM(counties_shp, countyList, year, scale, GCAMpath)
+    # output directory
+    # TODO:  change `os.path.dirname(gcam_data_directory)` to an output_path parameter that is passed into this fn.
+    output_directory = os.path.dirname(gcam_data_directory)
 
-#if additional geospatial data are avialable and included in model they can be
-#clipped and processed here using the extent file
+    # read counties shapefile as geopandas data frame
+    gdf_counties = gp.read_file(counties_shp)
+    gdf_counties.set_index('county', inplace=True)
+
+    # read in CDL to GCAM category key
+    gdf_key = gp.read_file(categories_csv)
+
+    # convert cdl data to GCAM categories of choice
+    lc.c2g(gdf_key, gcam_category_type)
+
+    # convert GCAM file to scale of interest
+    lc.aggGCAM(scale, gcam_data_directory)
+
+    # use the above file to create a polygon coverage
+    lc.grid2poly(year, scale, gcam_data_directory, output_directory)
+
+    # use the poly grid to create the extent for the model
+    extent = gf.get_extent(counties_shp, county_list, scale, output_directory)
+
+    # select initial gcam data from inital year
+    lc_raster = gf.get_gcam(counties_shp, county_list, gcam_data_directory)
+
+    return extent, lc_raster
