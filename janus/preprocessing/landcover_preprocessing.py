@@ -9,21 +9,30 @@ All functions necessary to do GIS pre-processing for Janus
 import gdal
 import glob 
 import numpy as np
-from joblib import Parallel, delayed
+import geopandas as gp
 import pandas as pd
+
 import os
+import json
+import urllib
 from osgeo import osr
+from joblib import Parallel, delayed
 
 from shapely.geometry import Polygon, MultiPolygon 
 from fiona.crs import from_epsg
-import geopandas as gp
+from rasterio.mask import mask
+from shapely.ops import cascaded_union
+
+import rasterio
+import pycrs
+
 
 #=============================================================================#
 # PREAMBLE AND PATH DEFINITIONS
 #=============================================================================#
 CDLPath = '../../Data/CDL/'
 
-files = glob.glob(CDLPath+'cdl*.txt')
+
 
 
 class CdlDataStruct:
@@ -49,7 +58,7 @@ class CdlDataStruct:
 
 
 class GCAM_DataStruct:
-
+#where does the construction of the class take the gcam_Path?
     def __init__(self, gcam_path, gcam_outfile):
         self.gcam_path    = gcam_path
         self.gcam_outfile = gcam_outfile
@@ -68,10 +77,11 @@ class GCAM_DataStruct:
 #=============================================================================#
 # FUNCTION DEFINITIONS  
 #=============================================================================#       
-def ReadArcGrid(CDL_struct):
+def ReadArcGrid(CDL_struct, cdl_path): #does the CDL path go in here??
     """ Reads in ArcGrid file for processing """
     
     # Construct the full name of the CDL input ArcGrid file
+    #TODO this is where the CDL path needs to be updated
     cdl_file = CDL_struct.cdl_path+'/'+CDL_struct.cdl_infile
     
     # Open the CDL input file using GDAL
@@ -149,7 +159,7 @@ def saveGCAMGrid(GCAM_struct):
 
     return
 
-def c2g(CDL_GCAM_keyfile, conversionID, gcam_output_path):
+def c2g(CDL_GCAM_keyfile, conversionID, gcam_output_path, cdl_input_path):
     """ Converts CDL categories to GCAM categories
 
     :param CDL_GCAM_keyfile:    File that links CDL categories to new GCAM categories, users may modify this forinclusion
@@ -172,6 +182,7 @@ def c2g(CDL_GCAM_keyfile, conversionID, gcam_output_path):
     #=========================================================================#
     # 1. Initialize a list of CDL structures for analysis                     #
     #=========================================================================#
+    files = glob.glob(cdl_input_path + 'cdl*.txt')
     CDL_Data  = []
     GCAM_Data = []
     for file in files:
@@ -329,3 +340,74 @@ def grid2poly(year, scale, GCAMpath, DataPath):
     # Save Output             #
     #-------------------------#
     polyagg.to_file(filename=DataPath+OutFileName, driver="ESRI Shapefile")
+
+#----------------------------------------------------------------------------
+#    Get extent of modeling domain                                          #
+#----------------------------------------------------------------------------
+
+def get_extent(counties_shp, county_list, scale, DataPath):
+    """Create a grid of the extent based on counties and scale of interest.
+    This will only be used if a user want to use and clip other geospatial data such as elevation
+
+    :param counties_shp:                Geopandas data frame for counties data
+    :param county_list:                 List of counties in the domain of interest
+    :param scale:                       Grid scale of output, can only be 3000 or 1000 (meters)
+    :param DataPath:                    File path to data folder
+
+    :return:                            Grid of polygons for the domain of interest
+    """
+
+    if scale == 3000:
+        SRB_poly = gp.read_file(DataPath + 'domain_poly_3000.shp')
+
+    elif scale == 1000:
+        SRB_poly = gp.read_file(DataPath + 'domain_poly_1000.shp')
+
+    # this returns geometry of the union, no longer distinguishes counties - see issue #1
+
+    # this is the row index, not the "COUNTY_ALL" index
+    extent = counties_shp['geometry'].loc[county_list].unary_union
+    extent_poly = SRB_poly[SRB_poly.geometry.intersects(extent)]
+
+    extent_poly.to_file(DataPath + 'extent_' + str(int(scale)) + '.shp')
+
+    return extent_poly
+
+#----------------------------------------------------------------------------
+#    Clip GCAM coverage to the counties of interest at scale of interest    #
+#----------------------------------------------------------------------------
+
+def get_gcam(counties_shp, county_list, gcam_file ):
+    """Clip GCAM coverage to the counties of interest at scale of interest.
+
+    :param counties_shp:                Geopandas data frame for counties data
+    :param county_list:                  List of counties in the domain of interest
+    :param gcam_file:                   Full path with file name and extension to the GCAM raster
+
+    :return:                            Land cover data clipped to domain of interest
+
+    """
+
+    data = rasterio.open(gcam_file)
+    extent_shp = counties_shp['geometry'].loc[county_list]
+    boundary = gp.GeoSeries(cascaded_union(extent_shp))
+    coords = [json.loads(boundary.to_json())['features'][0]['geometry']] # parses features from GeoDataFrame the way rasterio wants them
+    out_img, out_transform = mask(dataset=data, shapes=coords, crop=True)
+    out_meta = data.meta.copy()
+    epsg_code = int(data.crs.data['init'][5:])
+
+    # TODO:  check to see if this is a valid workaround for not setting a coordinate system on failure
+    try:
+        fetch_crs = pycrs.parse.from_epsg_code(epsg_code).to_proj4()
+
+    except urllib.error.URLError:
+        fetch_crs = None
+
+    out_meta.update({"driver": "GTiff",
+                 "height": out_img.shape[1],
+                 "width": out_img.shape[2],
+                 "transform": out_transform,
+                 "crs": fetch_crs})
+    #need to save this as a init file -- see saveGCAMgrid from lc preprocessing? it requires a GCAM structure, which I believe this is in
+
+    saveGCAMgrid(out_img)
