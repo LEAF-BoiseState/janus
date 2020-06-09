@@ -32,9 +32,8 @@ import pycrs
 #=============================================================================#
 
 class CdlDataStruct:
-    """Attributes of input CDL data, location, file name, and all georeferencing information
+    """Attributes of input CDL data, location, file name, and all georeferencing information """
 
-    """
     # Constructor requires the path and file name of the input CDL data
     def __init__(self, cdl_path, cdl_infile):
         self.cdl_path   = cdl_path
@@ -73,6 +72,8 @@ class GCAM_DataStruct:
 #=============================================================================#
 # FUNCTION DEFINITIONS  
 #=============================================================================#       
+
+
 def ReadArcGrid(CDL_struct): #does the CDL path go in here??
     """ Reads in ArcGrid file for processing """
     
@@ -92,7 +93,8 @@ def ReadArcGrid(CDL_struct): #does the CDL path go in here??
     
     return
 
-def CDL2GCAM(CDL_struct,CDL_cat,GCAM_struct,GCAM_cat):
+
+def CDL2GCAM(CDL_struct, CDL_cat, GCAM_struct, GCAM_cat):
     """ Convert raster of CDL land cover to GCAM categories
 
     :param CDL_struct:      Raster of CDL land cover
@@ -125,6 +127,7 @@ def CDL2GCAM(CDL_struct,CDL_cat,GCAM_struct,GCAM_cat):
     
     return
 
+
 def saveGCAMGrid(GCAM_struct):
     """ Creates outfile name, applies correct projection and saves raster
 
@@ -155,6 +158,7 @@ def saveGCAMGrid(GCAM_struct):
     gcam_gdal = None
 
     return
+
 
 def c2g(CDL_GCAM_keyfile, conversionID, gcam_output_path, cdl_input_path):
     """ Converts CDL categories to GCAM categories
@@ -203,31 +207,32 @@ def c2g(CDL_GCAM_keyfile, conversionID, gcam_output_path, cdl_input_path):
     # 2b. Perform the CDL-GCAM category conversion                            #
     #=========================================================================#
     Parallel(n_jobs=6, verbose=10, backend='threading')(delayed(CDL2GCAM)(CDL_Data[i],CDL_cat,GCAM_Data[i],GCAM_cat) \
-             for i in np.arange(len(CDL_Data))) 
+             for i in np.arange(len(CDL_Data)))
 
     #=========================================================================#
     # 2c. Save re categorized GCAM grids to files                              #
     #=========================================================================#
     Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(saveGCAMGrid)(GCAM_Data[i]) \
-             for i in np.arange(len(CDL_Data))) 
+             for i in np.arange(len(CDL_Data)))
 
     #=========================================================================#
     # 3. Create Arrays of Results
     #=========================================================================#
-    f=len(files)
+    f = len(files)
     CDL_stats  = np.zeros((132,f))
     GCAM_stats = np.zeros((28, f))
     
     for i in np.arange(f):
-        CDL_stats[:,i]= CDL_Data[i].cdl_stats
-        GCAM_stats[:,i]= GCAM_Data[i].gcam_stats
-    np.savetxt(GCAMPath+"cdl_initial.csv", CDL_stats, delimiter=",")
-    np.savetxt(GCAMPath+"gcam_initial.csv", GCAM_stats, delimiter=",")
+        CDL_stats[:,i] = CDL_Data[i].cdl_stats
+        GCAM_stats[:,i] = GCAM_Data[i].gcam_stats
+    np.savetxt(os.path.join(GCAMPath, "cdl_initial.csv"), CDL_stats, delimiter=",")
+    np.savetxt(os.path.join(GCAMPath, "gcam_initial.csv"), GCAM_stats, delimiter=",")
     
 #=============================================================================#
 # Aggregate to scale of interest
 #=============================================================================#
-    
+
+
 def AggregateGCAMGrid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
     """ Create grid that land cover data is saved in when aggregating from smaller scale to larger scale
 
@@ -277,23 +282,25 @@ def AggregateGCAMGrid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
 # Run aggregation function in parallel
 #=============================================================================#
 
-def aggGCAM(AggRes, GCAM_Dir):
-    """Runs aggregation funciton in parallel
 
-    :param AggRes: Resolution to aggregate data to in meters, suggested at 1000 or 3000
+def aggGCAM(AggRes, GCAM_Dir):
+    """Runs aggregation function in parallel
+
+    :param AggRes:         Resolution to aggregate data to in meters, suggested at 1000 or 3000
     :param gcam_directory: Directory where GCAM land cover data is stored
 
-    :return: saved landcover data at new resolution
+    :return: saved land cover data at new resolution
     """
         
-    GCAM_ReadFiles = glob.glob(GCAM_Dir +'gcam*domain.tiff')
+    GCAM_ReadFiles = glob.glob(os.path.join(GCAM_Dir, 'gcam*domain.tiff'))
     
-    Parallel(n_jobs=4, verbose=60, backend='threading')(delayed(AggregateGCAMGrid)(GCAM_Dir,os.path.basename(file),AggRes) \
+    Parallel(n_jobs=4, verbose=60, backend='threading')(delayed(AggregateGCAMGrid)(GCAM_Dir, os.path.basename(file), AggRes) \
              for file in GCAM_ReadFiles)
     
 #----------------------------------------------------------------------------
 # Create a set of polygons for entire domain
 #----------------------------------------------------------------------------
+
 
 def grid2poly(year, scale, GCAMpath, DataPath):
     """Creates a grid of polygons for holding information in each cell
@@ -306,7 +313,7 @@ def grid2poly(year, scale, GCAMpath, DataPath):
     :return: saved grid of polygon 
     """
         
-    grid_file = GCAMpath+'gcam_'+str(int(year))+'_domain_'+str(int(scale))+'.tiff'
+    grid_file = os.path.join(GCAMpath, 'gcam_'+str(int(year))+'_domain_'+str(int(scale))+'.tiff')
     OutFileName = 'domain_poly_'+str(int(scale))+'.shp'
     
     src= gdal.Open(grid_file)
@@ -409,7 +416,12 @@ def get_gcam(counties_shp, county_list, gcam_file, out_path):
     in_file = os.path.basename(gcam_file)
     out_filename = os.path.join(out_path, 'init_landcover'+in_file+'.geojson')
 
-    #TODO check to make sure that the geojson file format wont cause problems with import
     # Save clipped land cover coverage
-    out_img.to_file(filename=out_filename, driver="GeoJSON")
+    gdal.Warp(out_filename, out_img, dstSRS=epsg_code)
+
+    out_img.FlushCache()
+    gcam_gdal = None
+
+    return
+
 
