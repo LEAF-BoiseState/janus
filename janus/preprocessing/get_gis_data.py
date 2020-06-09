@@ -16,7 +16,7 @@ import janus.preprocessing.landcover_preprocessing as lc
 
 def get_gis_data(counties_shp, categories_csv, county_list, scale, year, raw_lc_dir, processed_lc_dir, init_lc_dir,
                  gcam_category_type='local_GCAM_id'):
-    """Preprocess GIS data based on counties, base year, and resolution.
+    """Pre-process GIS data based on counties, base year, and resolution.
 
     :param counties_shp:                    Full path with file name and extension to the input counties shapefile.
     :type counties_shp:                     str
@@ -34,18 +34,21 @@ def get_gis_data(counties_shp, categories_csv, county_list, scale, year, raw_lc_
     :param year:                            Four digit year to process (e.g., 2000)
     :type year:                             int
 
+    :param raw_lc_dir:                      Full path to the directory containing the raw land cover data
+    :type raw_lc_dir:                       str
+
     :param processed_lc_dir:                Full path to the directory containing the processed land cover data
     :type processed_lc_dir:                 str
 
-    :param init_lc_dir:                   Full path to the directory where land cover initialization files are stored
-    :type init_lc_dir:                   str
+    :param init_lc_dir:                     Full path to the directory where land cover initialization files are stored
+    :type init_lc_dir:                      str
 
     :param gcam_category_type:              Convert CDL data to GCAM categories of choice, Default 'local_GCAM_id' which
                                             is a set of ids that are specific to a local set of crop categories; where,
                                             'GCAM_id_list' is the standard set of GCAM global categories.
     :type gcam_category_type:               str
 
-    :param raw_lc_dir:
+
 
     """
     # read counties shapefile as geopandas data frame
