@@ -6,17 +6,20 @@ f_counties_shp: '/Users/kek25/Desktop/Data/shp/counties_srb.shp'
 # full path with file name and extension to the land class category key file
 f_key_file: '/Users/kek25/Desktop/Data/CDL2GCAM_categories.csv'
 
-# gcam raster
-f_gcam_file: '/Users/kek25/Desktop/Data/gcam_2010_domain_3000.tiff'
+# directory for output from the land cover pre processing
+f_processed_lc_dir: '/Users/kek25/Documents/GitRepos/IM3-BoiseState/Data/GCAM/'
+
+# raster of the initial land cover data
+f_init_lc_file: '/Users/kek25/Desktop/Data/gcam_2010_domain_3000.tiff'
 
 # TODO: add a profits choice flag to wherever it needs to be to set to one or the other
 #profit choice flag, gcam or generated
-profits: 'generated'
+profits: 'gcam'
 
 # TODO have these run from within this script, taking in nt and setting nc
 # profits file
-f_profits_file: '/Users/kek25/Desktop/Data/out_ts2.csv'
-f_gcam_profits_file: '/Users/kek25/Desktop/Data/GCAMvalues.csv'
+f_profits_file: '/Users/kek25/Desktop/Data/out.csv'
+f_gcam_profits_file: '/Users/kek25/Desktop/Data/out.csv'
 
 # output directory
 output_directory: '/Users/kek25/Desktop/Data/Results'
