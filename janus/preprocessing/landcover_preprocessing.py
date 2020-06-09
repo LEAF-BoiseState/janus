@@ -30,13 +30,9 @@ import pycrs
 #=============================================================================#
 # PREAMBLE AND PATH DEFINITIONS
 #=============================================================================#
-CDLPath = '../../Data/CDL/'
-
-
-
 
 class CdlDataStruct:
-    """TODO:  need description of class
+    """Attributes of input CDL data, location, file name, and all georeferencing information
 
     """
     # Constructor requires the path and file name of the input CDL data
@@ -50,20 +46,20 @@ class CdlDataStruct:
         self.cdl_projection   = Projection
         self.cdl_pixelsize    = PixelSize
 
-    def SetCDLGrid(self,cdl_grid): # Original CDL grid
+    def SetCDLGrid(self, cdl_grid): # Original CDL grid
         self.cdl_grid = cdl_grid
 
-    def SetCDLStats(self,cdl_stats): # Add CDL stats
+    def SetCDLStats(self, cdl_stats): # Add CDL stats
         self.cdl_stats = cdl_stats
 
 
 class GCAM_DataStruct:
-#where does the construction of the class take the gcam_Path?
+
     def __init__(self, gcam_path, gcam_outfile):
         self.gcam_path    = gcam_path
         self.gcam_outfile = gcam_outfile
 
-    def SetGCAM_ProjInfo(self,GeoTransform,Projection,PixelSize):
+    def SetGCAM_ProjInfo(self, GeoTransform, Projection, PixelSize):
         self.gcam_geotransform = GeoTransform
         self.gcam_projection   = Projection
         self.gcam_pixelsize    = PixelSize
@@ -77,19 +73,18 @@ class GCAM_DataStruct:
 #=============================================================================#
 # FUNCTION DEFINITIONS  
 #=============================================================================#       
-def ReadArcGrid(CDL_struct, cdl_path): #does the CDL path go in here??
+def ReadArcGrid(CDL_struct): #does the CDL path go in here??
     """ Reads in ArcGrid file for processing """
     
     # Construct the full name of the CDL input ArcGrid file
-    #TODO this is where the CDL path needs to be updated
-    cdl_file = CDL_struct.cdl_path+'/'+CDL_struct.cdl_infile
+    cdl_file = os.path.join(CDL_struct.cdl_path, CDL_struct.cdl_infile)
     
     # Open the CDL input file using GDAL
     CDL_gdal = gdal.Open(cdl_file)
     CDL_struct.SetCDL_ProjInfo(CDL_gdal.GetGeoTransform(),CDL_gdal.GetProjection(),CDL_gdal.GetGeoTransform()[1])
 
     cdl_grid = np.float64(CDL_gdal.ReadAsArray())
-    cdl_grid[cdl_grid==-9999] = np.nan
+    cdl_grid[cdl_grid == -9999] = np.nan
     CDL_struct.SetCDLGrid(cdl_grid)
 
     # Close GDAL CDL dataset to save memory
@@ -133,16 +128,18 @@ def CDL2GCAM(CDL_struct,CDL_cat,GCAM_struct,GCAM_cat):
 def saveGCAMGrid(GCAM_struct):
     """ Creates outfile name, applies correct projection and saves raster
 
-    :param GCAM_struct:      Input raster file
+    :param GCAM_struct:      Input GCAM structure
+    :param gcam_path:        Path to the GCAM data
+    :param gcam_outfilname:  Name of the GCAM outfile
 
     :return:                 Saved raster file 
 
     """
 
     gcam_grid = GCAM_struct.gcam_grid
-    nrows,ncols = np.shape(gcam_grid) 
-    
-    gcam_outfile = GCAM_struct.gcam_path + GCAM_struct.gcam_outfile
+    nrows,ncols = np.shape(gcam_grid)
+
+    gcam_outfile = os.path.join(GCAM_struct.gcam_path, GCAM_struct.gcam_outfile)
     
     gcam_driver = gdal.GetDriverByName('Gtiff')
     gcam_gdal   = gcam_driver.Create(gcam_outfile, ncols, nrows, 1, gdal.GDT_Float32)
@@ -152,7 +149,7 @@ def saveGCAMGrid(GCAM_struct):
     gcam_gdal.SetProjection(proj.ExportToWkt())
     gcam_gdal.SetGeoTransform(GCAM_struct.gcam_geotransform)
     gcam_gdal.GetRasterBand(1).WriteArray(GCAM_struct.gcam_grid)
-    gdal.Warp(gcam_outfile,gcam_gdal,dstSRS='EPSG:32611')
+    gdal.Warp(gcam_outfile, gcam_gdal, dstSRS='EPSG:32611')
     
     gcam_gdal.FlushCache()
     gcam_gdal = None
@@ -189,7 +186,7 @@ def c2g(CDL_GCAM_keyfile, conversionID, gcam_output_path, cdl_input_path):
         # Initialize CDL data structures with paths and file names
         cdl_path   = os.path.dirname(file)
         cdl_infile = os.path.basename(file)
-        CDL_Data.append(CdlDataStruct(cdl_path,cdl_infile))
+        CDL_Data.append(CdlDataStruct(cdl_path, cdl_infile))
 
         # Initialize GCAM data structures with paths and file names
         gcam_outfile = cdl_infile.replace('cdl', 'gcam')
@@ -309,8 +306,8 @@ def grid2poly(year, scale, GCAMpath, DataPath):
     :return: saved grid of polygon 
     """
         
-    grid_file=GCAMpath+'gcam_'+str(int(year))+'_domain_'+str(int(scale))+'.tiff'
-    OutFileName= 'domain_poly_'+str(int(scale))+'.shp'
+    grid_file = GCAMpath+'gcam_'+str(int(year))+'_domain_'+str(int(scale))+'.tiff'
+    OutFileName = 'domain_poly_'+str(int(scale))+'.shp'
     
     src= gdal.Open(grid_file)
     srcarray = src.ReadAsArray().astype(np.float)
@@ -358,31 +355,31 @@ def get_extent(counties_shp, county_list, scale, DataPath):
     """
 
     if scale == 3000:
-        SRB_poly = gp.read_file(DataPath + 'domain_poly_3000.shp')
+        SRB_poly = gp.read_file(os.path.join(DataPath, 'domain_poly_3000.shp'))
 
     elif scale == 1000:
-        SRB_poly = gp.read_file(DataPath + 'domain_poly_1000.shp')
+        SRB_poly = gp.read_file(os.path.join(DataPath, 'domain_poly_1000.shp'))
 
     # this returns geometry of the union, no longer distinguishes counties - see issue #1
 
     # this is the row index, not the "COUNTY_ALL" index
     extent = counties_shp['geometry'].loc[county_list].unary_union
     extent_poly = SRB_poly[SRB_poly.geometry.intersects(extent)]
+    out_filename = 'extent_' + str(int(scale)) + '.shp'
+    extent_poly.to_file(os.path.join(DataPath, out_filename))
 
-    extent_poly.to_file(DataPath + 'extent_' + str(int(scale)) + '.shp')
 
-    return extent_poly
+#------------------------------------------------------------------------------------------------
+#    Clip GCAM coverage to the counties of interest at scale of interest  & save for later use  #
+#------------------------------------------------------------------------------------------------
 
-#----------------------------------------------------------------------------
-#    Clip GCAM coverage to the counties of interest at scale of interest    #
-#----------------------------------------------------------------------------
-
-def get_gcam(counties_shp, county_list, gcam_file ):
+def get_gcam(counties_shp, county_list, gcam_file, out_path):
     """Clip GCAM coverage to the counties of interest at scale of interest.
 
     :param counties_shp:                Geopandas data frame for counties data
-    :param county_list:                  List of counties in the domain of interest
+    :param county_list:                 List of counties in the domain of interest
     :param gcam_file:                   Full path with file name and extension to the GCAM raster
+    :param out_path:                    Path to the directory where the file will be saved for use in Janus
 
     :return:                            Land cover data clipped to domain of interest
 
@@ -408,6 +405,11 @@ def get_gcam(counties_shp, county_list, gcam_file ):
                  "width": out_img.shape[2],
                  "transform": out_transform,
                  "crs": fetch_crs})
-    #need to save this as a init file -- see saveGCAMgrid from lc preprocessing? it requires a GCAM structure, which I believe this is in
+    # Merge original file name with init_landcover to denote that it is the initial land cover data being used
+    in_file = os.path.basename(gcam_file)
+    out_filename = os.path.join(out_path, 'init_landcover'+in_file+'.geojson')
 
-    saveGCAMgrid(out_img)
+    #TODO check to make sure that the geojson file format wont cause problems with import
+    # Save clipped land cover coverage
+    out_img.to_file(filename=out_filename, driver="GeoJSON")
+
