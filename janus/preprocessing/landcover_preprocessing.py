@@ -414,7 +414,7 @@ def get_gcam(counties_shp, county_list, gcam_file, out_path):
                  "crs": fetch_crs})
     # Merge original file name with init_landcover to denote that it is the initial land cover data being used
     in_file = os.path.basename(gcam_file)
-    out_filename = os.path.join(out_path, 'init_landcover'+in_file+'.geojson')
+    out_filename = os.path.join(out_path, 'init_landcover'+in_file+'.tiff')
 
     # Save clipped land cover coverage
     gdal.Warp(out_filename, out_img, dstSRS=epsg_code)

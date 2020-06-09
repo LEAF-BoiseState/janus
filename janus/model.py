@@ -10,6 +10,7 @@ import argparse
 import os
 
 import numpy as np
+import gdal
 
 import janus.preprocessing.geofxns as gf
 import janus.crop_functions.crop_decider as crpdec
@@ -77,8 +78,9 @@ class Janus:
         :return: nx, number of columns in domain
         """
 
-        # select initial gcam data from initial year
-        lc = gf.get_gcam(self.c.counties_shp, self.c.county_list, self.c.gcam_file)
+        # import the initial land cover data
+        lc_raster = gdal.Open(self.f_init_lc)
+        lc = lc_raster.GetRasterBand(1)
 
         ny, nx = lc[0].shape
 
