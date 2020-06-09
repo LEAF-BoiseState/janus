@@ -11,7 +11,8 @@ class ConfigReader:
     # keys found in the configuration file
     F_COUNTIES_SHP = 'f_counties_shp'
     F_KEY_FILE = 'f_key_file'
-    F_GCAM_FILE = 'f_gcam_file'
+    F_PROCESSED_LC_DIR = 'f_processed_lc_dir'
+    F_INIT_LC_FILE = 'f_init_lc_file'
     PROFITS = 'profits'
     F_PROFITS_FILE = 'f_profits_file'
     F_GCAM_PROFITS_FILE = 'f_gcam_profits_file'
@@ -45,7 +46,9 @@ class ConfigReader:
 
         self.key_file = pd.read_csv(c[ConfigReader.F_KEY_FILE])
 
-        self.gcam_file = c[ConfigReader.F_GCAM_FILE]
+        self.f_processed_lc_dir = c[ConfigReader.F_PROCESSED_LC_DIR]
+
+        self.f_init_lc = c[ConfigReader.F_INIT_LC_FILE]
 
         self.profits = c[ConfigReader.PROFITS]
 
