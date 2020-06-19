@@ -9,8 +9,6 @@ Select GIS data based on base year, and resolution and clip to counties
 import os
 
 import geopandas as gp
-
-import janus.preprocessing.geofxns as gf
 import janus.preprocessing.landcover_preprocessing as lc
 
 
