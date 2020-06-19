@@ -56,7 +56,7 @@ def get_gis_data(counties_shp, categories_csv, county_list, scale, year, raw_lc_
     gdf_key = gp.read_file(categories_csv)
 
     # convert cdl data to GCAM categories of choice
-    lc.c2g(gdf_key, gcam_category_type, processed_lc_dir, raw_lc_dir)
+    lc.c2g(gdf_key, processed_lc_dir, raw_lc_dir, gcam_category_type)
 
     # convert GCAM file to scale of interest
     lc.aggGCAM(scale, processed_lc_dir)

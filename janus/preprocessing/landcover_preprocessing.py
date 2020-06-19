@@ -160,16 +160,18 @@ def saveGCAMGrid(GCAM_struct):
     return
 
 
-def c2g(CDL_GCAM_keyfile, conversionID, gcam_output_path, cdl_input_path):
+def c2g(CDL_GCAM_keyfile, gcam_output_path, cdl_input_path, conversionID):
     """ Converts CDL categories to GCAM categories
 
     :param CDL_GCAM_keyfile:    File that links CDL categories to new GCAM categories, users may modify this for
                                 inclusion of local crops
-    :param conversionID:        String specifying which GCAM categories to use, options are 'local_GCAM_id' or 'GCAM_id'
-                                for regular GCAM categories
+
     :param gcam_output_path:    Path to save gcam output
 
     :param cdl_input_path:      Path to raw CDL data
+
+    :param conversionID:        String specifying which GCAM categories to use, options are 'local_GCAM_id' or 'GCAM_id'
+                                for regular GCAM categories
 
     :return:                Saved land cover rasters with user defined GCAM categories
 
@@ -186,7 +188,7 @@ def c2g(CDL_GCAM_keyfile, conversionID, gcam_output_path, cdl_input_path):
     # =========================================================================#
     # 1. Initialize a list of CDL structures for analysis                     #
     # =========================================================================#
-    files = glob.glob(cdl_input_path + 'cdl*.txt')
+    files = glob.glob(os.path.join(cdl_input_path, 'cdl*.txt'))
     CDL_Data  = []
     GCAM_Data = []
     for file in files:
@@ -248,7 +250,7 @@ def AggregateGCAMGrid(GCAM_dir, GCAM_ReadFile, AggRes):
     """
     
     # Open the GeoTiff based on the input path and file
-    input_file = os.join(GCAM_dir, GCAM_ReadFile)
+    input_file = os.path.join(GCAM_dir, GCAM_ReadFile)
     src_ds = gdal.Open(input_file)
 
     # Create the name of the output file by modifying the input file
@@ -268,7 +270,7 @@ def AggregateGCAMGrid(GCAM_dir, GCAM_ReadFile, AggRes):
     dst_nrows = int(src_nrows/agg_factor)
 
     dst_driver = gdal.GetDriverByName('Gtiff')
-    output = os.join(GCAM_dir, GCAM_WriteFile)
+    output = os.path.join(GCAM_dir, GCAM_WriteFile)
     dst_ds = dst_driver.Create(output, dst_ncols, dst_nrows, 1, gdal.GDT_Float32)
 
     dst_geot = (src_geot[0], src_geot[1]*agg_factor, src_geot[2], src_geot[3], src_geot[4], src_geot[5]*agg_factor)
