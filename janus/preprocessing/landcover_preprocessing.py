@@ -27,9 +27,9 @@ import rasterio
 import pycrs
 
 
-#=============================================================================#
+# =============================================================================#
 # PREAMBLE AND PATH DEFINITIONS
-#=============================================================================#
+# =============================================================================#
 
 class CdlDataStruct:
     """Attributes of input CDL data, location, file name, and all georeferencing information """
@@ -69,12 +69,12 @@ class GCAM_DataStruct:
     def SetGCAMGrid(self,gcam_grid): # Add reclassified GCAM grid
         self.gcam_grid = gcam_grid
         
-#=============================================================================#
+# =============================================================================#
 # FUNCTION DEFINITIONS  
-#=============================================================================#       
+# =============================================================================#
 
 
-def ReadArcGrid(CDL_struct): #does the CDL path go in here??
+def ReadArcGrid(CDL_struct): # does the CDL path go in here??
     """ Reads in ArcGrid file for processing """
     
     # Construct the full name of the CDL input ArcGrid file
@@ -163,26 +163,29 @@ def saveGCAMGrid(GCAM_struct):
 def c2g(CDL_GCAM_keyfile, conversionID, gcam_output_path, cdl_input_path):
     """ Converts CDL categories to GCAM categories
 
-    :param CDL_GCAM_keyfile:    File that links CDL categories to new GCAM categories, users may modify this forinclusion
-                                of local crops
-    :param conversionID:         String specifying which GCAM categories to use, options are 'local_GCAM_id' or 'GCAM_id'
+    :param CDL_GCAM_keyfile:    File that links CDL categories to new GCAM categories, users may modify this for
+                                inclusion of local crops
+    :param conversionID:        String specifying which GCAM categories to use, options are 'local_GCAM_id' or 'GCAM_id'
                                 for regular GCAM categories
-    :param gcam_output_path:    Path to GCAM data
+    :param gcam_output_path:    Path to save gcam output
+
+    :param cdl_input_path:      Path to raw CDL data
 
     :return:                Saved land cover rasters with user defined GCAM categories
 
     """
 
-    #=========================================================================#
+    # =========================================================================#
     # 0. Read in category data and create vectors                             #
-    #=========================================================================#
+    # =========================================================================#
+
     CDL2GCAM_key = pd.read_csv(CDL_GCAM_keyfile, sep=',')
     CDL_cat      = CDL2GCAM_key['CDL_id'].values
-    GCAM_cat     = CDL2GCAM_key[conversionID].values #'local_GCAM_id' or set to 'GCAM_id' for regular GCAM categories, or edit the original file to user defineted categories
+    GCAM_cat     = CDL2GCAM_key[conversionID].values
 
-    #=========================================================================#
+    # =========================================================================#
     # 1. Initialize a list of CDL structures for analysis                     #
-    #=========================================================================#
+    # =========================================================================#
     files = glob.glob(cdl_input_path + 'cdl*.txt')
     CDL_Data  = []
     GCAM_Data = []
@@ -197,27 +200,27 @@ def c2g(CDL_GCAM_keyfile, conversionID, gcam_output_path, cdl_input_path):
         gcam_outfile = gcam_outfile.replace('txt', 'tiff')
         GCAM_Data.append(GCAM_DataStruct(gcam_output_path, gcam_outfile))
     
-    #=========================================================================#
+    # =========================================================================#
     # 2a. Read in all the CDL files and store data in CDL_DataStruct          #
-    #=========================================================================#
+    # =========================================================================#
     Parallel(n_jobs=6, verbose=60, backend='threading')(delayed(ReadArcGrid)(CDL_Data[i]) \
              for i in np.arange(len(CDL_Data)))
 
-    #=========================================================================#
+    # =========================================================================#
     # 2b. Perform the CDL-GCAM category conversion                            #
-    #=========================================================================#
-    Parallel(n_jobs=6, verbose=10, backend='threading')(delayed(CDL2GCAM)(CDL_Data[i],CDL_cat,GCAM_Data[i],GCAM_cat) \
+    # =========================================================================#
+    Parallel(n_jobs=6, verbose=10, backend='threading')(delayed(CDL2GCAM)(CDL_Data[i], CDL_cat, GCAM_Data[i], GCAM_cat) \
              for i in np.arange(len(CDL_Data)))
 
-    #=========================================================================#
+    # =========================================================================#
     # 2c. Save re categorized GCAM grids to files                              #
-    #=========================================================================#
+    # =========================================================================#
     Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(saveGCAMGrid)(GCAM_Data[i]) \
              for i in np.arange(len(CDL_Data)))
 
-    #=========================================================================#
+    # =========================================================================#
     # 3. Create Arrays of Results
-    #=========================================================================#
+    # =========================================================================#
     f = len(files)
     CDL_stats  = np.zeros((132,f))
     GCAM_stats = np.zeros((28, f))
@@ -225,18 +228,18 @@ def c2g(CDL_GCAM_keyfile, conversionID, gcam_output_path, cdl_input_path):
     for i in np.arange(f):
         CDL_stats[:,i] = CDL_Data[i].cdl_stats
         GCAM_stats[:,i] = GCAM_Data[i].gcam_stats
-    np.savetxt(os.path.join(GCAMPath, "cdl_initial.csv"), CDL_stats, delimiter=",")
-    np.savetxt(os.path.join(GCAMPath, "gcam_initial.csv"), GCAM_stats, delimiter=",")
+    np.savetxt(os.path.join(gcam_output_path, "cdl_initial.csv"), CDL_stats, delimiter=",")
+    np.savetxt(os.path.join(gcam_output_path, "gcam_initial.csv"), GCAM_stats, delimiter=",")
     
-#=============================================================================#
+# =============================================================================#
 # Aggregate to scale of interest
-#=============================================================================#
+# =============================================================================#
 
 
-def AggregateGCAMGrid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
+def AggregateGCAMGrid(GCAM_dir, GCAM_ReadFile, AggRes):
     """ Create grid that land cover data is saved in when aggregating from smaller scale to larger scale
 
-    :param GCAM_ReadWriteDir: Directory that the land cover data exists in
+    :param GCAM_dir: Directory that the land cover data exists in
     :param GCAM_ReadFile:     The specific file to aggregate
     :param AggRes:            Resolution to aggregate data to in meters, suggested at 1000 or 3000
 
@@ -245,10 +248,11 @@ def AggregateGCAMGrid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
     """
     
     # Open the GeoTiff based on the input path and file
-    src_ds = gdal.Open(GCAM_ReadWriteDir+GCAM_ReadFile)
+    input_file = os.join(GCAM_dir, GCAM_ReadFile)
+    src_ds = gdal.Open(input_file)
 
     # Create the name of the output file by modifying the input file
-    GCAM_WriteFile = GCAM_ReadFile.replace('domain','domain'+'_'+str(int(AggRes)))
+    GCAM_WriteFile = GCAM_ReadFile.replace('domain', 'domain'+'_'+str(int(AggRes)))
 
     # Get key info on the source dataset    
     src_ncols = src_ds.RasterXSize
@@ -260,11 +264,12 @@ def AggregateGCAMGrid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
 
     agg_factor = AggRes / src_res
 
-    dst_ncols = (int)(src_ncols/agg_factor)
-    dst_nrows = (int)(src_nrows/agg_factor)
+    dst_ncols = int(src_ncols/agg_factor)
+    dst_nrows = int(src_nrows/agg_factor)
 
     dst_driver = gdal.GetDriverByName('Gtiff')
-    dst_ds = dst_driver.Create(GCAM_ReadWriteDir+GCAM_WriteFile, dst_ncols, dst_nrows, 1, gdal.GDT_Float32)
+    output = os.join(GCAM_dir, GCAM_WriteFile)
+    dst_ds = dst_driver.Create(output, dst_ncols, dst_nrows, 1, gdal.GDT_Float32)
 
     dst_geot = (src_geot[0], src_geot[1]*agg_factor, src_geot[2], src_geot[3], src_geot[4], src_geot[5]*agg_factor)
 
@@ -278,28 +283,28 @@ def AggregateGCAMGrid(GCAM_ReadWriteDir,GCAM_ReadFile, AggRes):
 
     return
 
-#=============================================================================#
+# =============================================================================#
 # Run aggregation function in parallel
-#=============================================================================#
+# =============================================================================#
 
 
-def aggGCAM(AggRes, GCAM_Dir):
+def aggGCAM(AggRes, gcam_dir):
     """Runs aggregation function in parallel
 
     :param AggRes:         Resolution to aggregate data to in meters, suggested at 1000 or 3000
-    :param gcam_directory: Directory where GCAM land cover data is stored
+    :param gcam_dir:       Directory where GCAM land cover data is stored
 
     :return: saved land cover data at new resolution
     """
         
-    GCAM_ReadFiles = glob.glob(os.path.join(GCAM_Dir, 'gcam*domain.tiff'))
+    GCAM_ReadFiles = glob.glob(os.path.join(gcam_dir, 'gcam*domain.tiff'))
     
-    Parallel(n_jobs=4, verbose=60, backend='threading')(delayed(AggregateGCAMGrid)(GCAM_Dir, os.path.basename(file), AggRes) \
+    Parallel(n_jobs=4, verbose=60, backend='threading')(delayed(AggregateGCAMGrid)(gcam_dir, os.path.basename(file), AggRes) \
              for file in GCAM_ReadFiles)
     
-#----------------------------------------------------------------------------
+# =============================================================================#
 # Create a set of polygons for entire domain
-#----------------------------------------------------------------------------
+# =============================================================================#
 
 
 def grid2poly(year, scale, GCAMpath, DataPath):
@@ -316,38 +321,39 @@ def grid2poly(year, scale, GCAMpath, DataPath):
     grid_file = os.path.join(GCAMpath, 'gcam_'+str(int(year))+'_domain_'+str(int(scale))+'.tiff')
     OutFileName = 'domain_poly_'+str(int(scale))+'.shp'
     
-    src= gdal.Open(grid_file)
+    src = gdal.Open(grid_file)
     srcarray = src.ReadAsArray().astype(np.float)
 
-    x_index =np.arange(srcarray.shape[1]) 
+    x_index = np.arange(srcarray.shape[1])
     y_index = np.arange(srcarray.shape[0])
     (upper_left_x, x_size, x_rotation, upper_left_y, y_rotation, y_size) = src.GetGeoTransform()
-    x_coords = x_index * x_size + upper_left_x + (x_size / 2) #add half the cell size
-    y_coords = y_index * y_size + upper_left_y + (y_size / 2) #to centre the point
+    x_coords = x_index * x_size + upper_left_x + (x_size / 2) # add half the cell size
+    y_coords = y_index * y_size + upper_left_y + (y_size / 2) # to centre the point
     xc, yc = np.meshgrid(x_coords, y_coords)
 
-    #create a list of all the polygons in the grid
+    # create a list of all the polygons in the grid
     vert = list()
     for i in np.arange(srcarray.shape[1]-1):  
         for j in np.arange(srcarray.shape[0]-1):  
                 vert.append([[xc[j, i] , yc[j,i]], [xc[j+1, i], yc[j+1, i]], [xc[j+1, i+1], yc[j+1, i+1]],[xc[j, i+1], yc[j, i+1]]])
  
-    #create list of polygons
-    polygons=[Polygon(vert[i]) for i in np.arange(len(vert))]
+    # create list of polygons
+    polygons = [Polygon(vert[i]) for i in np.arange(len(vert))]
 
-    #convert them to formats for exporting 
+    # convert them to formats for exporting
     polys   = gp.GeoSeries(MultiPolygon(polygons))
     polyagg = gp.GeoDataFrame(geometry=polys)
-    polyagg.crs= from_epsg(32611)
+    polyagg.crs = from_epsg(32611)
 
-    #-------------------------#
+    # -------------------------#
     # Save Output             #
-    #-------------------------#
+    # -------------------------#
     polyagg.to_file(filename=DataPath+OutFileName, driver="ESRI Shapefile")
 
-#----------------------------------------------------------------------------
-#    Get extent of modeling domain                                          #
-#----------------------------------------------------------------------------
+# ============================================================================= #
+#    Get extent of modeling domain                                              #
+# ============================================================================= #
+
 
 def get_extent(counties_shp, county_list, scale, DataPath):
     """Create a grid of the extent based on counties and scale of interest.
@@ -376,9 +382,9 @@ def get_extent(counties_shp, county_list, scale, DataPath):
     extent_poly.to_file(os.path.join(DataPath, out_filename))
 
 
-#------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------
 #    Clip GCAM coverage to the counties of interest at scale of interest  & save for later use  #
-#------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------
 
 def get_gcam(counties_shp, county_list, gcam_file, out_path):
     """Clip GCAM coverage to the counties of interest at scale of interest.
