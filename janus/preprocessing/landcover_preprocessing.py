@@ -109,31 +109,31 @@ def CDL2GCAM(CDL_struct, CDL_cat, GCAM_struct, GCAM_cat):
     cdl_stats  = np.zeros(132)
     gcam_stats = np.zeros(28)
      
-    gcam_grid = np.nan*np.ones(CDL_struct.cdl_grid.shape) #new blank np array
-    for i in np.arange(CDL_cat.size): #unique cdl categories
-        indx,indy = np.where(CDL_struct.cdl_grid == CDL_cat[i])
-        gcam_grid[indx,indy] = GCAM_cat[i]
-        cdl_stats[i]=indx.size
+    gcam_grid = np.nan*np.ones(CDL_struct.cdl_grid.shape)  # new blank np array
+    for i in np.arange(CDL_cat.size):  # unique cdl categories
+        indx, indy = np.where(CDL_struct.cdl_grid == CDL_cat[i])
+        gcam_grid[indx, indy] = GCAM_cat[i]
+        cdl_stats[i] = indx.size
        
-    for i in np.arange(28): # #count of each gcam category
-        indx,indy = np.where(gcam_grid == i+1)
+    for i in np.arange(28):  # count of each gcam category
+        indx, indy = np.where(gcam_grid == i+1)
         gcam_stats[i] = indx.size  
     
     CDL_struct.SetCDLStats(cdl_stats)
     
-    GCAM_struct.SetGCAM_ProjInfo(CDL_struct.cdl_geotransform,CDL_struct.cdl_projection,CDL_struct.cdl_pixelsize)
+    GCAM_struct.SetGCAM_ProjInfo(CDL_struct.cdl_geotransform, CDL_struct.cdl_projection, CDL_struct.cdl_pixelsize)
     GCAM_struct.SetGCAMStats(gcam_stats)
     GCAM_struct.SetGCAMGrid(gcam_grid)
     
     return
 
-
+# TODO do we need to feed this the path and outfilename? or is it defined in the structure?
 def saveGCAMGrid(GCAM_struct):
     """ Creates outfile name, applies correct projection and saves raster
 
     :param GCAM_struct:      Input GCAM structure
     :param gcam_path:        Path to the GCAM data
-    :param gcam_outfilname:  Name of the GCAM outfile
+    :param gcam_outfile:     Name of the GCAM outfile
 
     :return:                 Saved raster file 
 
@@ -148,7 +148,7 @@ def saveGCAMGrid(GCAM_struct):
     gcam_gdal   = gcam_driver.Create(gcam_outfile, ncols, nrows, 1, gdal.GDT_Float32)
 
     proj = osr.SpatialReference()
-    proj.ImportFromEPSG(4326) # Needed as an intermediate because no inital projection defined 
+    proj.ImportFromEPSG(4326)  # Needed as an intermediate because no initial projection defined
     gcam_gdal.SetProjection(proj.ExportToWkt())
     gcam_gdal.SetGeoTransform(GCAM_struct.gcam_geotransform)
     gcam_gdal.GetRasterBand(1).WriteArray(GCAM_struct.gcam_grid)
@@ -309,18 +309,18 @@ def aggGCAM(AggRes, gcam_dir):
 # =============================================================================#
 
 
-def grid2poly(year, scale, GCAMpath, DataPath):
+def grid2poly(year, scale, gcam_dir, out_path):
     """Creates a grid of polygons for holding information in each cell
 
     :param year:        Initiation year for identifying GCAM raster
     :param scale:       Scale of grid for identifying correct GCAM raster
-    :param GCAMpath:    Location of GCAM file
-    :param DataPath:    path for output file
+    :param gcam_dir:    Location of GCAM file
+    :param out_path:     path for output file
     
     :return: saved grid of polygon 
     """
         
-    grid_file = os.path.join(GCAMpath, 'gcam_'+str(int(year))+'_domain_'+str(int(scale))+'.tiff')
+    grid_file = os.path.join(gcam_dir, 'gcam_'+str(int(year))+'_domain_'+str(int(scale))+'.tiff')
     OutFileName = 'domain_poly_'+str(int(scale))+'.shp'
     
     src = gdal.Open(grid_file)
@@ -329,8 +329,8 @@ def grid2poly(year, scale, GCAMpath, DataPath):
     x_index = np.arange(srcarray.shape[1])
     y_index = np.arange(srcarray.shape[0])
     (upper_left_x, x_size, x_rotation, upper_left_y, y_rotation, y_size) = src.GetGeoTransform()
-    x_coords = x_index * x_size + upper_left_x + (x_size / 2) # add half the cell size
-    y_coords = y_index * y_size + upper_left_y + (y_size / 2) # to centre the point
+    x_coords = x_index * x_size + upper_left_x + (x_size / 2)  # add half the cell size
+    y_coords = y_index * y_size + upper_left_y + (y_size / 2)  # to centre the point
     xc, yc = np.meshgrid(x_coords, y_coords)
 
     # create a list of all the polygons in the grid
@@ -350,30 +350,31 @@ def grid2poly(year, scale, GCAMpath, DataPath):
     # -------------------------#
     # Save Output             #
     # -------------------------#
-    polyagg.to_file(filename=DataPath+OutFileName, driver="ESRI Shapefile")
+    outFileName = os.path.join(out_path, OutFileName)
+    polyagg.to_file(filename=outFileName, driver="ESRI Shapefile")
 
 # ============================================================================= #
 #    Get extent of modeling domain                                              #
 # ============================================================================= #
 
 
-def get_extent(counties_shp, county_list, scale, DataPath):
+def get_extent(counties_shp, county_list, scale, out_path):
     """Create a grid of the extent based on counties and scale of interest.
-    This will only be used if a user want to use and clip other geospatial data such as elevation
+    This will only be used if a user wants to use and clip other geospatial data such as elevation
 
     :param counties_shp:                Geopandas data frame for counties data
     :param county_list:                 List of counties in the domain of interest
     :param scale:                       Grid scale of output, can only be 3000 or 1000 (meters)
-    :param DataPath:                    File path to data folder
+    :param out_path:                     File path to processed lc data folder
 
     :return:                            Grid of polygons for the domain of interest
     """
 
     if scale == 3000:
-        SRB_poly = gp.read_file(os.path.join(DataPath, 'domain_poly_3000.shp'))
+        SRB_poly = gp.read_file(os.path.join(out_path, 'domain_poly_3000.shp'))
 
     elif scale == 1000:
-        SRB_poly = gp.read_file(os.path.join(DataPath, 'domain_poly_1000.shp'))
+        SRB_poly = gp.read_file(os.path.join(out_path, 'domain_poly_1000.shp'))
 
     # this returns geometry of the union, no longer distinguishes counties - see issue #1
 
@@ -381,7 +382,7 @@ def get_extent(counties_shp, county_list, scale, DataPath):
     extent = counties_shp['geometry'].loc[county_list].unary_union
     extent_poly = SRB_poly[SRB_poly.geometry.intersects(extent)]
     out_filename = 'extent_' + str(int(scale)) + '.shp'
-    extent_poly.to_file(os.path.join(DataPath, out_filename))
+    extent_poly.to_file(os.path.join(out_path, out_filename))
 
 
 # ------------------------------------------------------------------------------------------------
