@@ -45,21 +45,27 @@ def get_gis_data(counties_shp, categories_csv, county_list, scale, year, raw_lc_
                                             'GCAM_id_list' is the standard set of GCAM global categories.
     :type gcam_category_type:               str
 
-
+    :return:                                Land cover in GCAM categories at 30m and user defined scale of interest,
+                                            GCAM land cover for initiation year clipped to user defined extent
+    :type:                                  tiff
 
     """
     # read counties shapefile as geopandas data frame
     gdf_counties = gp.read_file(counties_shp)
     gdf_counties.set_index('county', inplace=True)
 
-    # read in CDL to GCAM category key
-    gdf_key = gp.read_file(categories_csv)
-
     # convert cdl data to GCAM categories of choice
-    lc.c2g(gdf_key, processed_lc_dir, raw_lc_dir, gcam_category_type)
+    lc.c2g(categories_csv, processed_lc_dir, raw_lc_dir, gcam_category_type)
+
+    assert os.path.exists(os.path.join(processed_lc_dir, 'gcam*.tiff')), 'get_gis_data.py ERROR: CDL to GCAM conversion' \
+                                                                         'was not successful, output does not exist'
 
     # convert GCAM file to scale of interest
-    lc.aggGCAM(scale, processed_lc_dir)
+    lc.aggGCAM(scale, processed_lc_dir, year)
+
+    assert os.path.exists(
+        os.path.join(processed_lc_dir, 'gcam_' + str(int(scale)) + '_domain_' + str(int(year)) + '.tiff')), \
+        'get_gis_data.py ERROR: aggregation was not successful, output does not exist'
 
     # use the above file to create a polygon coverage & save; this allows for mapping each cell over time (?)
     lc.grid2poly(year, scale, processed_lc_dir, init_lc_dir)
@@ -68,5 +74,9 @@ def get_gis_data(counties_shp, categories_csv, county_list, scale, year, raw_lc_
     lc.get_extent(counties_shp, county_list, scale, init_lc_dir)
 
     # crop land cover data from initialization year
-    gcam_file = os.path.join(processed_lc_dir, 'gcam_'+str(int(year))+'_domain_'+str(int(scale))+'.tiff')
+    gcam_file = os.path.join(processed_lc_dir, 'gcam_' + str(int(scale)) + '_domain_' + str(int(year)) + '.tiff')
+
     lc.get_gcam(counties_shp, county_list, gcam_file, init_lc_dir)
+
+    assert os.path.exists(os.path.join(init_lc_dir, os.path.join(init_lc_dir, 'init_landcover' + os.path.basename(
+        gcam_file)))), 'get_gis_data.py ERROR: clipping to user extent was not successful, output does not exist'

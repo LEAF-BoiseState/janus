@@ -238,23 +238,22 @@ def c2g(CDL_GCAM_keyfile, gcam_output_path, cdl_input_path, conversionID):
 # =============================================================================#
 
 
-def AggregateGCAMGrid(GCAM_dir, GCAM_ReadFile, AggRes):
+def aggregate_grid(input_file, scale, year):
     """ Create grid that land cover data is saved in when aggregating from smaller scale to larger scale
 
-    :param GCAM_dir: Directory that the land cover data exists in
-    :param GCAM_ReadFile:     The specific file to aggregate
-    :param AggRes:            Resolution to aggregate data to in meters, suggested at 1000 or 3000
+    :param input_file:      Full path and filename of input landcover
+    :param scale:           Resolution to aggregate data to in meters, suggested at 1000 or 3000
+    :param year:            Year that landcover is being initialized from
 
-    :return:                  New land cover raster at a specified resolution
+    :return:                New land cover raster at a specified resolution
 
     """
     
     # Open the GeoTiff based on the input path and file
-    input_file = os.path.join(GCAM_dir, GCAM_ReadFile)
     src_ds = gdal.Open(input_file)
 
     # Create the name of the output file by modifying the input file
-    GCAM_WriteFile = GCAM_ReadFile.replace('domain', 'domain'+'_'+str(int(AggRes)))
+    GCAM_WriteFile = 'gcam_'+str(int(scale))+'_domain_'+str(int(year))+'.tiff'
 
     # Get key info on the source dataset    
     src_ncols = src_ds.RasterXSize
@@ -264,13 +263,13 @@ def AggregateGCAMGrid(GCAM_dir, GCAM_ReadFile, AggRes):
     src_proj = src_ds.GetProjection()
     src_res  = src_ds.GetGeoTransform()[1]
 
-    agg_factor = AggRes / src_res
+    agg_factor = scale / src_res
 
     dst_ncols = int(src_ncols/agg_factor)
     dst_nrows = int(src_nrows/agg_factor)
 
     dst_driver = gdal.GetDriverByName('Gtiff')
-    output = os.path.join(GCAM_dir, GCAM_WriteFile)
+    output = os.path.join(os.path.dirname(input_file), GCAM_WriteFile)
     dst_ds = dst_driver.Create(output, dst_ncols, dst_nrows, 1, gdal.GDT_Float32)
 
     dst_geot = (src_geot[0], src_geot[1]*agg_factor, src_geot[2], src_geot[3], src_geot[4], src_geot[5]*agg_factor)
@@ -290,18 +289,19 @@ def AggregateGCAMGrid(GCAM_dir, GCAM_ReadFile, AggRes):
 # =============================================================================#
 
 
-def aggGCAM(AggRes, gcam_dir):
+def aggGCAM(scale, lc_dir, year):
     """Runs aggregation function in parallel
 
-    :param AggRes:         Resolution to aggregate data to in meters, suggested at 1000 or 3000
-    :param gcam_dir:       Directory where GCAM land cover data is stored
+    :param scale:        Resolution to aggregate data to in meters, suggested at 1000 or 3000
+    :param lc_dir:       Directory where GCAM landcover data is stored
+    :param year:         Year that landcover is being initialized from
 
     :return: saved land cover data at new resolution
     """
         
-    GCAM_ReadFiles = glob.glob(os.path.join(gcam_dir, 'gcam*domain.tiff'))
+    GCAM_ReadFiles = glob.glob(os.path.join(lc_dir, 'gcam_' + str(int(year)) + '*.tiff'))
     
-    Parallel(n_jobs=4, verbose=60, backend='threading')(delayed(AggregateGCAMGrid)(gcam_dir, os.path.basename(file), AggRes) \
+    Parallel(n_jobs=4, verbose=60, backend='threading')(delayed(aggregate_grid)(file, scale, year) \
              for file in GCAM_ReadFiles)
     
 # =============================================================================#
@@ -315,7 +315,7 @@ def grid2poly(year, scale, gcam_dir, out_path):
     :param year:        Initiation year for identifying GCAM raster
     :param scale:       Scale of grid for identifying correct GCAM raster
     :param gcam_dir:    Location of GCAM file
-    :param out_path:     path for output file
+    :param out_path:    path for output file
     
     :return: saved grid of polygon 
     """
@@ -423,7 +423,7 @@ def get_gcam(counties_shp, county_list, gcam_file, out_path):
                  "crs": fetch_crs})
     # Merge original file name with init_landcover to denote that it is the initial land cover data being used
     in_file = os.path.basename(gcam_file)
-    out_filename = os.path.join(out_path, 'init_landcover'+in_file+'.tiff')
+    out_filename = os.path.join(out_path, 'init_landcover'+in_file)
 
     # Save clipped land cover coverage
     gdal.Warp(out_filename, out_img, dstSRS=epsg_code)
