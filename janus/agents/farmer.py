@@ -13,6 +13,10 @@ class Farmer:
         self.LandStatus = kwargs.get('LandStatus')
         self.LandStatus = self.LandStatus
 
+        # TODO initialize location (x, y)
+        # note the LandStatus -- why is it that some are like that
+        
+        # TODO ask lejo about the way these lines are set up
         self.nFields = kwargs.get('nFields')
         self.nFields = self.nFields
 

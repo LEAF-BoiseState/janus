@@ -174,6 +174,7 @@ class Janus:
         :return:    Updated domain with agent information and landcover choice
 
         """
+        ## TODO parallelize? 
         for i in np.arange(1, self.c.Nt):
 
             for j in np.arange(self.Ny):
@@ -181,6 +182,14 @@ class Janus:
                 for k in np.arange(self.Nx):
 
                     if self.agent_domain[j, k].FarmerAgents:
+                        
+                        # look at what decision making method the agent is using (conformist, profit, success bias)
+                            # if conformist or success bias, look at network
+                        
+                            # TODO this is where the farmer will look around into network 
+                            # calling network code from im3 repo
+                        
+                            # call crop decider function to decide based off of network
 
                         # assess Profit
                         profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i-1, j, k],

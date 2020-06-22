@@ -35,7 +35,10 @@ class Dcell:
         self.nUrbAgent = 0
         self.nFarmAgent = 0
         self.UrbanAgents = []
+        # TODO is there ever more than one agent in a cell
+        # container for agent IDs?
         self.FarmerAgents = []
+        # TODO: add in location ID here?
 
     def add_agent(self, agent_struct):
         """Adds a new agent to a list

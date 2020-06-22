@@ -95,12 +95,17 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
     :return:           Domain with agents in each dCell
 
     """
+    
+    # TODO this is where I'd add in the location and the agent ID
+    # i j will be the location
+    # add in counter for agent ID
     for i in np.arange(Ny):
 
         for j in np.arange(Nx):
-
+            
+            # agentarray defines if agent is farmer/urban water/natural
             if AgentArray[i][j] == farmer.Farmer.__name__:
-
+                # TODO look at getNASS 
                 AgentData = getNASS.farmer_data(TenureCDF, AgeCDF, switch, dist2city[i][j], p, attr)
                 NewAgent = farmer.Farmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"],
                                           Dist2city=AgentData["Dist2city"], nFields=AgentData['nFields'],
