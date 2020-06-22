@@ -258,12 +258,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-c', '--config_file', type=str, help='Full path with file name and extension to YAML configuration file.')
-    parser.add_argument('-shp', '--f_counties_shp', type=str, help='Full path with file name and extension to the input counties shapefile.')
-    parser.add_argument('-key', '--f_key_file', type=str, help='Full path with file name and extension to the input land class category key file.')
-    parser.add_argument('-gcam', '--f_gcam_file', type=str, help='Full path with file name and extension to the input GCAM raster file.')
     parser.add_argument('-s', '--switch_params', type=list, help='List of lists for switching averse, tolerant, and neutral parameters (alpha, beta)')
     parser.add_argument('-nt', '--nt', type=int, help='Number of time steps')
     parser.add_argument('-attr', '--attr', type=str, help='Boolean that determines if switching parameters are based on attributes')
+    parser.add_argument('-f_init_lc', ' f_init_lc')
 
     # TODO: number of crops is calculated after doing the GIS pre-processing, if nc is needed for price generation, we might need to adjust this
     parser.add_argument('-nc', '--nc', type=int, help='Number of crops')
@@ -274,7 +272,7 @@ if __name__ == '__main__':
     parser.add_argument('-yr', '--initialization_yr', type=int, help='Initialization year assocciated with landcover input')
     parser.add_argument('-state', '--state', type=str, help='State where NASS data is pulled from, capitalized acronym')
     parser.add_argument('-sc', '--scale', type=int, help='Scale of landcover grid in meters. Current options are 1000 and 3000 m')
-    parser.add_argument('-cl', '--county_list', type=list, help='List of county names to evaluate from the input shapefile.')
+
     parser.add_argument('-av', '--agent_variables', type=list, help='NASS variables to characterize agents with. Currently set to use "TENURE" and "AREA OPERATED"')
     parser.add_argument('-nyr', '--nass_year', type=int, help='Year that NASS data are pulled from. This data is collected every 5 years, with the inital year here being 2007')
     parser.add_argument('-ncy', '--nass_county_list', type=list, help='List of counties in the domain that NASS data is collected from, these have to be entirely capatalized')
