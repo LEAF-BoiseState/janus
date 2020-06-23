@@ -320,8 +320,7 @@ def grid2poly(year, scale, gcam_dir, out_path):
     :return: saved grid of polygon 
     """
         
-    grid_file = os.path.join(gcam_dir, 'gcam_'+str(int(year))+'_domain_'+str(int(scale))+'.tiff')
-    OutFileName = 'domain_poly_'+str(int(scale))+'.shp'
+    grid_file = os.path.join(gcam_dir, 'gcam_'+str(int(scale))+'_domain_'+str(int(year))+'.tiff')
     
     src = gdal.Open(grid_file)
     srcarray = src.ReadAsArray().astype(np.float)
@@ -350,7 +349,7 @@ def grid2poly(year, scale, gcam_dir, out_path):
     # -------------------------#
     # Save Output             #
     # -------------------------#
-    outFileName = os.path.join(out_path, OutFileName)
+    outFileName = os.path.join(out_path, 'domain_poly_'+str(int(scale))+'.shp')
     polyagg.to_file(filename=outFileName, driver="ESRI Shapefile")
 
 # ============================================================================= #
