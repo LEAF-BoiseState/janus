@@ -71,12 +71,12 @@ def get_gis_data(counties_shp, categories_csv, county_list, scale, year, raw_lc_
     lc.grid2poly(year, scale, processed_lc_dir, init_lc_dir)
 
     # use the poly grid to create the extent for the model - only needed if using other land cover data
-    lc.get_extent(counties_shp, county_list, scale, init_lc_dir)
+    lc.get_extent(gdf_counties, county_list, scale, init_lc_dir)
 
     # crop land cover data from initialization year
     gcam_file = os.path.join(processed_lc_dir, 'gcam_' + str(int(scale)) + '_domain_' + str(int(year)) + '.tiff')
 
-    lc.get_gcam(counties_shp, county_list, gcam_file, init_lc_dir)
+    lc.get_gcam(gdf_counties, county_list, gcam_file, init_lc_dir)
 
     assert os.path.exists(os.path.join(init_lc_dir, os.path.join(init_lc_dir, 'init_landcover' + os.path.basename(
         gcam_file)))), 'get_gis_data.py ERROR: clipping to user extent was not successful, output does not exist'
