@@ -96,28 +96,33 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
 
     """
     
-    # TODO this is where I'd add in the location and the agent ID
+    # this is where I'd add in the location and the agent ID
     # i j will be the location
     # add in counter for agent ID
+    agent_ID_count = 0
     for i in np.arange(Ny):
 
         for j in np.arange(Nx):
-            
-            # agentarray defines if agent is farmer/urban water/natural
-            if AgentArray[i][j] == farmer.Farmer.__name__:
-                # TODO look at getNASS 
+
+            if AgentArray[i][j] == farmer.Farmer.__name__: 
+                # TODO check if agent ID and location ID are properly added 
                 AgentData = getNASS.farmer_data(TenureCDF, AgeCDF, switch, dist2city[i][j], p, attr)
                 NewAgent = farmer.Farmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"],
+                                          AgentID = agent_ID_count,
+                                          LocationID = (i,j),
                                           Dist2city=AgentData["Dist2city"], nFields=AgentData['nFields'],
                                           alpha=AgentData['Alpha'],
                                           beta=AgentData['Beta'])  # this is passing actual agent data
                 domain[i][j].add_agent(NewAgent)
+                agent_ID_count += 1 
 
             if AgentArray[i][j] == urban.Urban.__name__:
 
                 AgentData = getNASS.urban_data(lc[0][i][j])
                 NewAgent = urban.Urban(density=AgentData["Density"])
                 domain[i][j].add_agent(NewAgent)
+                
+    
 
     return domain
 

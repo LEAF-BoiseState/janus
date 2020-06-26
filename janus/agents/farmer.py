@@ -15,8 +15,13 @@ class Farmer:
 
         # TODO initialize location (x, y)
         # note the LandStatus -- why is it that some are like that
+
+        self.AgentID = kwargs.get('AgentID')
+        self.AgentID = self.AgentID # unsure if needed
         
-        # TODO ask lejo about the way these lines are set up
+        self.LocationID = kwargs.get('LocationID')
+        self.LocationID = self.LocationID
+   
         self.nFields = kwargs.get('nFields')
         self.nFields = self.nFields
 
