@@ -108,7 +108,8 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
                 # TODO check if agent ID and location ID are properly added 
                 AgentData = getNASS.farmer_data(TenureCDF, AgeCDF, switch, dist2city[i][j], p, attr)
                 NewAgent = farmer.Farmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"],
-                                          AgentID = agent_ID_count,
+                                         # TODO add in Agent and LocID 
+                                         AgentID = agent_ID_count,
                                           LocationID = (i,j),
                                           Dist2city=AgentData["Dist2city"], nFields=AgentData['nFields'],
                                           alpha=AgentData['Alpha'],

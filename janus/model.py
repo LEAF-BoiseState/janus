@@ -185,6 +185,8 @@ class Janus:
                         
                         # look at what decision making method the agent is using (conformist, profit, success bias)
                             # if conformist or success bias, look at network
+                            # is this where the network should be created if it depends 
+                            # on which decision making method is used?
                         
                             # TODO this is where the farmer will look around into network 
                             # calling network code from im3 repo
