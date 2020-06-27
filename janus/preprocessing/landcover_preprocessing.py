@@ -419,16 +419,15 @@ def get_gcam(counties_shp, county_list, gcam_file, out_path):
                  "height": out_img.shape[1],
                  "width": out_img.shape[2],
                  "transform": out_transform,
-                 "crs": fetch_crs})
+                 "crs": data._crs})
     # Merge original file name with init_landcover to denote that it is the initial land cover data being used
     in_file = os.path.basename(gcam_file)
-    out_filename = os.path.join(out_path, 'init_landcover'+in_file)
+    out_filename = os.path.join(out_path, 'init_landcover_'+in_file)
 
     # Save clipped land cover coverage
-    gdal.Warp(out_filename, out_img, dstSRS=epsg_code)
-
-    out_img.FlushCache()
-    gcam_gdal = None
+    outtiff = rasterio.open(out_filename, 'w', **out_meta)
+    outtiff.write(out_img, 1)
+    outtiff.close()
 
     return
 
