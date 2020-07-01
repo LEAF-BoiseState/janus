@@ -92,12 +92,13 @@ def gcam_usa_price_converter(gcam_profits, profits_out, key_file, nc, nt, year):
         for i in np.arange(len(gcam_srb_idx)):
             out[1:, gcam_srb_idx[i]] = np.transpose(price_ts)
 
+    # error trap
     if out.shape[1] != nc:
         print('\nERROR: Mismatch in number of crops read and provided as input\n')
         print(str(nc) + ' crops were expected, ' + str(out.shape[1]) + ' were read. Check key file\n')
         sys.exit()
 
-    # TODO: fix the warning here
+    # save output
     with open(profits_out, 'w') as fp:
         np.savetxt(fp, out, delimiter=',', fmt='%.5f')
         fp.close()
