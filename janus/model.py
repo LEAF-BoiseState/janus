@@ -94,10 +94,10 @@ class Janus:
     def initialize_crops(self):
         """Initialize crops
 
-        :return: crop_ids, numpy array of the crop IDs that are in the domain
-        :return: crop_id_all, numpy array of land cover categories through time
-        :return: ag, numpy array of where agricultural cells exist in the domain
-        :return: num_crops, integer og the number of crops being assessed
+        :return:    [0] numpy array; crop IDs that are in the domain
+                    [1] numpy array; crop_id_all, land cover categories through time
+                    [2] numpy array; ag, identifies where agricultural cells exist in the domain
+                    [3] integer; num_crops, number of crops being assessed
 
         """
 
@@ -118,10 +118,8 @@ class Janus:
     def initialize_profit(self):
         """Initialize profits based on profit signals csv that is either generated or input from other model output
 
-        :return:    profits_actual is the profit signal with a random variation
-        :type:      Numpy Array
-        :return:    profit_signals is the transposed profit signals cleaned to be used in other functions
-        :type:      Numpy Array
+        :return:    [0] Numpy Array; profits_actual, profit signal with a random variation
+                    [1] Numpy Array; profit_signals, transposed profit signals cleaned to be used in other functions
 
         """
         if self.c.profits == 'generated':
@@ -138,7 +136,7 @@ class Janus:
             print("Profit type not supported")
 
         assert profit_signals.shape[1] == self.c.Nt, 'The number of time steps in the profit signals do not ' \
-                                                       'match the number of model time steps'
+                                                     'match the number of model time steps'
 
         profits_actual = init_agent.init_profits(profit_signals, self.c.Nt, self.Ny, self.Nx, self.crop_id_all, self.crop_ids)
 
@@ -150,11 +148,8 @@ class Janus:
         :param cat_option:      Denotes which categorization option is used, 'GCAM', 'local', or user defined
         :type cat_option:       String
 
-        :return agent domain:   agent_domain is the domain with agent cell classes filled with agent information
-        :type:                  numpy array
-
-        :return agent_array:    agent_array is a numpy array of strings that define which agent is in each location
-        :type:                  numpy array
+        :return agent domain:   [0] Numpy array; agent_domain, domain with agent cell classes filled with agent info
+                                [1] Numpy array; agent_array, strings that define which agent is in each location
         """
 
         tenure = get_nass.tenure_area(self.c.state, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables,
@@ -240,7 +235,7 @@ class Janus:
         ppf.plot_price_signals(self.profit_signals, self.c.key_file, self.c.target_year, self.c.Nt, self.c.output_dir, self.c.profits)
 
     def save_outputs(self):
-        """Save outputs as NumPy arrays.
+        """Save outputs as Numpy arrays.
         
         The dimensions of each output NumPy array are [Number of time steps, Ny, Nx]
         """
