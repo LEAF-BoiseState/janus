@@ -406,7 +406,6 @@ def get_gcam(counties_shp, county_list, gcam_file, out_path):
     coords = [json.loads(boundary.to_json())['features'][0]['geometry']] # parses features from GeoDataFrame the way rasterio wants them
     out_img, out_transform = mask(dataset=data, shapes=coords, crop=True)
     out_meta = data.meta.copy()
-    epsg_code = int(data.crs.data['init'][5:])
 
     # update metadata with new transformation information
     out_meta.update({"driver": "GTiff",
