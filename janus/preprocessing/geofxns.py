@@ -14,12 +14,12 @@ from scipy import spatial
 def min_dist_city(gcam):
     """Calculate the minimum distance to a city cell.
 
-    :param gcam: np.array of landcover of Snake River Basin GCAM categories, other keyfiles will incorrectly identify city cells
+    :param gcam: np.array of land cover of Snake River Basin GCAM categories, other key files will incorrectly identify city cells
 
     :return: np.array of distance to a city cell within the domain
 
     """
-    # TODO:  are these values supposed to be hard-coded, no, update to follow based on key file
+    # TODO:  update to follow based on key file
     urban_bool = np.logical_or(np.logical_or(gcam[0] == 26, gcam[0] == 27), np.logical_or(gcam[0] == 17, gcam[0] == 25))
     
     rur = np.where(np.logical_and(~urban_bool, gcam[0] != 0))
