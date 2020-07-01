@@ -58,8 +58,8 @@ def get_gis_data(counties_shp, categories_csv, county_list, scale, year, raw_lc_
     # convert cdl data to GCAM categories of choice
     lc.c2g(categories_csv, processed_lc_dir, raw_lc_dir, gcam_category_type)
 
-    assert os.path.exists(os.path.join(processed_lc_dir, 'gcam*.tiff')), 'get_gis_data.py ERROR: CDL to GCAM conversion' \
-                                                                         'was not successful, output does not exist'
+    assert os.path.exists(os.path.join(processed_lc_dir, 'gcam_'+str(int(year))+'_srb.tiff')), \
+        'get_gis_data.py ERROR: CDL to GCAM conversion was not successful, output does not exist'
 
     # convert GCAM file to scale of interest
     lc.aggGCAM(scale, processed_lc_dir, year)
