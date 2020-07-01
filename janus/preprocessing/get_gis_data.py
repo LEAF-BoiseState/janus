@@ -78,5 +78,5 @@ def get_gis_data(counties_shp, categories_csv, county_list, scale, year, raw_lc_
 
     lc.get_gcam(gdf_counties, county_list, gcam_file, init_lc_dir)
 
-    assert os.path.exists(os.path.join(init_lc_dir, os.path.join(init_lc_dir, 'init_landcover' + os.path.basename(
-        gcam_file)))), 'get_gis_data.py ERROR: clipping to user extent was not successful, output does not exist'
+    assert os.path.exists(os.path.join(init_lc_dir, 'init_landcover_' + os.path.basename(gcam_file))), \
+        'get_gis_data.py ERROR: clipping to user extent was not successful, output does not exist'
