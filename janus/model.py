@@ -117,10 +117,11 @@ class Janus:
 
     def initialize_profit(self):
         """Initialize profits based on profit signals csv that is either generated or input from other model output
-        :param profit: Choice between using generated price signals, or prices from GCAM
 
-        :return: profits_actual is the profit signal with a random variation 
-        :return: profit_signals is the transposed profit signals cleaned to be used in other functions
+        :return:    profits_actual is the profit signal with a random variation
+        :type:      Numpy Array
+        :return:    profit_signals is the transposed profit signals cleaned to be used in other functions
+        :type:      Numpy Array
 
         """
         if self.c.profits == 'generated':
@@ -129,7 +130,6 @@ class Janus:
 
             assert np.all([profit_signals[:, 0], self.crop_ids[:, 0]]), 'Crop IDs in profit signals do not match ' \
                                                                         'Crop IDs from land cover'
-
             profit_signals = profit_signals[:, 1:]
 
         elif self.c.profits == 'gcam':
@@ -140,16 +140,21 @@ class Janus:
         assert profit_signals.shape[1] == self.c.Nt, 'The number of time steps in the profit signals do not ' \
                                                        'match the number of model time steps'
 
-        profits_actual = init_agent.profits(profit_signals, self.c.Nt, self.Ny, self.Nx, self.crop_id_all, self.crop_ids)
+        profits_actual = init_agent.init_profits(profit_signals, self.c.Nt, self.Ny, self.Nx, self.crop_id_all, self.crop_ids)
 
         return profits_actual, profit_signals
 
     def initialize_agents(self, cat_option='local'):
         """Initialize agents based on NASS data and initial land cover
-        :param cat_option: Denotes which categorization option is used, 'GCAM', 'local', or user defined
-        :return: agent_domain is the domain with agent cell classes filled with agent information 
-        :return: agent_array is a numpy array of strings that define which agent is in each location
 
+        :param cat_option:      Denotes which categorization option is used, 'GCAM', 'local', or user defined
+        :type cat_option:       String
+
+        :return agent domain:   agent_domain is the domain with agent cell classes filled with agent information
+        :type:                  numpy array
+
+        :return agent_array:    agent_array is a numpy array of strings that define which agent is in each location
+        :type:                  numpy array
         """
 
         tenure = get_nass.tenure_area(self.c.state, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables,
@@ -171,7 +176,8 @@ class Janus:
     def decisions(self):
         """Decision process.
 
-        :return:    Updated domain with agent information and landcover choice
+        :return:    Updated domain with agent information and land cover choice
+        :type:      Numpy Array
 
         """
         for i in np.arange(1, self.c.Nt):
