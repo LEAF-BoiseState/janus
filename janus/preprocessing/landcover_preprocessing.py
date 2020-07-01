@@ -408,25 +408,19 @@ def get_gcam(counties_shp, county_list, gcam_file, out_path):
     out_meta = data.meta.copy()
     epsg_code = int(data.crs.data['init'][5:])
 
-    # TODO:  check to see if this is a valid workaround for not setting a coordinate system on failure
-    try:
-        fetch_crs = pycrs.parse.from_epsg_code(epsg_code).to_proj4()
-
-    except urllib.error.URLError:
-        fetch_crs = None
-
+    # update metadata with new transformation information
     out_meta.update({"driver": "GTiff",
                  "height": out_img.shape[1],
                  "width": out_img.shape[2],
-                 "transform": out_transform,
-                 "crs": data._crs})
-    # Merge original file name with init_landcover to denote that it is the initial land cover data being used
+                 "transform": out_transform})
+
+    # Merge original file name with init_landcover to denote that it is the initial land cover data for Janus
     in_file = os.path.basename(gcam_file)
     out_filename = os.path.join(out_path, 'init_landcover_'+in_file)
 
     # Save clipped land cover coverage
     outtiff = rasterio.open(out_filename, 'w', **out_meta)
-    outtiff.write(out_img, 1)
+    outtiff.write(np.squeeze(out_img, 0), 1)
     outtiff.close()
 
     return
