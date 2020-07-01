@@ -27,15 +27,25 @@ def define_seed(seed):
 def switching_prob_curve(alpha, beta, fmin, fmax, n, profit):
     """ Creates probability curves that show likelihood of switching crops based on profits
     :param alpha:       Alpha parameter for the incomplete beta distribution
-    :param beta:        Beta parameter for the incomplete beta distribution
-    :param fmin:        Fraction of current profit at which the CDF of the beta distribution is zero
-    :param fmax:        Fraction of current profit at which the CDF of the beta distribution is one
-    :param n:           Number of points to generate in the CDF
-    :param profit:      Current profit
+    :type alpha:        Float
 
-    :return:            Two (n x 1) numpy arrays containing, respectively n points spaced
-                        linearly between fmin*profit and fmax*profit (x2) and the associated points
-                        of the beta distribution as specified by alpha and beta (fx).
+    :param beta:        Beta parameter for the incomplete beta distribution
+    :type beta:         Float
+
+    :param fmin:        Fraction of current profit at which the CDF of the beta distribution is zero
+    :type fmin:         Float
+
+    :param fmax:        Fraction of current profit at which the CDF of the beta distribution is one
+    :type fmax:         Float
+
+    :param n:           Number of points to generate in the CDF
+    :type n:            Int
+
+    :param profit:      Current profit
+    :type profit:       Float
+
+    :return:            [0] numpy array; n points spaced linearly between fmin * profit and fmax * profit
+                        [1] numpy array; associated points of the beta distribution as specified by alpha and beta
     """
     x = np.linspace(0, 1.0, num=n)
 
@@ -49,15 +59,22 @@ def switching_prob_curve(alpha, beta, fmin, fmax, n, profit):
 def decide2switch(alpha, beta, fmin, fmax, n, profit, profit_p):
     """ This decides whether to retain current crop or switch to one other option
 
-    :param alpha: The alpha parameter for the incomplete beta distribution
-    :param beta: The beta parameter for the incomplete beta distribution
-    :param fmin: The fraction of current profit at which the CDF of the beta distribution is zero
-    :param fmax: The fraction of current profit at which the CDF of the beta distribution is one
-    :param n: The number of points to generate in the CDF 
-    :param profit: The current profit the farmer experiences
-    :param profit_p: The potential profit of the alternative crop being evaluated
-
-    :return: A binary flag indicating whether or not to switch crops (1 = switch, 0 = do not switch)
+    :param alpha:       Alpha parameter for the incomplete beta distribution
+    :type alpha:        Float
+    :param beta:        Beta parameter for the incomplete beta distribution
+    :type beta:         Float
+    :param fmin:        Fraction of current profit at which the CDF of the beta distribution is zero
+    :type fmin:         Float
+    :param fmax:        Fraction of current profit at which the CDF of the beta distribution is one
+    :type fmax:         Float
+    :param n:           Number of points to generate in the CDF
+    :type n:            Int
+    :param profit:      Current profit the farmer experiences
+    :type profit:       Float
+    :param profit_p:    Potential profit of the alternative crop being evaluated
+    :type profit_p:     Float
+    :return:            A binary flag indicating whether or not to switch crops (1 = switch, 0 = do not switch)
+    :type:              Int
 
     """
     if profit_p > profit:
@@ -93,9 +110,8 @@ def assess_profit(crop, profits_current, profit_signals, num_crops, crop_ids):
    :param crop_ids:          The associated vector of crop IDs associated with the input profit signal
    :param crop_ids:          Vector
 
-   :return:                 Float of the profit for a particular crop (Crop) from the last time step, \
-                            and an array of potential profits for the current time step
-    :type:                  Float and Vector
+   :return:                 [0] Float; profit for a particular crop (Crop) from the last time step
+                            [1] Numpy array; potential profits for the current time step
 
    """
 
@@ -145,8 +161,9 @@ def profit_maximizer(alpha, beta, fmin, fmax, n, profits_current, vec_crops, vec
                             more profitable, to choose the most profitable alternative (True),
                             or select randomly between all viable alternatives.
 
-    :return:                Integer denoting crop choice and float of the associated profit
-    :type:                  Int and float
+    :return:                [0] Integer; denoting crop choice and
+                            [1] Float; associated profit
+
     """
     # Key assumptions: the vector of crop IDs and anticipated profits associated
     # with each crop must both be N x 1 column vectors.
@@ -216,8 +233,8 @@ def make_choice(crop_id_last, profit_last, crop_choice, profit_choice, seed=Fals
     :param seed:                A boolean indicating whether or not to use a random seed
     :type seed:                 Bool
 
-    :return:                    The new crop ID and its associated profit
-    :type:                      Int and Float
+    :return:                    [0] Int; selected crop ID
+    :type:                      [1] Float; crop profit
     """
 
     if seed:
