@@ -45,10 +45,12 @@ def get_gis_data(counties_shp, categories_csv, county_list, scale, year, raw_lc_
                                             'GCAM_id_list' is the standard set of GCAM global categories.
     :type gcam_category_type:               str
 
-    :return:                                Land cover in GCAM categories at user defined scale of interest,
-                                            Extent of domain, and grid of polygons for domain shape files,
-                                            GCAM land cover for initiation year clipped to user defined extent
-    :type:                                  tiff
+    :return:                                [0] Tiff; Land cover in GCAM categories at scale of input data
+                                            [1] Tiff; Land cover in GCAM categories at user defined scale of interest
+                                            [2] ESRI Shapefile; Extent of domain
+                                            [3] ESRI Shapefile; grid of polygons for domain
+                                            [4] Tiff; GCAM land cover for initiation year clipped to user defined extent
+
 
     """
     # read counties shapefile as geopandas data frame
