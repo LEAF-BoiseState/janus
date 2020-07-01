@@ -127,7 +127,7 @@ def agents(agent_array, domain, dist2city, tenure_cdf, age_cdf, switch, ny, nx, 
     :type attr:         Bool
 
     :return:            Domain with agents in each dCell
-    :type:
+    :type:              Numpy Array
 
     """
     for i in np.arange(ny):
