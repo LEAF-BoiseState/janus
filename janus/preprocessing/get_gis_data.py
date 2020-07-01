@@ -3,7 +3,7 @@ Created on Mon Apr  8 21:55:00 2019
 
 @author: kek25
 
-Select GIS data based on base year, and resolution and clip to counties
+Select GIS data based on base year, and resolution and clip to extent to create the initial land cover coverage
 """
 
 import os
@@ -45,7 +45,8 @@ def get_gis_data(counties_shp, categories_csv, county_list, scale, year, raw_lc_
                                             'GCAM_id_list' is the standard set of GCAM global categories.
     :type gcam_category_type:               str
 
-    :return:                                Land cover in GCAM categories at 30m and user defined scale of interest,
+    :return:                                Land cover in GCAM categories at user defined scale of interest,
+                                            Extent of domain, and grid of polygons for domain shape files,
                                             GCAM land cover for initiation year clipped to user defined extent
     :type:                                  tiff
 
@@ -75,7 +76,6 @@ def get_gis_data(counties_shp, categories_csv, county_list, scale, year, raw_lc_
 
     # crop land cover data from initialization year
     gcam_file = os.path.join(processed_lc_dir, 'gcam_' + str(int(scale)) + '_domain_' + str(int(year)) + '.tiff')
-
     lc.get_gcam(gdf_counties, county_list, gcam_file, init_lc_dir)
 
     assert os.path.exists(os.path.join(init_lc_dir, 'init_landcover_' + os.path.basename(gcam_file))), \
