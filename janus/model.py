@@ -182,15 +182,15 @@ class Janus:
 
                     if self.agent_domain[j, k].FarmerAgents:
 
-                        # assess Profit
+                        # assess profit
                         profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i-1, j, k],
                                                                        self.profits_actual[i-1, j, k],
                                                                        self.profit_signals[:, i],
                                                                        self.num_crops,
                                                                        self.crop_ids)
 
-                        # choose between crops
-                        crop_choice, profit_choice = crpdec.decide_n(self.agent_domain[j, k].FarmerAgents[0].alpha,
+                        # identify the most profitable crop
+                        crop_choice, profit_choice = crpdec.profit_maximizer(self.agent_domain[j, k].FarmerAgents[0].alpha,
                                                                     self.agent_domain[j, k].FarmerAgents[0].beta,
                                                                     self.c.fmin,
                                                                     self.c.fmax,
