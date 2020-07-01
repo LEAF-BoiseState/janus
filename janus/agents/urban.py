@@ -1,4 +1,7 @@
-
+# Author: Kendra Kaiser
+# Date: 8/13/2019
+# FileName: urban.py
+# Purpose: Holds definition of urban agent
 
 class Urban:
     """Holds definition of urban agent
