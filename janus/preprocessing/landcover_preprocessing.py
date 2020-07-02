@@ -27,41 +27,85 @@ import rasterio
 # =============================================================================#
 
 class CdlDataStruct:
-    """Attributes of input CDL data, location, file name, and all georeferencing information """
+    """Attributes of input CDL data, location, file name, and all georeferencing information 
+    :param cdl_path:    Full path to the CDl data
+    :type cdl_path:     String
+    :param cdl_infile:  Filename of CDL data
+    :type cdl_infile:   String
+    
+    """
 
     # Constructor requires the path and file name of the input CDL data
     def __init__(self, cdl_path, cdl_infile):
         self.cdl_path = cdl_path
         self.cdl_infile = cdl_infile
 
-    # Add CDL geographic transformation adn projection information
-    def SetCDL_ProjInfo(self, GeoTransform, Projection, PixelSize):
-        self.cdl_geotransform = GeoTransform
-        self.cdl_projection = Projection
-        self.cdl_pixelsize = PixelSize
+    def set_cdl_proj(self, geo_transform, projection, pixel_size):
+        """ Add CDL geographic transformation and projection information
+        :param geo_transform:   Transformation information
+        :type geo_transform:    String
+        :param projection:      Projection of data
+        :type projection:       String  
+        :param pixel_size:      Size of pixels in meters
+        :type pixel_size:       Int
 
-    def SetCDLGrid(self, cdl_grid):  # Original CDL grid
+        """
+        self.cdl_geotransform = geo_transform
+        self.cdl_projection = projection
+        self.cdl_pixelsize = pixel_size
+
+    def set_cdl_grid(self, cdl_grid):  
+        """Add the 2D data to the class structure
+        :param cdl_grid:    Land cover data
+        :type cdl_grid:     Numpy Array
+        """
         self.cdl_grid = cdl_grid
 
-    def SetCDLStats(self, cdl_stats):  # Add CDL stats
+    def set_cdl_stats(self, cdl_stats):  
+        """ Add the stats calculated to the class
+        :param cdl_stats:   Number of cells that have each crop type
+        :type cdl_stats:    Numpy Array
+        """
         self.cdl_stats = cdl_stats
 
 
-class gcam_dataStruct:
+class GCAM_DataStruct:
+    """Attributes of the GCAM data, location, file name, and all georeferencing information 
+    :param gcam_path:     Full path to the GCAM data
+    :type gcam_path:      String
+    :param gcam_outfile:  Filename to save the GCAM data
+    :type gcam_outfile:   String
 
+    """
     def __init__(self, gcam_path, gcam_outfile):
         self.gcam_path = gcam_path
         self.gcam_outfile = gcam_outfile
 
-    def SetGCAM_ProjInfo(self, GeoTransform, Projection, PixelSize):
-        self.gcam_geotransform = GeoTransform
-        self.gcam_projection = Projection
-        self.gcam_pixelsize = PixelSize
+    def set_gcam_proj(self, geo_transform, projection, pixel_size):
+        """ Set the projection of the GCAM data
+        :param geo_transform:   Transformation information
+        :type geo_transform:    String
+        :param projection:      Projection of data
+        :type projection:       String
+        :param pixel_size:      Size of pixels in meters
+        :type pixel_size:       Int
+        """
+        self.gcam_geotransform = geo_transform
+        self.gcam_projection = projection
+        self.gcam_pixelsize = pixel_size
 
-    def SetGCAMStats(self, gcam_stats):  # Add GCAM stats
+    def set_gcam_stats(self, gcam_stats):
+        """ Add the stats calculated to the class
+        :param gcam_stats:   Number of cells that have each crop type
+        :type gcam_stats:    Numpy Array
+        """
         self.gcam_stats = gcam_stats
 
-    def SetGCAMGrid(self, gcam_grid):  # Add reclassified GCAM grid
+    def set_gcam_grid(self, gcam_grid):  
+        """Add the reclassified 2D data to the class structure
+        :param gcam_grid:    Land cover data
+        :type gcam_grid:     Numpy Array
+        """
         self.gcam_grid = gcam_grid
 
 
@@ -70,19 +114,22 @@ class gcam_dataStruct:
 # =============================================================================#
 
 
-def ReadArcGrid(cdl_struct):  # does the CDL path go in here??
-    """ Reads in ArcGrid file for processing """
+def read_arc_grid(cdl_struct):  
+    """ Reads in ArcGrid file for processing
+    :param cdl_struct:  CDL class
+    :type cdl_struct:   Class
+    """
 
     # Construct the full name of the CDL input ArcGrid file
     cdl_file = os.path.join(cdl_struct.cdl_path, cdl_struct.cdl_infile)
 
     # Open the CDL input file using GDAL
     cdl_input = gdal.Open(cdl_file)
-    cdl_struct.SetCDL_ProjInfo(cdl_input.GetGeoTransform(), cdl_input.GetProjection(), cdl_input.GetGeoTransform()[1])
+    cdl_struct.set_cdl_proj(cdl_input.GetGeoTransform(), cdl_input.GetProjection(), cdl_input.GetGeoTransform()[1])
 
     cdl_grid = np.float64(cdl_input.ReadAsArray())
     cdl_grid[cdl_grid == -9999] = np.nan
-    cdl_struct.SetCDLGrid(cdl_grid)
+    cdl_struct.set_cdl_grid(cdl_grid)
 
     # Close CDL data set to save memory
     cdl_input = None
@@ -90,7 +137,7 @@ def ReadArcGrid(cdl_struct):  # does the CDL path go in here??
     return
 
 
-def CDL2GCAM(cdl_struct, cdl_cat, gcam_struct, gcam_cat):
+def cdl2gcam(cdl_struct, cdl_cat, gcam_struct, gcam_cat):
     """ Convert raster of CDL land cover to GCAM categories
 
     :param cdl_struct:      Raster of CDL land cover
@@ -123,16 +170,16 @@ def CDL2GCAM(cdl_struct, cdl_cat, gcam_struct, gcam_cat):
         indx, indy = np.where(gcam_grid == i + 1)
         gcam_stats[i] = indx.size
 
-    cdl_struct.SetCDLStats(cdl_stats)
+    cdl_struct.set_cdl_stats(cdl_stats)
 
-    gcam_struct.SetGCAM_ProjInfo(cdl_struct.cdl_geotransform, cdl_struct.cdl_projection, cdl_struct.cdl_pixelsize)
-    gcam_struct.SetGCAMStats(gcam_stats)
-    gcam_struct.SetGCAMGrid(gcam_grid)
+    gcam_struct.set_gcam_proj(cdl_struct.cdl_geotransform, cdl_struct.cdl_projection, cdl_struct.cdl_pixelsize)
+    gcam_struct.set_gcam_stats(gcam_stats)
+    gcam_struct.set_gcam_grid(gcam_grid)
 
     return
 
 
-def saveGCAMGrid(gcam_struct):
+def save_gcam_grid(gcam_struct):
     """ Creates outfile name, applies correct projection and saves raster
 
     :param gcam_struct:      Input GCAM structure
@@ -208,24 +255,24 @@ def c2g(cdl_gcam_keyfile, gcam_output_path, cdl_input_path, conversion_id):
         # Initialize GCAM data structures with paths and file names
         gcam_outfile = cdl_infile.replace('cdl', 'gcam')
         gcam_outfile = gcam_outfile.replace('txt', 'tiff')
-        gcam_data.append(gcam_dataStruct(gcam_output_path, gcam_outfile))
+        gcam_data.append(GCAM_DataStruct(gcam_output_path, gcam_outfile))
 
     # =========================================================================#
     # 2a. Read in all the CDL files and store data in cdl_dataStruct          #
     # =========================================================================#
-    Parallel(n_jobs=6, verbose=60, backend='threading')(delayed(ReadArcGrid)(cdl_data[i])
+    Parallel(n_jobs=6, verbose=60, backend='threading')(delayed(read_arc_grid)(cdl_data[i])
                                                         for i in np.arange(len(cdl_data)))
 
     # =========================================================================#
     # 2b. Perform the CDL-GCAM category conversion                            #
     # =========================================================================#
-    Parallel(n_jobs=6, verbose=10, backend='threading')(delayed(CDL2GCAM)(cdl_data[i], cdl_cat, gcam_data[i], gcam_cat)
+    Parallel(n_jobs=6, verbose=10, backend='threading')(delayed(cdl2gcam)(cdl_data[i], cdl_cat, gcam_data[i], gcam_cat)
                                                         for i in np.arange(len(cdl_data)))
 
     # =========================================================================#
     # 2c. Save re categorized GCAM grids to files                              #
     # =========================================================================#
-    Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(saveGCAMGrid)(gcam_data[i])
+    Parallel(n_jobs=6, verbose=30, backend='threading')(delayed(save_gcam_grid)(gcam_data[i])
                                                         for i in np.arange(len(cdl_data)))
 
     # =========================================================================#
@@ -305,7 +352,7 @@ def aggregate_grid(input_file, scale, year):
 # =============================================================================#
 
 
-def aggGCAM(scale, lc_dir, year):
+def agg_gcam(scale, lc_dir, year):
     """Runs aggregation function in parallel
 
     :param scale:        Resolution to aggregate data to in meters, suggested at 1000 or 3000
