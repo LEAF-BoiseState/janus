@@ -64,7 +64,7 @@ def get_gis_data(counties_shp, categories_csv, county_list, scale, year, raw_lc_
         'get_gis_data.py ERROR: CDL to GCAM conversion was not successful, output does not exist'
 
     # convert GCAM file to scale of interest
-    lc.aggGCAM(scale, processed_lc_dir, year)
+    lc.agg_gcam(scale, processed_lc_dir, year)
 
     assert os.path.exists(
         os.path.join(processed_lc_dir, 'gcam_' + str(int(scale)) + '_domain_' + str(int(year)) + '.tiff')), \
