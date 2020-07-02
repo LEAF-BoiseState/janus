@@ -3,9 +3,12 @@
 # FileName: urban.py
 # Purpose: Holds definition of urban agent
 
-class Urban:
-    """Holds definition of urban agent
 
+class Urban:
+    """ Urban agents exist in locations where the land cover is urban, the class contains their attributes.
+    The urban agent is currently not in use in Janus, but is a placeholder for future development.
+    :param density:     Density of urban location, high medium or low
+    :type density:      String
     """
 
     def __init__(self, **kwargs):
