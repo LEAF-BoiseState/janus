@@ -100,7 +100,7 @@ Run preprocessing scripts to set up initial land cover data and profits data.
 Janus is currently setup to use the NASS Cropland Data Layer, this data should be downloaded for the area of interest and the key_file should be updated to reflect the land cover categories of interest. If other land cover data is being used this step is not necessary. The aggregation step may take upwards of an hour depending on the extent.
 
 ```python
-from janus.preprocessing.get_gis_data import get_gis_data
+from janus import get_gis_data
 get_gis_data('<full path and filename of counties_shp>', '<full path and filename of key file>', '<county_list>', <scale>, <year>, '<full path to raw_lc_di>', '<full path to processed_lc_dir>', '<full path to init_lc_dir>',
                  gcam_category_type='local_GCAM_id')
 ```
