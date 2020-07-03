@@ -50,11 +50,11 @@ There is an example config file in the `janus/example` directory of this package
 | Key | Description | Example Data Name
 | -- | -- | -- |
 |`f_input_dir`| full path to input file directory |
-|`f_init_lc_file`| full path with file name and extension to the initial land cover data [more details] (https://github.com/LEAF-BoiseState/janus/wiki/Input-File-Details)|
-| `f_key_file` | full path with file name and extension to the land class category key file [more details] (https://github.com/LEAF-BoiseState/janus/wiki/Input-File-Details) | `data/CDL2GCAM_categories.csv` |
+|`f_init_lc_file`| full path with file name and extension to the initial land cover data [more details](https://github.com/LEAF-BoiseState/janus/wiki/Input-File-Details)|
+| `f_key_file` | full path with file name and extension to the land class category key file [more details](https://github.com/LEAF-BoiseState/janus/wiki/Input-File-Details) | `data/CDL2GCAM_categories.csv` |
 | `profits` | flag for using 'gcam' or 'generated' profits |
-| `f_profits_file` | Profits file [more details] (https://github.com/LEAF-BoiseState/janus/wiki/Input-File-Details) | `data/GenerateSyntheticPrices_test_output.csv` |
-| `f_gcam_profits_file` | GCAM profits file [more details] (https://github.com/LEAF-BoiseState/janus/wiki/Input-File-Details). | `profits_out.csv` |
+| `f_profits_file` | Profits file [more details](https://github.com/LEAF-BoiseState/janus/wiki/Input-File-Details) | `data/GenerateSyntheticPrices_test_output.csv` |
+| `f_gcam_profits_file` | GCAM profits file [more details](https://github.com/LEAF-BoiseState/janus/wiki/Input-File-Details). | `profits_out.csv` |
 | `output_directory` | full path to output directory | |
 | `nt` | Number of time steps |  |
 | `switch_params` | list of lists for switching averse, tolerant parameters (alpha, beta) | see example |
@@ -69,7 +69,7 @@ There is an example config file in the `janus/example` directory of this package
 | `agent_variables` | NASS variables to characterize agents with. Currently set to use "TENURE" and "AREA OPERATED" | |
 | `nass_year` | Year that NASS data are pulled from. This data is collected every 5 years, with the Initialization year here being 2007 | |
 | `nass_county_list` | List of counties in the domain that NASS data is collected from, these have to be capitalized | ['ADA', 'CANYON']|
-| `nass_api_key` | A NASS API is needed to access the NASS data, get yours here https://quickstats.nass.usda.gov/api | |
+| `nass_api_key` | A NASS API is needed to access the NASS data, get yours [here](https://quickstats.nass.usda.gov/api) | |
 
 ### Setup the input files, see wiki page for details
 
