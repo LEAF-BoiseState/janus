@@ -5,16 +5,15 @@
 f_input_dir: '<Full path to the directory where input files are>'
 
 # raster of the initial land cover data
-f_init_lc_file: '<Full path with file name and extension to the initial land cover data'
+f_init_lc_file: '<Full path with file name and extension to the initial land cover data>'
 
-# TODO: add a profits choice flag to wherever it needs to be to set to one or the other
 #profit choice flag, gcam or generated
 profits: 'gcam'
 
 # TODO have these run from within this script, taking in nt and setting nc
 # profits file
 f_profits_file: '<Full path with file name and extension to the profits csv file>'
-f_gcam_profits_file: '<Full path with file name and extension to the GCAM profits csv file>'
+f_gcam_profits_file: '<Full path with file name and extension to the GCAM USA profits csv file>'
 
 # output directory
 output_directory: '<Full path with file name and extension to the output directory>'
