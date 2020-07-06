@@ -1,11 +1,11 @@
-[![Build Status](https://travis-ci.org/LEAF-BoiseState/janus.svg?branch=master)](https://travis-ci.org/LEAF-BoiseState/janus)
-
 [![DOI](https://zenodo.org/badge/157612222.svg)](https://zenodo.org/badge/latestdoi/157612222)
+[![Build Status](https://travis-ci.org/LEAF-BoiseState/janus.svg?branch=master)](https://travis-ci.org/LEAF-BoiseState/janus)
+[![codecov](https://codecov.io/gh/LEAF-BoiseState/janus/branch/master/graph/badge.svg)](https://codecov.io/gh/LEAF-BoiseState/janus)
 
 
 # janus
 
-`janus` was designed to simulate land cover changes over time. These landcover changes are carried out by individual agents that choose to either continue planting the same crop, or choose to switch to a new crop based on expected profits.
+`janus` was designed to simulate land cover changes over time. These land cover changes are carried out by individual agents that choose to either continue planting the same crop, or choose to switch to a new crop based on expected profits.
 
 ## Contact
 - Kendra Kaiser (kendrakaiser@boisestate.edu)
@@ -49,45 +49,34 @@ There is an example config file in the `janus/example` directory of this package
 
 | Key | Description | Example Data Name
 | -- | -- | -- |
-| `f_counties_shp` | full path with file name and extension to the counties shapefile | `shp/counties_srb.shp` |
-| `f_key_file` | full path with file name and extension to the land class category key file | `data/CDL2GCAM_categories.csv` |
-| `f_gcam_file` | GCAM raster file | `data/gcam_2010_domain_3000.tiff` |
-| `f_profits_file` | Profits file | `data/GenerateSyntheticPrices_test_output.csv` |
-| `nt` | Number of timesteps | |
+|`f_input_dir`| full path to input file directory |
+|`f_init_lc_file`| full path with file name and extension to the initial land cover data [... read more](https://github.com/LEAF-BoiseState/janus/wiki/Input-File-Details)| `landcover.tiff`
+| `f_key_file` | full path with file name and extension to the land class category key file [...read more](https://github.com/LEAF-BoiseState/janus/wiki/Input-File-Details) | `CDL2GCAM_categories.csv` |
+| `profits` | flag for using 'gcam' or 'generated' profits |
+| `f_profits_file` | Profits file [... read more](https://github.com/LEAF-BoiseState/janus/wiki/Input-File-Details) | `GenerateSyntheticPrices_test_output.csv` |
+| `f_gcam_profits_file` | GCAM profits file [... read more](https://github.com/LEAF-BoiseState/janus/wiki/Input-File-Details). | `profits_out.csv` |
+| `output_directory` | full path to output directory | |
+| `nt` | Number of time steps |  |
 | `switch_params` | list of lists for switching averse, tolerant parameters (alpha, beta) | |
+| `attr` | Boolean that sets if farmer switching parameters are based on farmer attributes (TRUE) or not (FALSE) |
 | `p` | Proportion of each switching type, lower than p is averse, higher is tolerant | |
 | `fmin` | The fraction of current profit at which the CDF of the beta distribution is zero | |
 | `fmax` | The fraction of current profit at which the CDF of the beta distribution is one | |
 | `n` | The number of points to generate in the CDF | |
 | `crop_seed_size` | Seed to set for random number generators for unit testing | |
-| `target_yr` | Initialization year associated with landcover input | |
-| `scale` | Scale of landcover grid in meters. Current options are 1000 and 3000 m | |
-| `county_list` | List of counties to evaluate | |
+| `initialization_yr` | Initialization year associated with landcover input | |
+| `scale` | Scale of land cover grid in meters. Current options are 1000 and 3000 m | |
 | `agent_variables` | NASS variables to characterize agents with. Currently set to use "TENURE" and "AREA OPERATED" | |
 | `nass_year` | Year that NASS data are pulled from. This data is collected every 5 years, with the Initialization year here being 2007 | |
-| `nass_county_list` | List of counties in the domain that NASS data is collected from, these have to be capitalized | |
-| `nass_api_key` | A NASS API is needed to access the NASS data, get yours here https://quickstats.nass.usda.gov/api | |
+| `nass_county_list` | List of counties in the domain that NASS data is collected from, these have to be capitalized | ['ADA', 'CANYON']|
+| `nass_api_key` | A NASS API is needed to access the NASS data, get yours [here](https://quickstats.nass.usda.gov/api) | |
 
-### Setup the input files
+### Setup the input files, see wiki page for details
 
-- `counties_shp.shp`:  Shapefile of counties within the area of interest. This should have county names and a single identifier for each polygon.
-
-- `cdl.txt`:  Cropland Data Layer
-
-- `key_file.csv`:  This file must have the following column titles 'CDL_id',	'CDL_name',	'GCAM_id',	'local_GCAM_id', 'GCAM_id_list',	'GCAM_name',	'GCAM_cat',	'local_GCAM_id_list',	'local_GCAM_name',	'local_cat'.
-
-	'GCAM_id' and	'local_GCAM_id' are the conversion columns where the destination id is matched with each original CDL id.
-
-	CDL_id, CDL_name, GCAM_id and GCAM_name are set based on the original CDL data and GCAM categorization.
-
-	'id_list' are numeric identifiers for each category associated with names ('GCAM_name', 'local_GCAM_name') of output categorization.
-
-	Columns that start with 'local' are where the file can be modified to create location specific landcover categories.
-
-	'cat' is the generic category for assigning agents.'ag' for agricultural, 'nat' for natural (e.g. water, wetland), or 'urb' for urban land covers.
-
-- `profits_file.csv`:  csv with the number of rows equal to number of crops. This contains the crop name, crop ID number, price function of choice and parameters for that function.
-
+* `counties_shp.shp`
+* `cdl.txt`
+* `key_file.csv`  
+* `profits_file.csv`
 
 ## Running `janus`
 
@@ -104,6 +93,27 @@ All parameters can be passed to the `Janus` class using terminal or command line
 
 ```python
 from janus import Janus
+```
+### Run Preprocessing Packages
+Run preprocessing scripts to set up initial land cover data and profits data.
+
+Janus is currently setup to use the NASS Cropland Data Layer, this data should be downloaded for the area of interest and the key_file should be updated to reflect the land cover categories of interest. If other land cover data is being used this step is not necessary. The aggregation step may take upwards of an hour depending on the extent.
+
+```python
+from janus import get_gis_data
+get_gis_data('<full path and filename of counties_shp>', '<full path and filename of key file>', '<county_list>', <scale>, <year>, '<full path to raw_lc_di>', '<full path to processed_lc_dir>', '<full path to init_lc_dir>',
+                 gcam_category_type='local_GCAM_id')
+```
+
+Janus can convert profit data from GCAM-USA (example below) or generate synthetic profit signals. 
+
+```python
+from janus import gcam_usa_price_converter
+convert_gcam_usa_prices('<full path and file name of gcam_profits.csv', '<full path and filename of profits_out.csv>', '<full path and filename of key_file,csv>', <nc>, <nt>, <year>)
+```
+
+### Run Janus
+```
 Janus('<path-to-config-file>')
 ```
 

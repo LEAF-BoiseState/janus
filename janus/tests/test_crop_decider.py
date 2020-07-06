@@ -38,7 +38,7 @@ class CropDeciderTest(unittest.TestCase):
         profit_p=1050
         
         ans = 0
-        ans_test = cd.decide(alpha,beta,fmin,fmax,n,profit,profit_p)
+        ans_test = cd.decide2switch(alpha,beta,fmin,fmax,n,profit,profit_p)
         
         self.assertEqual(ans, ans_test)
         
@@ -69,7 +69,7 @@ class CropDeciderTest(unittest.TestCase):
         vec_crops=vec_crops.reshape((4,1))
         vec_profit_p=np.zeros([4,1])
         
-        CropChoice_test, ProfitChoice_test = cd.decide_n(alpha, beta, fmin, fmax, n, profit, vec_crops, \
+        CropChoice_test, ProfitChoice_test = cd.profit_maximizer(alpha, beta, fmin, fmax, n, profit, vec_crops, \
                                                       vec_profit_p, rule=True)
         
         CropChoice_known = -1

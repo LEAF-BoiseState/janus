@@ -9,12 +9,13 @@ import janus.crop_functions.crop_decider as crpdec
 class ConfigReader:
 
     # keys found in the configuration file
-    F_COUNTIES_SHP = 'f_counties_shp'
-    F_KEY_FILE = 'f_key_file'
-    F_GCAM_FILE = 'f_gcam_file'
+    F_INIT_LC_FILE = 'f_init_lc_file'
+    PROFITS = 'profits'
     F_PROFITS_FILE = 'f_profits_file'
+    F_GCAM_PROFITS_FILE = 'f_gcam_profits_file'
     NT = 'nt'
     SWITCH_PARAMS = 'switch_params'
+    ATTR = 'attr'
     P = 'p'
     FMIN = 'fmin'
     FMAX = 'fmax'
@@ -37,14 +38,13 @@ class ConfigReader:
 
         c = self.read_yaml(config_file)
 
-        self.counties_shp = gpd.read_file(c[ConfigReader.F_COUNTIES_SHP])
-        self.counties_shp.set_index(ConfigReader.COUNTY_FLD, inplace=True)
+        self.f_init_lc = c[ConfigReader.F_INIT_LC_FILE]
 
-        self.key_file = pd.read_csv(c[ConfigReader.F_KEY_FILE])
-
-        self.gcam_file = c[ConfigReader.F_GCAM_FILE]
+        self.profits = c[ConfigReader.PROFITS]
 
         self.profits_file = pd.read_csv(c[ConfigReader.F_PROFITS_FILE], header=None)
+
+        self.gcam_profits_file = pd.read_csv(c[ConfigReader.F_GCAM_PROFITS_FILE], header=0)
 
         self.output_dir = c[ConfigReader.OUTPUT_DIR]
 
@@ -52,6 +52,9 @@ class ConfigReader:
 
         # set agent switching parameters (alpha, beta) [[switching averse], [switching tolerant]]
         self.switch = np.array(c[ConfigReader.SWITCH_PARAMS])
+
+        # boolean that sets whether to base switching parameters on age and tenure (True) or not
+        self.attr = c[ConfigReader.ATTR]
 
         # proportion of each switching type, lower than p is averse, higher is tolerant
         self.p = c[ConfigReader.P]

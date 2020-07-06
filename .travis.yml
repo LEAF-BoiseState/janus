@@ -20,5 +20,8 @@ install:
   - pip install GDAL==$(gdal-config --version) --global-option=build_ext --global-option="-I/usr/include/gdal"
   - pip install -r requirements.txt
   - python setup.py -q install
+  - pip install coverage
 script:
-  - travis_wait 35 python -m unittest discover
+  - travis_wait 35 coverage run -m unittest discover
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

@@ -7,7 +7,7 @@ Created on Mon Sep 16 14:23:05 2019
 """
 
 # TODO: Need to create RunProfitGenerator in config file. If value 0 = do not run GenerateSyntheticProfits.
-#      If 0 = do not run this script (must specify profit profiles to read in). If 1 = run ihis script
+#      (must specify profit profiles to read in). If 1 = run this script
 #      (must specify profit generator parameter input file AND associate output file, which will then be
 #      used to run the actual model)
 
@@ -20,21 +20,21 @@ NPRICE_FUNCTIONS = 3  # Number of profit functions in this script. If the user
 # to reflect the total number of synthetic profit functions
 # in this script.
 
-#=============================================================================#
+# =========================================================================== #
 #                                                                             #
 #             GeneratePrice_linear(Nt, Pi, Pf, perturb, s_p=0.0)              #
 #                                                                             #
 # AUTHOR: Lejo Flores                                                         #
 #                                                                             #
 # PURPOSE: The purpose of this function is to generate a synthetic price      #
-#          signal that is Nt timesteps long and changes linearly from the     #
+#          signal that is Nt time steps long and changes linearly from the    #
 #          initial price, Pi, to the final price, Pf. Optionally, the user    #
 #          has the option to perturb that synthetic price with gaussian,      #
 #          uncorrelated, zero-mean noise with a standard deviation of s_p     #
 #                                                                             #
 # INPUTS:                                                                     #
 #                                                                             #
-#          Nt      = The number of timesteps for which to create prices.      #
+#          Nt      = The number of time steps for which to create prices.     #
 #          Pi      = The price at the start of the time series.               #
 #          Pf      = The price at the end of the time series.                 #
 #          perturb = A flag noting whether to perturb the times series with   #
@@ -61,7 +61,7 @@ NPRICE_FUNCTIONS = 3  # Number of profit functions in this script. If the user
 def GeneratePrice_linear(Nt, Pi, Pf, perturb, s_p=0.0):
     """Description
 
-    :param Nt: Number of timesteps in the model
+    :param Nt: Number of time steps in the model
     :param Pi: Profit at the beginning of the time series
     :param Pf: Profit at the end of the time series
     :param perturb: Perturbation flag. 0 = no random perturbations to profit. 1 = add zero mean, uncorrelated noise to every time step
@@ -86,7 +86,7 @@ def GeneratePrice_linear(Nt, Pi, Pf, perturb, s_p=0.0):
 # AUTHOR: Lejo Flores                                                         #
 #                                                                             #
 # PURPOSE: The purpose of this function is to generate a synthetic price      #
-#          signal that is Nt timesteps long and undergoes a step-change in    #
+#          signal that is Nt time steps long and undergoes a step-change in   #
 #          price from from the initial price, Pi, to the final price, Pf.     #
 #          Optionally, the user can perturb that synthetic price with         #
 #          gaussian, uncorrelated, zero-mean noise with a standard deviation  #
@@ -94,10 +94,10 @@ def GeneratePrice_linear(Nt, Pi, Pf, perturb, s_p=0.0):
 #                                                                             #
 # INPUTS:                                                                     #
 #                                                                             #
-#          Nt      = The number of timesteps for which to create prices.      #
+#          Nt      = The number of time steps for which to create prices.     #
 #          Pi      = The price at the start of the time series.               #
 #          Pf      = The price at the end of the time series.                 #
-#          t_step  = The time (as a fraction of the number of timesteps Nt)   #
+#          t_step  = The time (as a fraction of the number of time steps Nt)  #
 #                    at which the price change occurs.                        #
 #          perturb = A flag noting whether to perturb the times series with   #
 #                    gaussian, uncorrelated, zero mean noise. 0 = false.      #
@@ -124,7 +124,7 @@ def GeneratePrice_linear(Nt, Pi, Pf, perturb, s_p=0.0):
 def GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p=0.0):
     """Description
 
-    :param Nt: Number of timesteps in the model
+    :param Nt: Number of time steps in the model
     :param Pi: Profit prior to the step change
     :param Pf: Profit after the step change
     :param t_step: (0.0 to 1.0) the time at which the step change occurs as a fraction of Nt
@@ -136,7 +136,7 @@ def GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p=0.0):
     assert Pi >= 0.0, 'generate_synthetic_prices.py ERROR: Pi must be greater than or equal to 0.0'
     assert Pf >= 0.0, 'generate_synthetic_prices.py ERROR: Pf must be greater than or equal to 0.0'
     assert t_step > 0.0, 'generate_synthetic_prices.py ERROR: Step price change time is less than 0.0'
-    assert t_step < 1.0, 'generate_synthetic_prices.py ERROR: Step price change time is greeater than 1.0'
+    assert t_step < 1.0, 'generate_synthetic_prices.py ERROR: Step price change time is greater than 1.0'
 
     P = np.zeros((Nt, 1))
     P[0:(int(t_step * Nt))] = Pi
@@ -147,7 +147,7 @@ def GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p=0.0):
 
     return P
 
-
+# TODO: have Lejo double check n_period description
 #=============================================================================#
 #                                                                             #
 #      GeneratePrice_periodic(Nt, Pmag, Pamp, n_period, perturb, s_p=0.0)     #
@@ -155,19 +155,19 @@ def GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p=0.0):
 # AUTHOR: Lejo Flores                                                         #
 #                                                                             #
 # PURPOSE: The purpose of this function is to generate a synthetic price      #
-#          signal that is Nt timesteps long and varies periodically about a   #
+#          signal that is Nt time steps long and varies periodically about a  #
 #          level Pmag, with an amplitude Pamp, over n_periods during the Nt   #
-#          timesteps. Optionally, the user can perturb that synthetic price   #         #
+#          time steps. Optionally, the user can perturb that synthetic price  #         #
 #          with gaussian, uncorrelated, zero-mean noise with a standard       #
 #          deviation of s_p.                                                  #
 #                                                                             #
 # INPUTS:                                                                     #
 #                                                                             #
-#          Nt        = The number of timesteps for which to create prices.    #
+#          Nt        = The number of time steps for which to create prices.   #
 #          Pmag      = The level about which prices fluctuate.                #
 #          Pamp      = The amplitude of the fluctuation.                      #
-#          n_period  = The number of periods during the Nt timesteps to       #
-#                      that the price fluctuations should undergo.            #                     at which the price change occurs.                        #
+#          n_period  = The number of periods during the Nt time steps         #
+#                      that the price fluctuations occur.                     #
 #          perturb   = A flag noting whether to perturb the times series with #
 #                      gaussian, uncorrelated, zero mean noise. 0 = false.    #
 #                      1 = true.                                              #
@@ -182,7 +182,7 @@ def GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p=0.0):
 #                                                                             #
 #          (1) Error trap to ensure that Pmag and Pamp are greater than 0.    #
 #          (2) Create an (Nt x 1) numpy array that is a sinusoidal signal     #
-#              with  n_period periods over Nt timesteps.                      #
+#              with  n_period periods over Nt time steps.                      #
 #          (3) Scale and shift the sinusoid such that it fluctuates about     #
 #              Pmag with an amplitude Pamp.                                   #
 #          (4) Check if the perturb flag is set to true                       #
@@ -194,10 +194,10 @@ def GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p=0.0):
 def GeneratePrice_periodic(Nt, Pmag, Pamp, n_period, perturb, s_p=0.0):
     """Description
 
-    :param Nt: Number of timesteps in the model
+    :param Nt: Number of time steps in the model
     :param Pmag: Level about which profit fluctuates through time
     :param Pamp: Amplitude of profit fluctuation
-    :param n_period: Number of periods during the Nt timesteps. Can be negative to reflect sinusoid about Y axis.
+    :param n_period: Number of periods during the Nt time steps. Can be negative to reflect sinusoid about Y axis.
     :param perturb: Perturbation flag. 0 = no random perturbations to profit. 1 = add zero mean, uncorrelated noise to every time step
     :param s_p: Standard deviation of noise added to profit signal at each time step (default = 0.0)
 
@@ -234,7 +234,7 @@ def GeneratePrice_periodic(Nt, Pmag, Pamp, n_period, perturb, s_p=0.0):
 #          argv[0] = The name of this function (generate_synthetic_prices).   #
 #          argv[1] = The string representation of the number of crops for     #
 #                    which prices will be synthesized.                        #
-#          argv[2] = The string representation of the number of timesteps for #
+#          argv[2] = The string representation of the number of time steps for#
 #                    which prices will be generated for every crop.           #
 #          argv[3] = The string containing the name of the CSV file that      #
 #                    contains information on what mathematical form crop      #
@@ -250,7 +250,7 @@ def GeneratePrice_periodic(Nt, Pmag, Pamp, n_period, perturb, s_p=0.0):
 #                                                                             #
 #          (1) Error trap for correct number of command line arguments, print #
 #              usage statement.                                               #
-#          (2) Save command line arguments to variablles, and error trap for  #
+#          (2) Save command line arguments to variables, and error trap for  #
 #              validity of input.                                             #
 #          (3) Open the input file containing information on how prices will  #
 #              be generated, error trap.                                      #
@@ -275,7 +275,7 @@ def main(argv):
     :param argv: Array of 5 command line arguments passed from the __main__ function
     :param argv[0]: Name of this function (generate_synthetic_prices)
     :param argv[1]: Number of crops expect to create profit time series for
-    :param argv[2]: Number of timesteps in the time series
+    :param argv[2]: Number of time steps in the time series
     :param argv[3]: Name of CSV file that contains information about the crops, including parameters of the generator functions, for which profits are generated and including path if CSV file is in a different directory
     :param argv[4]: Name of CSV file to which profit time series will be written, including path to output if in a different directory than the script
     :return: null (output written to file)
@@ -283,13 +283,13 @@ def main(argv):
 
     if (len(argv) != 5):
         print('\nERROR: Incorrect number of command line arguments\n')
-        print('Usage: generate_synthetic_prices.py <no. crops> <no. timesteps> <Input CSV file> <Output CSV file>\n')
+        print('Usage: generate_synthetic_prices.py <no. crops> <no. time steps> <Input CSV file> <Output CSV file>\n')
         print('\tgenerate_synthetic_prices.py = Name of this python script')
         print('\t<no. crops>                = Number of crops to synthesize prices for')
-        print('\t<no. timesteps>            = Number of timesteps to generate prices for')
+        print('\t<no. time steps>           = Number of time steps to generate prices for')
         print('\t<CSV file>                 = CSV file containing crop information')
         print('\t                             (see documentation)')
-        print('\t<Output CSV file>          = CSV filel in which to save output prices\n')
+        print('\t<Output CSV file>          = CSV file in which to save output prices\n')
         sys.exit()
 
     Nc = int(argv[1])
@@ -299,7 +299,7 @@ def main(argv):
 
     # Error traps
     assert Nc > 0, 'generate_synthetic_prices.py ERROR: Negative number of crops encountered'
-    assert Nt > 0, 'generate_synthetic_prices.py ERROR: Negative number of timesteps encountered'
+    assert Nt > 0, 'generate_synthetic_prices.py ERROR: Negative number of time steps encountered'
     assert Nc <= 28, 'generate_synthetic_prices.py ERROR: Too many crops encountered'
 
     # Try opening the CSV file provided as input
@@ -331,7 +331,7 @@ def main(argv):
 
         price_fxn_type = int(row[2])
 
-        if (price_fxn_type == 1):  # Linear ramp (use for linearlly increasing, decreasing, constant prices)
+        if price_fxn_type == 1:  # Linear ramp (use for linearly increasing, decreasing, constant prices)
             assert len(
                 row) == 7, 'generate_synthetic_prices.py ERROR: Incorrect number of parameters for linear ramp in row ' + str(
                 CropCount)
@@ -339,14 +339,14 @@ def main(argv):
             Pi = float(row[3])
             Pf = float(row[4])
             perturb = int(row[5])
-            if (perturb == 1):
+            if perturb == 1:
                 s_p = float(row[6])
             else:
                 s_p = 0.0
 
             P = GeneratePrice_linear(Nt, Pi, Pf, perturb, s_p)
 
-        elif (price_fxn_type == 2):  # Step function (use for step increase or decrease in price)
+        elif price_fxn_type == 2:  # Step function (use for step increase or decrease in price)
             assert len(
                 row) == 8, 'generate_synthetic_prices.py ERROR: Incorrect number of parameters for step change in row ' + str(
                 CropCount)
@@ -355,14 +355,14 @@ def main(argv):
             Pf = float(row[4])
             t_step = float(row[5])
             perturb = int(row[6])
-            if (perturb == 1):
+            if perturb == 1:
                 s_p = float(row[7])
             else:
                 s_p = 0.0
 
             P = GeneratePrice_step(Nt, Pi, Pf, t_step, perturb, s_p)
 
-        elif (price_fxn_type == 3):  # Sinusoidal fluctuation in price
+        elif price_fxn_type == 3:  # Sinusoidal fluctuation in price
             assert len(
                 row) == 8, 'generate_synthetic_prices.py ERROR: Incorrect number of parameters for periodic price in row ' + str(
                 CropCount)
@@ -371,19 +371,19 @@ def main(argv):
             Pamp = float(row[4])
             n_period = float(row[5])
             perturb = int(row[6])
-            if (perturb == 1):
+            if perturb == 1:
                 s_p = float(row[7])
             else:
                 s_p = 0.0
 
             P = GeneratePrice_periodic(Nt, Pmag, Pamp, n_period, perturb, s_p)
 
-        if (CropCount == 1):
+        if CropCount == 1:
             P_allcrops = P
         else:
             P_allcrops = np.column_stack((P_allcrops, P))
 
-    if (CropCount != Nc):
+    if CropCount != Nc:
         print('\nERROR: Mismatch in number of crops read and provided as input\n')
         print(str(Nc) + ' crops were expected, ' + str(CropCount) + ' were read. Check input\n')
         sys.exit()
