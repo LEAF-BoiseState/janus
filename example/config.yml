@@ -1,35 +1,28 @@
+# Configuration file for the ABM land use land cover change agent based model
 
-# Configuration file for Janus, an agent based model of land use and land cover change
+# full path with file name and extension to the counties shapefile
+f_counties_shp: '<Full path with file name and extension to the counties shapefile>'
 
-# directory for all initialization files
-f_input_dir: '<Full path to the directory where input files are>'
+# full path with file name and extension to the land class category key file
+f_key_file: '<Full path with file name and extension to the land class category key file>'
 
-# raster of the initial land cover data
-f_init_lc_file: '<Full path with file name and extension to the initial land cover data'
+# gcam raster
+f_gcam_file: '<Full path with file name and extension to the GCAM raster>'
 
-# TODO: add a profits choice flag to wherever it needs to be to set to one or the other
-#profit choice flag, gcam or generated
-profits: 'gcam'
-
-# TODO have these run from within this script, taking in nt and setting nc
 # profits file
 f_profits_file: '<Full path with file name and extension to the profits csv file>'
-f_gcam_profits_file: '<Full path with file name and extension to the GCAM profits csv file>'
 
 # output directory
 output_directory: '<Full path with file name and extension to the output directory>'
 
 # number of time steps
-nt: 30
+nt: 20
 
-# list of lists for switching averse, tolerant, and neutral parameters (alpha, beta)
-switch_params: [[4.5, 0.5], [0.25, 4.0], [2.0, 2.0]]
+# list of lists for switching averse, tolerant parameters (alpha, beta)
+switch_params: [[4.5, 1.0], [0.5, 3.0]]
 
-# boolean of whether to base switching parameters on farmer attributes or not
-attr: False
-
-# proportion of each switching type (0.95 = switching tolerant)
-p: 0.95
+# proportion of each switching type, lower than p is averse, higher is tolerant
+p: 0.5
 
 # fraction of current profit at which the CDF is zero and one, and number of points to generate
 fmin: 1.0
@@ -46,13 +39,16 @@ initialization_yr: 2010
 # scale of grid in meters
 scale: 3000
 
+# list of counties to evaluate
+county_list: ['Ada', 'Canyon']
+
 # Currently available agent attributes, tenure status and area operated
 agent_variables: ["TENURE", "AREA OPERATED"]
 
 # NASS years that are available are 2007, 2012
 nass_year: 2007
 
-# state where NASS data is pulled from, as capitalized acronym
+# state where NASS data is pulled from, as capatalized acronym
 state: 'ID'
 
 # List of counties used to gather NASS data, must be capitalized
