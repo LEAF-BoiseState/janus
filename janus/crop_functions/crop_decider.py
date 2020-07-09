@@ -24,16 +24,16 @@ def define_seed(seed):
 
 def switching_prob_curve(alpha, beta, fmin, fmax, n, profit):
     """ Creates probability curves that show likelyhood of switching crops based on profits"
-    :param alpha: The alpha parameter for the incomplete beta distribution 
+    :param alpha: The alpha parameter for the incomplete beta distribution
     :param beta: The beta parameter for the incomplete beta distribution
     :param fmin: The fraction of current profit at which the CDF of the beta distribution is zero
     :param fmax: The fraction of current profit at which the CDF of the beta distribution is one
-    :param n: The number of points to generate in the CDF 
+    :param n: The number of points to generate in the CDF
     :param profit: The current profit of the farmer
 
-    :return: Two (n x 1) numpy arrays containing, respectively n points spaced 
-             linearly between fmin*profit and fmax*profit (x2) and the associated points 
-             of the beta distribution as specified by alpha and beta (fx). 
+    :return: Two (n x 1) numpy arrays containing, respectively n points spaced
+             linearly between fmin*profit and fmax*profit (x2) and the associated points
+             of the beta distribution as specified by alpha and beta (fx).
 
     """
     x = np.linspace(0, 1.0, num=n)
@@ -44,6 +44,25 @@ def switching_prob_curve(alpha, beta, fmin, fmax, n, profit):
 
     return x2, fx
 
+# success bias switching decision
+# observe profit from individual(s) in their network
+# pick the max profit and associated cropID
+# compare that profit to the agents current profit
+# give some probability of following those ppl observed (if their previous profit was higher then agents)
+# return: the cropID they are switching to
+
+# conformist bias
+# inputs: d = the strength of conformity bias (0-1)
+# observe their network, and calculate the proportion of each crop
+# select the crop w the highest proportion (p)
+# eqn from example p * 1/d
+# return: cropID
+
+# if n of network is less than n of crops then high likelihood that there are no repeat crops then... ?
+# a realistic social network is connected to 3-4 ppl...
+# given the number of alternative crops, does CB make sense?
+# and/or is there an alternative "characteristic" that individuals could conform to
+
 
 def decide(alpha, beta, fmin, fmax, n, profit, profit_p):
     """ This decides whether to retain current crop or switch to one other option
@@ -52,7 +71,7 @@ def decide(alpha, beta, fmin, fmax, n, profit, profit_p):
     :param beta: The beta parameter for the incomplete beta distribution
     :param fmin: The fraction of current profit at which the CDF of the beta distribution is zero
     :param fmax: The fraction of current profit at which the CDF of the beta distribution is one
-    :param n: The number of points to generate in the CDF 
+    :param n: The number of points to generate in the CDF
     :param profit: The current profit the farmer experiences
     :param profit_p: The potential profit of the alternative crop being evaluated
 
@@ -74,16 +93,47 @@ def decide(alpha, beta, fmin, fmax, n, profit, profit_p):
         return 0  # Do not switch if not profitable
 
 
-def decide_n(alpha, beta, fmin, fmax, n, Profits_current, vec_crops,
-            vec_profit_p, rule=True):
-    """Decide which crop and associated profit to pick out of N options.
+def assess_profit(crop, profits_current, profit_signals, num_crops, crop_ids):
+    """A given location, get the potential profits from the next time step and set the last profit equal to the current profit
+
+   :param crop:             Current crop choice
+   :type crop:              Int
+
+   :param profits_current:  Profit from current crop choice
+   :type profits_current:   Float
+
+   :param profit_signals:   A vector of profits against which current profit will be assessed
+   :type profit_signals:    Vector
+
+   :param num_crops:        The number of crops in the vector of Profit_signals
+   :type num_crops:         Int
+
+   :param crop_ids:          The associated vector of crop IDs associated with the input profit signal
+   :param crop_ids:          Vector
+
+   :return:                 [0] Float; profit for a particular crop (Crop) from the last time step
+                            [1] Numpy array; potential profits for the current time step
+
+   """
+
+    # Existing Crop ID
+    cur_crop_choice_ind = crop.astype('int')
+
+    # assess current and future profit of that given crop
+    if np.isin(cur_crop_choice_ind, crop_ids):  # if the current land cover is a crop
+        profit_last = profits_current  # last years profit in this location
+        profit_expected = profit_signals.reshape(num_crops, 1)  # next years anticipated profit
+
+    else:
+        profit_last = 0
+        profit_expected = np.zeros((num_crops, 1))
 
 
     :param alpha: The alpha parameter for the incomplete beta distribution
     :param beta: The beta parameter for the incomplete beta distribution
     :param fmin: The fraction of current profit at which the CDF of the beta distribution is zero
     :param fmax: The fraction of current profit at which the CDF of the beta distribution is one
-    :param n: The number of points ato generate in the CDF 
+    :param n: The number of points ato generate in the CDF
     :param current_profit: The current profit the farmer experiences
     :param vec_crops: A vector of potential alternative crops
     :param vec_profit_p: A vector of potential profits associated with the alternatives contained in vec_crops
@@ -151,7 +201,7 @@ def assess_profit(Crop, Profits_current, Profit_signals, Num_crops, CropIDs):
 
    :param Crop: Current crop choice
    :param Profits_current: Profit from current crop choice
-   :param Profit_signals: A vector of profits against which current profit will be assessed 
+   :param Profit_signals: A vector of profits against which current profit will be assessed
    :param Num_crops: The number of crops in the vector of Profit_signals
    :param CropIDs: The associated vector of crop IDs associated with the input profit signal
 
