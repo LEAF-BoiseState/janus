@@ -6,11 +6,16 @@ f_counties_shp: '<Full path with file name and extension to the counties shapefi
 # full path with file name and extension to the land class category key file
 f_key_file: '<Full path with file name and extension to the land class category key file>'
 
-# gcam raster
-f_gcam_file: '<Full path with file name and extension to the GCAM raster>'
+# raster of the initial land cover data
+f_init_lc_file: '<Full path with file name and extension to the initial land cover data>'
 
+#profit choice flag, gcam or generated
+profits: 'gcam'
+
+# TODO have these run from within this script, taking in nt and setting nc
 # profits file
 f_profits_file: '<Full path with file name and extension to the profits csv file>'
+f_gcam_profits_file: '<Full path with file name and extension to the GCAM USA profits csv file>'
 
 # output directory
 output_directory: '<Full path with file name and extension to the output directory>'
