@@ -13,3 +13,4 @@ nass>=0.1.1
 fiona>=1.7.13
 pyyaml>=3.12
 seaborn>=0.10
+pylandstats
