@@ -6,7 +6,8 @@ Created on Tue Jul  9 12:12:43 2019
 
 import numpy as np
 import scipy.special as sp
-
+# TODO import IM3agents.im3networks as nwk
+# collab w Chris Vernon to get package right?
 
 def define_seed(seed):
     """ Creates seed for random selection for testing
@@ -44,12 +45,54 @@ def switching_prob_curve(alpha, beta, fmin, fmax, n, profit):
 
     return x2, fx
 
-# success bias switching decision
-# observe profit from individual(s) in their network
-# pick the max profit and associated cropID
-# compare that profit to the agents current profit
-# give some probability of following those ppl observed (if their previous profit was higher then agents)
-# return: the cropID they are switching to
+
+
+def retrieve_network_profits(agentID, ):
+    """
+    This will be called in the main model to retrieve the array of profits
+    based upon the agent ID
+
+    :param agentID:        agentID for the agent whose network to retrieve
+    :type agentID:         int
+
+    :return: a 2D array of cropIDs and their associated profits in the network of agent
+
+    """
+    # TODO pass in crops and profit arrays -- see assess_profits
+    # TODO - change this to call actual network
+    temp_network = np.random.randint(0, size=4)
+    # might look something like
+    # network_ids =
+
+    # at this point now there should be a list of agents in that network
+
+    # for each of those agents
+        # retrieve crop ID? or retrieve profit?
+        # see Kendra's notes in Slack
+        # in the model.py it will be crop_id_all[i-1, :, :]
+        # then index into specific j,k values from agentID
+        # this will need to be passed in
+
+
+
+def success_bias_decision():
+    """
+
+
+    Returns
+    -------
+    None.
+
+    """
+    # pick max profit and associated cropID
+
+    # put that into the decide2switch function
+
+    # return the cropID they are going with (either their current or the most successful)
+    # and the profit associated with each
+
+
+
 
 # conformist bias
 # inputs: d = the strength of conformity bias (0-1)
@@ -57,7 +100,6 @@ def switching_prob_curve(alpha, beta, fmin, fmax, n, profit):
 # select the crop w the highest proportion (p)
 # eqn from example p * 1/d
 # return: cropID
-
 # if n of network is less than n of crops then high likelihood that there are no repeat crops then... ?
 # a realistic social network is connected to 3-4 ppl...
 # given the number of alternative crops, does CB make sense?
@@ -128,6 +170,27 @@ def assess_profit(crop, profits_current, profit_signals, num_crops, crop_ids):
         profit_last = 0
         profit_expected = np.zeros((num_crops, 1))
 
+    return profit_last, profit_expected
+
+
+def profit_maximizer(alpha, beta, fmin, fmax, n, profits_current, vec_crops, vec_profit_p, rule=True):
+    """ Decide which crop and associated profit to pick out of N options.
+    Only used for the profit maximization crop decision rule.
+
+    :param alpha:           Alpha parameter for the incomplete beta distribution
+    :type alpha:            Float
+
+    :param beta:            Beta parameter for the incomplete beta distribution
+    :type beta:             Float
+
+    :param fmin:            Fraction of current profit at which the CDF of the beta distribution is zero
+    :type fmin:             Int
+
+    :param fmax:            Fraction of current profit at which the CDF of the beta distribution is one
+    :type fmax:             Int
+
+    :param n:               Number of points to generate in the CDF
+    :type n:                Int
 
     :param alpha: The alpha parameter for the incomplete beta distribution
     :param beta: The beta parameter for the incomplete beta distribution

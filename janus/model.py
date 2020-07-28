@@ -1,5 +1,5 @@
 """
-Agent Based Model of Land Use and Land Cover Change 
+Agent Based Model of Land Use and Land Cover Change
 
 @author: lejoflores & kendrakaiser
 
@@ -18,6 +18,8 @@ import janus.postprocessing.create_figures as ppf
 import janus.preprocessing.get_nass_agent_data as get_nass
 
 from janus.config_reader import ConfigReader
+
+# TODO: import network from im3agents
 
 
 class Janus:
@@ -55,6 +57,10 @@ class Janus:
 
         # initialize agents
         self.agent_domain, self.agent_array = self.initialize_agents()
+
+        # initialize network here? given that the config file lists a certain type of network
+        # TODO: add in config file "randomwalk" "barabasi" "smallworld" "erdosrenyi" "gilbert"
+        self.network = self.initialize_network()
 
         # make agent decisions
         self.decisions()
@@ -116,7 +122,7 @@ class Janus:
     def initialize_profit(self):
         """Initialize profits based on profit signals csv that is either generated or input from other model output
 
-        :return: profits_actual is the profit signal with a random variation 
+        :return: profits_actual is the profit signal with a random variation
         :return: profit_signals is the transposed profit signals cleaned to be used in other functions
 
         """
@@ -135,7 +141,7 @@ class Janus:
     def initialize_agents(self, cat_option='local'):
         """Initialize agents based on NASS data and initial land cover
         :param cat_option: Denotes which categorization option is used, 'GCAM', 'local', or user defined
-        :return: agent_domain is the domain with agent cell classes filled with agent information 
+        :return: agent_domain is the domain with agent cell classes filled with agent information
         :return: agent_array is a numpy array of strings that define which agent is in each location
 
         """
@@ -155,6 +161,26 @@ class Janus:
 
         return agent_domain, agent_array
 
+    # TODO self.c.network_type will be a config file option like "randomwalk", etc
+    def initialize_network(self, self.c.network_type):
+        """ This will create a network object from network.py in im3agents repo
+
+
+        Parameters
+        ----------
+        self.c.network_type : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        """
+
+
+
+
+
     def decisions(self):
         """Decision process.
 
@@ -169,30 +195,59 @@ class Janus:
 
                     if self.agent_domain[j, k].FarmerAgents:
 
-                        # assess Profit
-                        profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i-1, j, k],
-                                                                       self.profits_actual[i-1, j, k],
-                                                                       self.profit_signals[:, i],
-                                                                       self.num_crops,
-                                                                       self.crop_ids)
+                        # TODO add in decision_type in config file so it can be called this way
+                        # three decision types -- profit, success, and conformist
+                        if c.decision_type == 'profit'
 
-                        # choose between crops
-                        crop_choice, profit_choice = crpdec.decide_n(self.agent_domain[j, k].FarmerAgents[0].alpha,
-                                                                    self.agent_domain[j, k].FarmerAgents[0].beta,
-                                                                    self.c.fmin,
-                                                                    self.c.fmax,
-                                                                    self.c.n,
-                                                                    profit_last,
-                                                                    self.crop_ids,
-                                                                    profit_pred,
-                                                                    rule=True)
+                            # assess profit - only needs to occur for profit based learning
+                            profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i-1, j, k]    # this is the crop for last time step for agent jk
+                                                                           self.profits_actual[i-1, j, k], #this is last profit for agent jk
+                                                                           self.profit_signals[:, i],
+                                                                           self.num_crops,
+                                                                           self.crop_ids)
 
-                        # decide whether to switch and add random variation to actual profit
-                        self.crop_id_all[i, j, k], self.profits_actual[i, j, k] = crpdec.make_choice(self.crop_id_all[i-1, j, k],
-                                                                                                    profit_last,
-                                                                                                    crop_choice,
-                                                                                                    profit_choice,
-                                                                                                    seed=False)
+                            # identify the most profitable crop
+                            crop_choice, profit_choice = crpdec.profit_maximizer(self.agent_domain[j, k].FarmerAgents[0].alpha,
+                                                                        self.agent_domain[j, k].FarmerAgents[0].beta,
+                                                                        self.c.fmin,
+                                                                        self.c.fmax,
+                                                                        self.c.n,
+                                                                        profit_last,
+                                                                        self.crop_ids,
+                                                                        profit_pred,
+                                                                        rule=True)
+
+                            # decide whether to switch and add random variation to actual profit
+                            self.crop_id_all[i, j, k], self.profits_actual[i, j, k] = crpdec.make_choice(self.crop_id_all[i-1, j, k],
+                                                                                                        profit_last,
+                                                                                                        crop_choice,
+                                                                                                        profit_choice,
+                                                                                                        seed = False)
+                            if c.decision_type == 'success':
+
+
+                                # retrieve the cropIDs and the associated profits of their network given an individual
+                                # one array -- two colums cropIDs and their profits
+                                # see Kendra's code in Slack
+                                network_profits = crpdec.retrieve_network_profits(agentID)
+
+                                # identify the most profitable crop of the network
+                                crop_choice, profit_choice = crpdec.success_bias_crop()
+
+                                # TODO decide whether to switch or add random variation to profit??
+                                # can I literally just call make choice in the exact same way it is above?
+                                # or maybe if all three learning strategies are using make_choice, it can be outside
+                                # of if statement to reduce duplicate code
+
+
+
+
+                            if c.decision_type = 'conformist':
+                                # do stuff here -- collab w Vicken
+
+
+
+
 
                         # update agent attributes
                         self.agent_domain[j, k].FarmerAgents[0].update_age()
@@ -203,12 +258,12 @@ class Janus:
         ppf.plot_crop_percent(self.crop_id_all, self.crop_ids, self.c.Nt, self.num_crops, self.c.scale,
                               self.c.output_dir, self.c.key_file, self.ag)
 
-        ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx, self.c.Nt, 
+        ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx, self.c.Nt,
                             self.c.scale, self.c.output_dir)
 
     def save_outputs(self):
         """Save outputs as NumPy arrays.
-        
+
         The dimensions of each output NumPy array are [Number of timesteps, Ny, Nx]
         """
 
