@@ -50,5 +50,6 @@ setup(
     description='An agent based model to model land use',
     long_description=readme(),
     install_requires=get_requirements(),
+    include_package_data=True,
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, <4'
 )
