@@ -60,6 +60,7 @@ class Janus:
 
         # initialize network here? given that the config file lists a certain type of network
         # TODO: add in config file "randomwalk" "barabasi" "smallworld" "erdosrenyi" "gilbert"
+        # thinking of storing network as a dictionary
         self.network = self.initialize_network()
 
         # make agent decisions
@@ -176,6 +177,18 @@ class Janus:
         None.
 
         """
+        
+        # TODO: check with Vicken over the different types of networks
+        if self.c.network_type == 'randomwalk':
+            network = 
+            
+        if self.c.network_type == 'erdosrenyi'
+        
+        if self.c.network_type == 'barabasi':
+            
+        if self.c.network_type == 'smallworld':
+            
+        if self.c.network_type = 'gilbert':
 
 
 
