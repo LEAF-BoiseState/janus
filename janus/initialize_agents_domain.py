@@ -94,18 +94,21 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
     :return:           Domain with agents in each dCell
 
     """
+    
+    farmer_count = 0
     for i in np.arange(Ny):
 
         for j in np.arange(Nx):
 
             if AgentArray[i][j] == farmer.Farmer.__name__:
-
                 AgentData = getNASS.farmer_data(TenureCDF, AgeCDF, switch, p, dist2city[i][j])
                 NewAgent = farmer.Farmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"],
                                           Dist2city=AgentData["Dist2city"], nFields=AgentData['nFields'],
                                           alpha=AgentData['Alpha'],
-                                          beta=AgentData['Beta'])  # this is passing actual agent data
+                                          beta=AgentData['Beta']
+                                          agentID=farmer_count)  # this is passing actual agent data
                 domain[i][j].add_agent(NewAgent)
+                farmer_count = farmer_count + 1
 
             if AgentArray[i][j] == urban.Urban.__name__:
 
