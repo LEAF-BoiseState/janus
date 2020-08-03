@@ -19,6 +19,8 @@ class Farmer:
         
         self.alpha = kwargs.get('alpha')
         self.beta = kwargs.get('beta')
+        
+        self.agentID = kwargs.get('agentID')
 
     def update_age(self):
         self.Age += 1
