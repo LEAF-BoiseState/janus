@@ -76,16 +76,16 @@ def place_agents(ny, nx, lc, key_file, cat_option):
 
     # this works, would be better without the for loops
     for i in ag:
-        agent_array[lc[0] == i] = farmer.Farmer.__name__
+        agent_array[lc == i] = farmer.Farmer.__name__
 
     for i in water:
-        agent_array[lc[0] == i] = 'water'
+        agent_array[lc == i] = 'water'
 
     for i in urb:
-        agent_array[lc[0] == i] = urban.Urban.__name__
+        agent_array[lc == i] = urban.Urban.__name__
 
     for i in empty:
-        agent_array[lc[0] == i] = 'empty'
+        agent_array[lc == i] = 'empty'
 
     return agent_array
 
@@ -145,7 +145,7 @@ def agents(agent_array, domain, dist2city, tenure_cdf, age_cdf, switch, ny, nx, 
 
             if agent_array[i][j] == urban.Urban.__name__:
 
-                agent_data = getNASS.urban_data(lc[0][i][j])
+                agent_data = getNASS.urban_data(lc[i][j])
                 new_agent = urban.Urban(density=agent_data["Density"])
                 domain[i][j].add_agent(new_agent)
 
