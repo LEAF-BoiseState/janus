@@ -79,10 +79,10 @@ class Janus:
         """
 
         # import the initial land cover data
-        lc_raster = gdal.Open(self.f_init_lc)
-        lc = lc_raster.GetRasterBand(1)
+        lc_raster = gdal.Open(self.c.f_init_lc_file)
+        lc = lc_raster.GetRasterBand(1).ReadAsArray()
 
-        ny, nx = lc[0].shape
+        ny, nx = lc.shape
 
         # initialize minimum distance to city
         dist2city = gf.min_dist_city(lc)
