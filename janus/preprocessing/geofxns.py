@@ -19,11 +19,11 @@ def min_dist_city(gcam):
     :return: np.array of distance to a city cell within the domain
 
     """
-    # TODO:  update to follow based on key file
+    # TODO:  update to based on key file
     urban_bool = np.logical_or(np.logical_or(gcam[0] == 26, gcam[0] == 27), np.logical_or(gcam[0] == 17, gcam[0] == 25))
     
     rur = np.where(np.logical_and(~urban_bool, gcam[0] != 0))
-    rural = np.array((rur[0],rur[1])).transpose()
+    rural = np.array((rur[0], rur[1])).transpose()
     
     urb = np.where(urban_bool)
     urban = np.array((urb[0], urb[1])).transpose()
