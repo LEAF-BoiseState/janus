@@ -20,9 +20,9 @@ def min_dist_city(gcam):
 
     """
     # TODO:  update to based on key file
-    urban_bool = np.logical_or(np.logical_or(gcam[0] == 26, gcam[0] == 27), np.logical_or(gcam[0] == 17, gcam[0] == 25))
+    urban_bool = np.logical_or(np.logical_or(gcam == 26, gcam == 27), np.logical_or(gcam == 17, gcam == 25))
     
-    rur = np.where(np.logical_and(~urban_bool, gcam[0] != 0))
+    rur = np.where(np.logical_and(~urban_bool, gcam != 0))
     rural = np.array((rur[0], rur[1])).transpose()
     
     urb = np.where(urban_bool)
@@ -35,7 +35,7 @@ def min_dist_city(gcam):
     urb_val = np.zeros(urban.shape[0])
     idx = np.vstack((urban, rural))
     dist = np.vstack((urb_val[:, None], mindist[:, None]))
-    out = np.zeros(gcam[0].shape)
+    out = np.zeros(gcam.shape)
     out.fill(np.nan)
 
     for i in np.arange(dist.size):
