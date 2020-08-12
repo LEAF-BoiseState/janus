@@ -5,7 +5,7 @@
 f_input_dir: '<Full path to the directory where input files are>'
 
 # raster of the initial land cover data
-f_init_lc_file: '<Full path with file name and extension to the initial land cover data>'
+f_init_lc_file: '<Full path with file name and extension of the initial land cover tiff>'
 
 #profit choice flag, gcam or generated
 profits: 'gcam'
@@ -15,8 +15,11 @@ profits: 'gcam'
 f_profits_file: '<Full path with file name and extension to the profits csv file>'
 f_gcam_profits_file: '<Full path with file name and extension to the GCAM USA profits csv file>'
 
+# full path with file name and extension to the land class category key file
+f_key_file: '<Full path with file name and extension to the crop conversion csv file>'
+
 # output directory
-output_directory: '<Full path with file name and extension to the output directory>'
+output_directory:'<Full path with file name and extension to the output directory>'
 
 # number of time steps
 nt: 30
@@ -53,6 +56,9 @@ nass_year: 2007
 
 # state where NASS data is pulled from, as capitalized acronym
 state: 'ID'
+
+#list of counties for spatial sub setting
+county_list: ['Ada', 'Canyon']
 
 # List of counties used to gather NASS data, must be capitalized
 nass_county_list: ['ADA', 'CANYON']
