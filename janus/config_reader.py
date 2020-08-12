@@ -13,6 +13,7 @@ class ConfigReader:
     PROFITS = 'profits'
     F_PROFITS_FILE = 'f_profits_file'
     F_GCAM_PROFITS_FILE = 'f_gcam_profits_file'
+    F_KEY_FILE = 'f_key_file'
     NT = 'nt'
     SWITCH_PARAMS = 'switch_params'
     ATTR = 'attr'
@@ -23,7 +24,6 @@ class ConfigReader:
     CROP_SEED_SIZE = 'crop_seed_size'
     TARGET_YR = 'initialization_yr'
     SCALE = 'scale'
-    COUNTY_LIST = 'county_list'
     AGENT_VARS = 'agent_variables'
     NASS_YR = 'nass_year'
     STATE = 'state'
@@ -38,13 +38,15 @@ class ConfigReader:
 
         c = self.read_yaml(config_file)
 
-        self.f_init_lc = c[ConfigReader.F_INIT_LC_FILE]
+        self.f_init_lc_file = c[ConfigReader.F_INIT_LC_FILE]
 
         self.profits = c[ConfigReader.PROFITS]
 
         self.profits_file = pd.read_csv(c[ConfigReader.F_PROFITS_FILE], header=None)
 
         self.gcam_profits_file = pd.read_csv(c[ConfigReader.F_GCAM_PROFITS_FILE], header=0)
+
+        self.key_file = pd.read_csv(c[ConfigReader.F_KEY_FILE])
 
         self.output_dir = c[ConfigReader.OUTPUT_DIR]
 
@@ -73,8 +75,8 @@ class ConfigReader:
         # scale of grid in meters
         self.scale = c[ConfigReader.SCALE]
 
-        # list of counties to evaluate
-        self.county_list = c[ConfigReader.COUNTY_LIST]
+        # list of counties to pull NASS data from
+        self.nass_county_list = c[ConfigReader.NASS_COUNTY_LIST]
 
         # agent variables
         self.agent_variables = c[ConfigReader.AGENT_VARS]
