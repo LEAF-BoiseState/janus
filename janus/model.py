@@ -262,7 +262,7 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--switch_params', type=list, help='List of lists for switching averse, tolerant, and neutral parameters (alpha, beta)')
     parser.add_argument('-nt', '--nt', type=int, help='Number of time steps')
     parser.add_argument('-attr', '--attr', type=str, help='Boolean that determines if switching parameters are based on attributes')
-    parser.add_argument('-f_init_lc', ' f_init_lc')
+    parser.add_argument('-f_init_lc', '--f_init_lc')
 
     # TODO: number of crops is calculated after doing the GIS pre-processing, if nc is needed for price generation, we might need to adjust this
     parser.add_argument('-nc', '--nc', type=int, help='Number of crops')
