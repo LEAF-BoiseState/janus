@@ -20,6 +20,7 @@ import janus.preprocessing.get_nass_agent_data as get_nass
 from janus.config_reader import ConfigReader
 
 # TODO: import network from im3agents
+# import im3agents.im3networks.networks as ntwk
 
 
 class Janus:
