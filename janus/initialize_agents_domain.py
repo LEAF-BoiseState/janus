@@ -99,7 +99,7 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
     # this is where I'd add in the location and the agent ID
     # i j will be the location
     # add in counter for agent ID
-    agent_ID_count = 0
+    farmer_count = 0
     for i in np.arange(Ny):
 
         for j in np.arange(Nx):
@@ -108,14 +108,14 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
                 # TODO check if agent ID and location ID are properly added 
                 AgentData = getNASS.farmer_data(TenureCDF, AgeCDF, switch, dist2city[i][j], p, attr)
                 NewAgent = farmer.Farmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"],
-                                         # TODO add in Agent and LocID 
-                                         AgentID = agent_ID_count,
                                           LocationID = (i,j),
                                           Dist2city=AgentData["Dist2city"], nFields=AgentData['nFields'],
                                           alpha=AgentData['Alpha'],
-                                          beta=AgentData['Beta'])  # this is passing actual agent data
+                                          beta=AgentData['Beta'],
+                                          agentID=farmer_count)  
+
                 domain[i][j].add_agent(NewAgent)
-                agent_ID_count += 1 
+                farmer_count += 1 
 
             if AgentArray[i][j] == urban.Urban.__name__:
 
