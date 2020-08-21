@@ -38,7 +38,7 @@ def place_agents(Ny, Nx, lc, key_file, cat_option):
     :param Nx: Number of rows in domain
     :param lc: Initial landcover numpy array
     :param key_file: csv file with categorization from CDL categories to GCAM or user defined categories, see README file.
-    :param cat_option:  Set whether using 'GCAM' or 'local'categorization. If the local caracterization has been changed to 
+    :param cat_option:  Set whether using 'GCAM' or 'local'categorization. If the local caracterization has been changed to
     have more or less categories, the number of rows to use in line 52/53 will need to be edited
 
     :return: numpy array of strings with each agent type
@@ -47,7 +47,7 @@ def place_agents(Ny, Nx, lc, key_file, cat_option):
     AgentArray = np.empty((Ny, Nx), dtype='U10')
 
     if cat_option == 'local':
-        
+
         agent_Cat = key_file['local_cat'][0:28]
         code = key_file['local_GCAM_id_list'][0:28]
 
@@ -77,25 +77,24 @@ def place_agents(Ny, Nx, lc, key_file, cat_option):
     return AgentArray
 
 
-def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p, attr):
+def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p):
     """Place agent structures onto landscape and define attributes.
 
     :param AgentArray: Numpy array of strings of location of each agent type
-    :param domain:     Initial domain
+    :param domain:     Inital domain
     :param dist2city:  Numpy array of distance to city
     :param TenureCDF:  CDF of tenure type in the domain
     :param AgeCDF:     CDF of ages in the domain
     :param switch:     List of lists of parameter sets to describe agent switching behavior
     :param Ny:         Number of columns in domain
     :param Nx:         Number of rows in domain
-    :param lc:         Initial land cover numpy array
+    :param lc:         Initial landcover numpy array
     :param p:          Percentage of switching averse farming agents
-    :param attr:       A boolean indicating whether or not to use switching curves based on tenure and age attributes
 
     :return:           Domain with agents in each dCell
 
     """
-    
+
     # this is where I'd add in the location and the agent ID
     # i j will be the location
     # add in counter for agent ID
@@ -104,26 +103,25 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
 
         for j in np.arange(Nx):
 
-            if AgentArray[i][j] == farmer.Farmer.__name__: 
-                # TODO check if agent ID and location ID are properly added 
+            if AgentArray[i][j] == farmer.Farmer.__name__:
+                # TODO check if agent ID and location ID are properly added
                 AgentData = getNASS.farmer_data(TenureCDF, AgeCDF, switch, dist2city[i][j], p, attr)
                 NewAgent = farmer.Farmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"],
                                           LocationID = (i,j),
                                           Dist2city=AgentData["Dist2city"], nFields=AgentData['nFields'],
                                           alpha=AgentData['Alpha'],
-                                          beta=AgentData['Beta'],
-                                          agentID=farmer_count)  
-
+                                          beta=AgentData['Beta']
+                                          agentID=farmer_count)  # this is passing actual agent data
                 domain[i][j].add_agent(NewAgent)
-                farmer_count += 1 
+                farmer_count = farmer_count + 1
 
             if AgentArray[i][j] == urban.Urban.__name__:
 
                 AgentData = getNASS.urban_data(lc[0][i][j])
                 NewAgent = urban.Urban(density=AgentData["Density"])
                 domain[i][j].add_agent(NewAgent)
-                
-    
+
+
 
     return domain
 

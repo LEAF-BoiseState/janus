@@ -1,40 +1,33 @@
 # Configuration file for the ABM land use land cover change agent based model
 
 # full path with file name and extension to the counties shapefile
-f_counties_shp: '/Users/kek25/Desktop/Data/shp/counties_srb.shp'
+f_counties_shp: '<Full path with file name and extension to the counties shapefile>'
 
 # full path with file name and extension to the land class category key file
-f_key_file: '/Users/kek25/Desktop/Data/CDL2GCAM_categories.csv'
-
-# directory for output from the land cover pre processing
-f_processed_lc_dir: '/Users/kek25/Documents/GitRepos/IM3-BoiseState/Data/GCAM/'
+f_key_file: '<Full path with file name and extension to the land class category key file>'
 
 # raster of the initial land cover data
-f_init_lc_file: '/Users/kek25/Desktop/Data/gcam_2010_domain_3000.tiff'
+f_init_lc_file: '<Full path with file name and extension to the initial land cover data>'
 
-# TODO: add a profits choice flag to wherever it needs to be to set to one or the other
 #profit choice flag, gcam or generated
 profits: 'gcam'
 
 # TODO have these run from within this script, taking in nt and setting nc
 # profits file
-f_profits_file: '/Users/kek25/Desktop/Data/out.csv'
-f_gcam_profits_file: '/Users/kek25/Desktop/Data/out.csv'
+f_profits_file: '<Full path with file name and extension to the profits csv file>'
+f_gcam_profits_file: '<Full path with file name and extension to the GCAM USA profits csv file>'
 
 # output directory
-output_directory: '/Users/kek25/Desktop/Data/Results'
+output_directory: '<Full path with file name and extension to the output directory>'
 
 # number of time steps
-nt: 30
+nt: 20
 
-# list of lists for switching averse, tolerant, and neutral parameters (alpha, beta)
-switch_params: [[4.5, 0.5], [0.25, 4.0], [2.0, 2.0]]
+# list of lists for switching averse, tolerant parameters (alpha, beta)
+switch_params: [[4.5, 1.0], [0.5, 3.0]]
 
-# boolean of whether to base switching parameters on farmer attributes or not
-attr: False
-
-# proportion of each switching type (0.95 = switching tolerant)
-p: 0.95
+# proportion of each switching type, lower than p is averse, higher is tolerant
+p: 0.5
 
 # fraction of current profit at which the CDF is zero and one, and number of points to generate
 fmin: 1.0

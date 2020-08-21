@@ -1,7 +1,7 @@
 """
-Agent Based Model of Land Use and Land Cover Change 
+Agent Based Model of Land Use and Land Cover Change
 
-@author: Kendra Kaiser & Lejo Flores
+@author: lejoflores & kendrakaiser
 
 @license: BSD 2-Clause
 """
@@ -10,7 +10,6 @@ import argparse
 import os
 
 import numpy as np
-import gdal
 
 import janus.preprocessing.geofxns as gf
 import janus.crop_functions.crop_decider as crpdec
@@ -20,8 +19,8 @@ import janus.preprocessing.get_nass_agent_data as get_nass
 
 from janus.config_reader import ConfigReader
 
-# TODO: import network from im3agents - collaborate with Chris on
-
+# TODO: import network from im3agents
+# import im3agents.im3networks.networks as ntwk
 
 
 class Janus:
@@ -60,6 +59,11 @@ class Janus:
         # initialize agents
         self.agent_domain, self.agent_array = self.initialize_agents()
 
+        # initialize network here? given that the config file lists a certain type of network
+        # TODO: add in config file "randomwalk" "barabasi" "smallworld" "erdosrenyi" "gilbert"
+        # thinking of storing network as a dictionary
+        self.network = self.initialize_network()
+
         # make agent decisions
         self.decisions()
 
@@ -74,16 +78,15 @@ class Janus:
     def initialize_landscape_domain(self):
         """Initialize landscape and domain.
 
-        :return: lc, numpy array of land cover categories within domain at scale of interest
+        :return: lc, numpy array of landcover categories within domain at scale of interest
         :return: dist2city, numpy array of distance to nearest city cell
         :return: domain, grid of dCell classes
         :return: ny, number of rows in domain
         :return: nx, number of columns in domain
         """
 
-        # import the initial land cover data
-        lc_raster = gdal.Open(self.f_init_lc)
-        lc = lc_raster.GetRasterBand(1)
+        # select initial gcam data from initial year
+        lc = gf.get_gcam(self.c.counties_shp, self.c.county_list, self.c.gcam_file)
 
         ny, nx = lc[0].shape
 
@@ -98,7 +101,7 @@ class Janus:
         """Initialize crops
 
         :return: crop_ids, numpy array of the crop IDs that are in the domain
-        :return: crop_id_all, numpy array of land cover categories through time
+        :return: crop_id_all, numpy array of landcover categories through time
         :return: ag, numpy array of where agricultural cells exist in the domain
         :return: num_crops, integer og the number of crops being assessed
 
@@ -120,28 +123,18 @@ class Janus:
 
     def initialize_profit(self):
         """Initialize profits based on profit signals csv that is either generated or input from other model output
-        :param profit: Choice between using generated price signals, or prices from GCAM
 
-        :return: profits_actual is the profit signal with a random variation 
+        :return: profits_actual is the profit signal with a random variation
         :return: profit_signals is the transposed profit signals cleaned to be used in other functions
 
         """
-        if self.c.profits == 'generated':
+        profit_signals = np.transpose(self.c.profits_file.values)
 
-            profit_signals = np.transpose(self.c.profits_file.values)
+        assert np.all([profit_signals[:, 0], self.crop_ids[:, 0]]), 'Crop IDs in profit signals do not match Crop IDs from landcover'
 
-            assert np.all([profit_signals[:, 0], self.crop_ids[:, 0]]), 'Crop IDs in profit signals do not match ' \
-                                                                        'Crop IDs from land cover'
+        profit_signals = profit_signals[:, 1:]
 
-            profit_signals = profit_signals[:, 1:]
-
-        elif self.c.profits == 'gcam':
-            profit_signals = np.transpose(self.c.gcam_profits_file.values)
-        else:
-            print("Profit type not supported")
-
-        assert profit_signals.shape[1] == self.c.Nt, 'The number of time steps in the profit signals do not ' \
-                                                       'match the number of model time steps'
+        assert profit_signals.shape[1] == self.c.Nt, 'The number of timesteps in the profit signals do not match the number of model timesteps'
 
         profits_actual = init_agent.profits(profit_signals, self.c.Nt, self.Ny, self.Nx, self.crop_id_all, self.crop_ids)
 
@@ -150,13 +143,12 @@ class Janus:
     def initialize_agents(self, cat_option='local'):
         """Initialize agents based on NASS data and initial land cover
         :param cat_option: Denotes which categorization option is used, 'GCAM', 'local', or user defined
-        :return: agent_domain is the domain with agent cell classes filled with agent information 
+        :return: agent_domain is the domain with agent cell classes filled with agent information
         :return: agent_array is a numpy array of strings that define which agent is in each location
 
         """
 
-        tenure = get_nass.tenure_area(self.c.state, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables,
-                                      self.c.nass_api_key)
+        tenure = get_nass.tenure_area(self.c.state, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables, self.c.nass_api_key)
 
         ages = get_nass.ages(self.c.nass_year, self.c.state, self.c.nass_api_key)
 
@@ -167,9 +159,41 @@ class Janus:
         agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, cat_option)
 
         agent_domain = init_agent.agents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf, self.c.switch,
-                                         self.Ny, self.Nx, self.lc, self.c.attr, self.c.p)
+                                         self.Ny, self.Nx, self.lc, self.c.p)
 
         return agent_domain, agent_array
+
+    # TODO self.c.network_type will be a config file option like "randomwalk", etc
+    def initialize_network(self, self.c.network_type):
+        """ This will create a network object from network.py in im3agents repo
+
+
+        Parameters
+        ----------
+        self.c.network_type : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        """
+
+        # TODO: check with Vicken over the different types of networks
+        if self.c.network_type == 'randomwalk':
+            network =
+
+        if self.c.network_type == 'erdosrenyi'
+
+        if self.c.network_type == 'barabasi':
+
+        if self.c.network_type == 'smallworld':
+
+        if self.c.network_type = 'gilbert':
+
+
+
+
 
     def decisions(self):
         """Decision process.
@@ -177,7 +201,7 @@ class Janus:
         :return:    Updated domain with agent information and landcover choice
 
         """
-        ## TODO parallelize? 
+        ## TODO parallelize?
         for i in np.arange(1, self.c.Nt):
 
             for j in np.arange(self.Ny):
@@ -185,47 +209,73 @@ class Janus:
                 for k in np.arange(self.Nx):
 
                     if self.agent_domain[j, k].FarmerAgents:
-                        
+
                         # look at what decision making method the agent is using (conformist, profit, success bias)
                             # if conformist or success bias, look at network
-                            # is this where the network should be created if it depends 
+                            # is this where the network should be created if it depends
                             # on which decision making method is used?
-                        
-                            # TODO this is where the farmer will look around into network 
+
+                            # TODO this is where the farmer will look around into network
                             # calling network code from im3 repo
-                        
+
                             # call crop decider function to decide based off of network
 
-                        # assess Profit
-                        profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i-1, j, k],
-                                                                       self.profits_actual[i-1, j, k],
-                                                                       self.profit_signals[:, i],
-                                                                       self.num_crops,
-                                                                       self.crop_ids)
+                        # TODO add in decision_type in config file so it can be called this way
+                        # three decision types -- profit, success, and conformist
+                        if c.decision_type == 'profit'
 
-                        # choose between crops
-                        crop_choice, profit_choice = crpdec.decide_n(self.agent_domain[j, k].FarmerAgents[0].alpha,
-                                                                    self.agent_domain[j, k].FarmerAgents[0].beta,
-                                                                    self.c.fmin,
-                                                                    self.c.fmax,
-                                                                    self.c.n,
-                                                                    profit_last,
-                                                                    self.crop_ids,
-                                                                    profit_pred,
-                                                                    rule=True)
+                            # assess profit - only needs to occur for profit based learning
+                            profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i-1, j, k]    # this is the crop for last time step for agent jk
+                                                                           self.profits_actual[i-1, j, k], #this is last profit for agent jk
+                                                                           self.profit_signals[:, i],
+                                                                           self.num_crops,
+                                                                           self.crop_ids)
 
-                        # decide whether to switch and add random variation to actual profit
-                        self.crop_id_all[i, j, k], self.profits_actual[i, j, k] = crpdec.make_choice(self.crop_id_all[i-1, j, k],
-                                                                                                    profit_last,
-                                                                                                    crop_choice,
-                                                                                                    profit_choice,
-                                                                                                    seed = False)
+                            # identify the most profitable crop
+                            crop_choice, profit_choice = crpdec.profit_maximizer(self.agent_domain[j, k].FarmerAgents[0].alpha,
+                                                                        self.agent_domain[j, k].FarmerAgents[0].beta,
+                                                                        self.c.fmin,
+                                                                        self.c.fmax,
+                                                                        self.c.n,
+                                                                        profit_last,
+                                                                        self.crop_ids,
+                                                                        profit_pred,
+                                                                        rule=True)
+
+                            # decide whether to switch and add random variation to actual profit
+                            self.crop_id_all[i, j, k], self.profits_actual[i, j, k] = crpdec.make_choice(self.crop_id_all[i-1, j, k],
+                                                                                                        profit_last,
+                                                                                                        crop_choice,
+                                                                                                        profit_choice,
+                                                                                                        seed = False)
+                            if c.decision_type == 'success':
+
+
+                                # retrieve the cropIDs and the associated profits of their network given an individual
+                                # one array -- two colums cropIDs and their profits
+                                # see Kendra's code in Slack
+                                network_profits = crpdec.retrieve_network_profits(agentID)
+
+                                # identify the most profitable crop of the network
+                                crop_choice, profit_choice = crpdec.success_bias_crop()
+
+                                # TODO decide whether to switch or add random variation to profit??
+                                # can I literally just call make choice in the exact same way it is above?
+                                # or maybe if all three learning strategies are using make_choice, it can be outside
+                                # of if statement to reduce duplicate code
+
+
+
+
+                            if c.decision_type = 'conformist':
+                                # do stuff here -- collab w Vicken
+
+
+
+
 
                         # update agent attributes
                         self.agent_domain[j, k].FarmerAgents[0].update_age()
-                        if self.c.attr:
-                            if self.agent_domain[j, k].FarmerAgents[0].LandStatus != 2:
-                                self.agent_domain[j, k].FarmerAgents[0].update_switch()
 
     def plot_results(self):
         """Create result plots and save them."""
@@ -233,29 +283,18 @@ class Janus:
         ppf.plot_crop_percent(self.crop_id_all, self.crop_ids, self.c.Nt, self.num_crops, self.c.scale,
                               self.c.output_dir, self.c.key_file, self.ag)
 
-        ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx, self.c.Nt, 
+        ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx, self.c.Nt,
                             self.c.scale, self.c.output_dir)
-
-        ppf.plot_switching_curves(self.agent_domain, self.agent_array, self.c.fmin, self.c.fmax, self.Ny, self.Nx,
-                                  self.c.Nt, self.c.n, self.c.scale, self.c.output_dir,
-                                  self.profits_actual[self.c.Nt-1, :, :], self.c.switch)
-
-        ppf.plot_lc(self.crop_id_all, 0, self.c.target_year, self.c.output_dir, self.ag, self.crop_ids, self.num_crops, self.c.Nt, self.c.key_file)
-
-        ppf.plot_lc(self.crop_id_all, 1, self.c.target_year, self.c.output_dir, self.ag, self.crop_ids, self.num_crops, self.c.Nt, self.c.key_file)
-        ppf.plot_lc(self.crop_id_all, 29, self.c.target_year, self.c.output_dir, self.ag, self.crop_ids, self.num_crops, self.c.Nt, self.c.key_file)
-
-        ppf.plot_price_signals(self.profit_signals, self.c.key_file, self.c.target_year, self.c.Nt, self.c.output_dir, self.c.profits)
 
     def save_outputs(self):
         """Save outputs as NumPy arrays.
-        
-        The dimensions of each output NumPy array are [Number of time steps, Ny, Nx]
+
+        The dimensions of each output NumPy array are [Number of timesteps, Ny, Nx]
         """
 
         out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr.npy')
 
-        # save time series of land cover coverage
+        # save time series of landcover coverage
         np.save(out_file.format('landcover', self.c.scale, self.c.Nt), self.crop_id_all)
 
         # save time series of profits
@@ -263,8 +302,6 @@ class Janus:
 
         # save domain, can be used for initialization
         np.save(out_file.format('domain', self.c.scale, self.c.Nt), self.agent_domain)
-
-
 
 
 if __name__ == '__main__':
@@ -275,9 +312,8 @@ if __name__ == '__main__':
     parser.add_argument('-shp', '--f_counties_shp', type=str, help='Full path with file name and extension to the input counties shapefile.')
     parser.add_argument('-key', '--f_key_file', type=str, help='Full path with file name and extension to the input land class category key file.')
     parser.add_argument('-gcam', '--f_gcam_file', type=str, help='Full path with file name and extension to the input GCAM raster file.')
-    parser.add_argument('-s', '--switch_params', type=list, help='List of lists for switching averse, tolerant, and neutral parameters (alpha, beta)')
-    parser.add_argument('-nt', '--nt', type=int, help='Number of time steps')
-    parser.add_argument('-attr', '--attr', type=str, help='Boolean that determines if switching parameters are based on attributes')
+    parser.add_argument('-s', '--switch_params', type=list, help='List of lists for switching averse, tolerant parameters (alpha, beta)')
+    parser.add_argument('-nt', '--nt', type=int, help='Number of timesteps')
 
     # TODO: number of crops is calculated after doing the GIS pre-processing, if nc is needed for price generation, we might need to adjust this
     parser.add_argument('-nc', '--nc', type=int, help='Number of crops')
@@ -285,7 +321,7 @@ if __name__ == '__main__':
     parser.add_argument('-fmax', '--fmax', type=float, help='The fraction of current profit at which the CDF of the beta distribution is one')
     parser.add_argument('-n', '--n', type=int, help='The number of points to generate in the CDF')
     parser.add_argument('-seed', '--crop_seed_size', type=int, help='Seed to set for random number generators for unit testing')
-    parser.add_argument('-yr', '--initialization_yr', type=int, help='Initialization year assocciated with landcover input')
+    parser.add_argument('-yr', '--initalization_yr', type=int, help='Initialization year assocciated with landcover input')
     parser.add_argument('-state', '--state', type=str, help='State where NASS data is pulled from, capitalized acronym')
     parser.add_argument('-sc', '--scale', type=int, help='Scale of landcover grid in meters. Current options are 1000 and 3000 m')
     parser.add_argument('-cl', '--county_list', type=list, help='List of county names to evaluate from the input shapefile.')

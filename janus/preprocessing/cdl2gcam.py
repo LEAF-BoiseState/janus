@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Created on Mon Nov 19 09:53:01 2018
 
@@ -12,10 +14,6 @@ import pandas as pd
 import os
 from osgeo import osr
 
-from shapely.geometry import Polygon, MultiPolygon 
-from fiona.crs import from_epsg
-import geopandas as gp
-
 #=============================================================================#
 # PREAMBLE AND PATH DEFINITIONS
 #=============================================================================#
@@ -24,18 +22,16 @@ GCAMPath= '../../Data/GCAM/'
 
 files = glob.glob(CDLPath+'cdl*.txt') 
 
-
-class CdlDataStruct:
-    """TODO:  need description of class
-
-    """
+#=============================================================================#
+# CLASS DEFINITIONS    
+class CDL_DataStruct:
     # Constructor requires the path and file name of the input CDL data
-    def __init__(self, cdl_path, cdl_infile):
+    def __init__(self,cdl_path,cdl_infile): 
         self.cdl_path   = cdl_path
         self.cdl_infile = cdl_infile
         
     # Add CDL geographic transformation adn projection information
-    def SetCDL_ProjInfo(self, GeoTransform, Projection, PixelSize):
+    def SetCDL_ProjInfo(self,GeoTransform,Projection,PixelSize):
         self.cdl_geotransform = GeoTransform
         self.cdl_projection   = Projection
         self.cdl_pixelsize    = PixelSize
@@ -45,10 +41,9 @@ class CdlDataStruct:
 
     def SetCDLStats(self,cdl_stats): # Add CDL stats
         self.cdl_stats = cdl_stats
-
-
+                
 class GCAM_DataStruct:
-    def __init__(self, gcam_path, gcam_outfile):
+    def __init__(self,gcam_path,gcam_outfile):
         self.gcam_path    = gcam_path
         self.gcam_outfile = gcam_outfile
 
@@ -136,7 +131,7 @@ def c2g(CDL_GCAM_keyfile, conversionID):
     #=========================================================================#
     CDL2GCAM_key = pd.read_csv(CDL_GCAM_keyfile, sep=',')
     CDL_cat      = CDL2GCAM_key['CDL_id'].values
-    GCAM_cat     = CDL2GCAM_key[conversionID].values #'local_GCAM_id' or set to 'GCAM_id' for regular GCAM categories, or edit the original file to user defineted categories
+    GCAM_cat     = CDL2GCAM_key[conversionID].values #'SRP_GCAM_id' or set to GCAM_id for regular GCAM categories, or edit the original file to user defineted categories
 
     #=========================================================================#
     # 1. Initialize a list of CDL structures for analysis                     #
@@ -147,7 +142,7 @@ def c2g(CDL_GCAM_keyfile, conversionID):
         # Initialize CDL data structures with paths and file names
         cdl_path   = os.path.dirname(file)
         cdl_infile = os.path.basename(file)
-        CDL_Data.append(CdlDataStruct(cdl_path,cdl_infile))
+        CDL_Data.append(CDL_DataStruct(cdl_path,cdl_infile))
 
         # Initialize GCAM data structures with paths and file names
         gcam_path    = GCAMPath
@@ -235,40 +230,3 @@ def aggGCAM(AggRes, GCAM_Dir):
     
     Parallel(n_jobs=4, verbose=60, backend='threading')(delayed(AggregateGCAMGrid)(GCAM_Dir,os.path.basename(file),AggRes) \
              for file in GCAM_ReadFiles)
-    
-#----------------------------------------------------------------------------
-# Create a set of polygons for entire domain
-#----------------------------------------------------------------------------
-
-def grid2poly(year, scale, GCAMpath, DataPath):
-    grid_file=GCAMpath+'gcam_'+str(int(year))+'_domain_'+str(int(scale))+'.tiff'
-    OutFileName= 'domain_poly_'+str(int(scale))+'.shp'
-    
-    src= gdal.Open(grid_file)
-    srcarray = src.ReadAsArray().astype(np.float)
-
-    x_index =np.arange(srcarray.shape[1]) 
-    y_index = np.arange(srcarray.shape[0])
-    (upper_left_x, x_size, x_rotation, upper_left_y, y_rotation, y_size) = src.GetGeoTransform()
-    x_coords = x_index * x_size + upper_left_x + (x_size / 2) #add half the cell size
-    y_coords = y_index * y_size + upper_left_y + (y_size / 2) #to centre the point
-    xc, yc = np.meshgrid(x_coords, y_coords)
-
-    #create a list of all the polygons in the grid
-    vert = list()
-    for i in np.arange(srcarray.shape[1]-1):  
-        for j in np.arange(srcarray.shape[0]-1):  
-                vert.append([[xc[j, i] , yc[j,i]], [xc[j+1, i], yc[j+1, i]], [xc[j+1, i+1], yc[j+1, i+1]],[xc[j, i+1], yc[j, i+1]]])
- 
-    #create list of polygons
-    polygons=[Polygon(vert[i]) for i in np.arange(len(vert))]
-
-    #convert them to formats for exporting 
-    polys   = gp.GeoSeries(MultiPolygon(polygons))
-    polyagg = gp.GeoDataFrame(geometry=polys)
-    polyagg.crs= from_epsg(32611)
-
-    #-------------------------#
-    # Save Output             #
-    #-------------------------#
-    polyagg.to_file(filename=DataPath+OutFileName, driver="ESRI Shapefile")

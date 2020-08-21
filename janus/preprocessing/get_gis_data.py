@@ -3,70 +3,47 @@ Created on Mon Apr  8 21:55:00 2019
 
 @author: kek25
 
-Select GIS data based on base year, and resolution and clip to counties
+Pre-process GIS data based on counties, base year, and resolution
 """
 
-import os
 import geopandas as gp
+
+import janus.preprocessing.geofxns as gf
 import janus.preprocessing.landcover_preprocessing as lc
 
+# TODO:  this needs to be wrapped in a function that can be called
+userPath='/Users/kek25/Documents/GitRepos/'
+DataPath= userPath+'IM3-BoiseState/Data/'
+GCAMpath=DataPath+'GCAM/'
 
-def get_gis_data(counties_shp, categories_csv, county_list, scale, year, raw_lc_dir, processed_lc_dir, init_lc_dir,
-                 gcam_category_type='local_GCAM_id'):
-    """Pre-process GIS data based on counties, base year, and resolution.
+counties_shp= gp.read_file(DataPath+'Counties/Counties_SRB_clip_SingleID.shp')
+counties_shp=counties_shp.set_index('county')
 
-    :param counties_shp:                    Full path with file name and extension to the input counties shapefile.
-    :type counties_shp:                     str
+key_file= gp.read_file(DataPath+'CDL2GCAM_categories.csv', sep=',')
 
-    :param categories_csv:                  Full path with file name and extension to the input categories CSV file
-                                            that bins CDL land classes to GCAM land classes
-    :type categories_csv:                   str
+#------------------------------------------------------------------------
+# Select, crop and save npy file of specific initialization year and scale
+#------------------------------------------------------------------------
 
-    :param county_list:                     List of county names to process
-    :type county_list:                      list
+countyList=['Ada', 'Canyon']
+scale=3000 #scale of grid in meters
+year=2010
 
-    :param scale:                           resolution of grid cells in meters
-    :type scale:                            int
+#convert cdl data to GCAM categories of choice, this will take a while depending on size of original dataset
+lc.c2g(key_file,'local_GCAM_id')
 
-    :param year:                            Four digit year to process (e.g., 2000)
-    :type year:                             int
+#convert GCAM file to scale of interest
+lc.aggGCAM(scale, GCAMpath)
 
-    :param raw_lc_dir:                      Full path to the directory containing the raw land cover data
-    :type raw_lc_dir:                       str
+#use the above file to create a polygon coverage
 
-    :param processed_lc_dir:                Full path to the directory containing the processed land cover data
-    :type processed_lc_dir:                 str
+gf.grid2poly(year, scale, GCAMpath, DataPath)
 
-    :param init_lc_dir:                     Full path to the directory where land cover initialization files are stored
-    :type init_lc_dir:                      str
+#use the poly grid to create the extent for the model
+extent=gf.getExtent(counties_shp, countyList, scale, DataPath)
 
-    :param gcam_category_type:              Convert CDL data to GCAM categories of choice, Default 'local_GCAM_id' which
-                                            is a set of ids that are specific to a local set of crop categories; where,
-                                            'GCAM_id_list' is the standard set of GCAM global categories.
-    :type gcam_category_type:               str
+#select initial gcam data from inital year
+lc = gf.getGCAM(counties_shp, countyList, year, scale, GCAMpath)
 
-
-
-    """
-    # read counties shapefile as geopandas data frame
-    gdf_counties = gp.read_file(counties_shp)
-    gdf_counties.set_index('county', inplace=True)
-
-    # read in CDL to GCAM category key
-    gdf_key = gp.read_file(categories_csv)
-
-    # convert cdl data to GCAM categories of choice
-    lc.c2g(gdf_key, processed_lc_dir, raw_lc_dir, gcam_category_type)
-
-    # convert GCAM file to scale of interest
-    lc.aggGCAM(scale, processed_lc_dir)
-
-    # use the above file to create a polygon coverage & save; this allows for mapping each cell over time (?)
-    lc.grid2poly(year, scale, processed_lc_dir, init_lc_dir)
-
-    # use the poly grid to create the extent for the model - only needed if using other land cover data
-    lc.get_extent(counties_shp, county_list, scale, init_lc_dir)
-
-    # crop land cover data from initialization year
-    gcam_file = os.path.join(processed_lc_dir, 'gcam_'+str(int(year))+'_domain_'+str(int(scale))+'.tiff')
-    lc.get_gcam(counties_shp, county_list, gcam_file, init_lc_dir)
+#if additional geospatial data are avialable and included in model they can be
+#clipped and processed here using the extent file
