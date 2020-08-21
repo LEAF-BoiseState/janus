@@ -97,8 +97,7 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
 
     # this is where I'd add in the location and the agent ID
     # i j will be the location
-    # add in counter for agent ID
-    farmer_count = 0
+    
     for i in np.arange(Ny):
 
         for j in np.arange(Nx):
@@ -110,10 +109,9 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
                                           LocationID = (i,j),
                                           Dist2city=AgentData["Dist2city"], nFields=AgentData['nFields'],
                                           alpha=AgentData['Alpha'],
-                                          beta=AgentData['Beta']
-                                          agentID=farmer_count)  # this is passing actual agent data
+                                          beta=AgentData['Beta'],
+                                          agentID=(i,j))  
                 domain[i][j].add_agent(NewAgent)
-                farmer_count = farmer_count + 1
 
             if AgentArray[i][j] == urban.Urban.__name__:
 
