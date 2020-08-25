@@ -256,22 +256,26 @@ class Janus:
         srs = lc.GetProjectionRef()
         lc = None
 
+        # set gdal based crs
+        sr = nc.createVariable('spatial_ref', 'i4')
+        sr.spatial_ref = srs
+
         # store number of pixel/lines in a more convenient variable
         # TODO(kyle): check axis ordering
         nx =  self.crop_id_all.shape[0]
         ny =  self.crop_id_all.shape[1]
 
-        # setup the dimensions for the output file
+        # setup the dimensions for the output file.
         # TODO(kyle): check on axis ordering
+        # time is unlimited for appending
         dt = nc.createDimension('time', None)
         dx = nc.createDimension('x', nx)
         dy = nc.createDimension('y', ny)
 
         time = nc.createVariable('time', 'u2', ('time',))
-        time.units = 'Years since {}'.format(self.c.target_year)
+        time.units = 'years'
         time.long_name = 'time'
         time[:] = years[:]
-
 
         # TODO(kyle): more axis ordering (-dy, dy, etc.), as well as half pixel
         # offsets.
@@ -282,11 +286,9 @@ class Janus:
         y.long_name = 'y coordinate'
         y[:] = [gt[3] + (0.5 * gt[5]) + i * gt[5] for i in range(ny)]
 
-        # write the lat/lon arrays
         lon = nc.createVariable('lon', 'f8', ('y', 'x'))
         lon.long_name = 'longitude'
         lon.units = 'degrees'
-
         lat = nc.createVariable('lat', 'f8', ('y', 'x'))
         lat.long_name = 'latitude'
         lat.units = 'degrees'
@@ -309,32 +311,22 @@ class Janus:
                 y = gt[3] + (0.5 * gt[5]) + i * gt[5]
                 x = gt[0] + (0.5 * gt[1]) + j * gt[1]
                 lon[i, j], lat[i, j], z = ct.TransformPoint(x, y)
-        # while we're here, set some CF metadata based on the srs info
-        nc.crs = 'crs_wkt = "{}"'.format(srs)
-        # TODO(kyle): full CF/CRS support
-        crs = nc.createVariable('transverse_mercator', 'i1', ())
-        crs.grid_mapping_name = 'transverse_mercator'
-        crs.scale_factor_at_central_meridian = s_srs.GetProjParm('scale_factor')
-        crs.longitude_of_central_meridian = s_srs.GetProjParm('central_meridian')
-        crs.latitude_of_projection_origin = s_srs.GetProjParm('latitude_of_origin')
-        crs.false_easting = s_srs.GetProjParm('false_easting')
-        crs.false_northing = s_srs.GetProjParm('false_northing')
 
         # TODO(kyle): check on range of crop values, cursory inspection showed
         # a max of 254, but it could have been the wrong file.
         crop = nc.createVariable('crop', 'i2', ('time', 'y', 'x'))
         crop.units = 'gcam(?) crop classification'
         crop.long_name = 'crop landcover'
-        crop.grid_mapping = 'transverse_mercator'
         # prepend the initial conditions
         crop[:] = np.insert(self.crop_id_all, 0, self.lc, axis=0)
+        crop.grid_mapping = 'spatial_ref'
 
         profits = nc.createVariable('profits', 'f8', ('time', 'y', 'x'))
         profits.units = 'total dollars (per unit area?)'
         profits.long_name = 'profit'
-        profits.grid_mapping = 'transverse_mercator'
         # prepend zeros for the initial crop conditions
         profits[:] = np.insert(self.profits_actual, 0, np.zeros(self.lc.shape), axis=0)
+        profits.grid_mapping = 'spatial_ref'
 
         # TODO(kyle): write the domain data
 
