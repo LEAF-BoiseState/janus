@@ -311,6 +311,8 @@ if __name__ == '__main__':
     parser.add_argument('-gcam', '--f_gcam_file', type=str, help='Full path with file name and extension to the input GCAM raster file.')
     parser.add_argument('-s', '--switch_params', type=list, help='List of lists for switching averse, tolerant parameters (alpha, beta)')
     parser.add_argument('-nt', '--nt', type=int, help='Number of timesteps')
+    
+    # TODO: add in arguments for network creations and decision type
 
     # TODO: number of crops is calculated after doing the GIS pre-processing, if nc is needed for price generation, we might need to adjust this
     parser.add_argument('-nc', '--nc', type=int, help='Number of crops')
