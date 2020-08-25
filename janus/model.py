@@ -19,7 +19,7 @@ import janus.preprocessing.get_nass_agent_data as get_nass
 
 from janus.config_reader import ConfigReader
 
-# TODO: import network from im3agents -- see Chris' example
+# change this to use network
 from im3agents import FarmerOne
 
 
@@ -164,23 +164,21 @@ class Janus:
 
 
     def initialize_network(self):
-        """ This will create and return a 
-
-
-        Parameters
-        ----------
-        self.c.network_type : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        None.
+        """ This will create and return a network based upon which type of network
+        was listed in the config.yml file. Network type must be properly set in
+        config.yml to be either: randomwalk, erdosrenyi, barabasi, smallworld,
+        or gilbert.
+        
+        :return: network_dict is dictionary where the keys are all
+        agentIDs and the value associated with that key is a numpy array
+        containing the agentIDs that share a connection with the key agent.
 
         """
 
 
         if self.c.net_type == 'randomwalk':
             return
+        
         if self.c.net_type == 'erdosrenyi':
             return
         
@@ -192,9 +190,6 @@ class Janus:
 
         if self.c.net_type == 'gilbert':
             return
-
-
-
 
 
     def decisions(self):
