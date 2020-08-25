@@ -60,6 +60,8 @@ class ConfigReader:
         # TODO: network type to pass through to the main model
         self.net_type = c[ConfigReader.NETWORK_TYPE]
 
+        self.decision_type = c[ConfigReader.DECISIONS]        
+
         # set agent switching parameters (alpha, beta) [[switching averse], [switching tolerant]]
         self.switch = np.array(c[ConfigReader.SWITCH_PARAMS])
 
