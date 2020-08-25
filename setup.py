@@ -16,6 +16,9 @@ def get_requirements():
     with open('requirements.txt') as f:
         return f.read().split()
 
+def version():
+    with open('VERSION') as f:
+        return f.read()
 
 try:
     import gdal
@@ -41,7 +44,7 @@ except ImportError:
 
 setup(
     name='janus',
-    version=__version__,
+    version=version(),
     packages=find_packages(),
     url='https://github.com/LEAF-BoiseState/janus.git',
     license='BSD 2-Clause',
