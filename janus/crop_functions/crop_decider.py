@@ -6,8 +6,7 @@ Created on Tue Jul  9 12:12:43 2019
 
 import numpy as np
 import scipy.special as sp
-# TODO import IM3agents.im3networks as nwk
-# collab w Chris Vernon to get package right?
+from im3agents import FarmerOne
 
 def define_seed(seed):
     """ Creates seed for random selection for testing
@@ -58,11 +57,6 @@ def retrieve_network_profits(agentID, ):
     :return: a 2D array of cropIDs and their associated profits in the network of agent
 
     """
-    # TODO pass in crops and profit arrays -- see assess_profits
-    # TODO - change this to call actual network
-    temp_network = np.random.randint(0, size=4)
-    # might look something like
-    # network_ids =
 
     # at this point now there should be a list of agents in that network
 
