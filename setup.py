@@ -41,7 +41,7 @@ except ImportError:
 
 setup(
     name='janus',
-    version='0.0.1',
+    version=__version__,
     packages=find_packages(),
     url='https://github.com/LEAF-BoiseState/janus.git',
     license='BSD 2-Clause',
