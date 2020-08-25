@@ -77,7 +77,7 @@ def place_agents(Ny, Nx, lc, key_file, cat_option):
     return AgentArray
 
 
-def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p):
+def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc, p, attr):
     """Place agent structures onto landscape and define attributes.
 
     :param AgentArray: Numpy array of strings of location of each agent type

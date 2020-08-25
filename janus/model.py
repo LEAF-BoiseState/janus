@@ -1,7 +1,7 @@
 """
 Agent Based Model of Land Use and Land Cover Change
 
-@author: lejoflores & kendrakaiser
+@author: lejoflores, kendrakaiser & hollybossart
 
 @license: BSD 2-Clause
 """
@@ -19,10 +19,8 @@ import janus.preprocessing.get_nass_agent_data as get_nass
 
 from janus.config_reader import ConfigReader
 
-# TODO: import network from im3agents
+# TODO: import network from im3agents -- see Chris' example
 from im3agents import FarmerOne
-
-# import im3agents.im3networks.networks as ntwk
 
 
 class Janus:
@@ -61,9 +59,8 @@ class Janus:
         # initialize agents
         self.agent_domain, self.agent_array = self.initialize_agents()
 
-        # initialize network here? given that the config file lists a certain type of network
         # TODO: add in config file "randomwalk" "barabasi" "smallworld" "erdosrenyi" "gilbert"
-        # thinking of storing network as a dictionary
+        # network will be stored as a dictionary
         self.network = self.initialize_network()
 
         # make agent decisions
@@ -165,9 +162,9 @@ class Janus:
 
         return agent_domain, agent_array
 
-    # TODO self.c.network_type will be a config file option like "randomwalk", etc
-    def initialize_network(self, self.c.network_type):
-        """ This will create a network object from network.py in im3agents repo
+
+    def initialize_network(self):
+        """ This will create and return a 
 
 
         Parameters
@@ -181,17 +178,20 @@ class Janus:
 
         """
 
-        # TODO: check with Vicken over the different types of networks
-        if self.c.network_type == 'randomwalk':
-            network =
 
-        if self.c.network_type == 'erdosrenyi'
+        if self.c.net_type == 'randomwalk':
+            return
+        if self.c.net_type == 'erdosrenyi':
+            return
+        
+        if self.c.net_type == 'barabasi':
+            return
 
-        if self.c.network_type == 'barabasi':
+        if self.c.net_type == 'smallworld':
+            return
 
-        if self.c.network_type == 'smallworld':
-
-        if self.c.network_type = 'gilbert':
+        if self.c.net_type == 'gilbert':
+            return
 
 
 
@@ -203,7 +203,7 @@ class Janus:
         :return:    Updated domain with agent information and landcover choice
 
         """
-        ## TODO parallelize?
+
         for i in np.arange(1, self.c.Nt):
 
             for j in np.arange(self.Ny):
@@ -224,7 +224,7 @@ class Janus:
 
                         # TODO add in decision_type in config file so it can be called this way
                         # three decision types -- profit, success, and conformist
-                        if c.decision_type == 'profit'
+                        if self.c.decision_type == 'profit'
 
                             # assess profit - only needs to occur for profit based learning
                             profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i-1, j, k]    # this is the crop for last time step for agent jk
