@@ -68,6 +68,7 @@ There is an example config file in the `janus/example` directory of this package
 | `nass_county_list` | List of counties in the domain that NASS data is collected from, these have to be capitalized | |
 | `nass_api_key` | A NASS API is needed to access the NASS data, get yours here https://quickstats.nass.usda.gov/api | |
 | `decision_type` | The type of decision to be used by the agent. Options include `profit` for profit maximization without a network, `success` for success bias with a network, or `conformist` for conformist bias. | |
+| `network_type` | The type of network to be created if the `decision_type` includes a network. Options include `'barabasi'`, `'randomwalk'`, `'erdosrenyi'`, `'smallworld'`, and `'gilbert'`. Details on each can be found [here](https://github.com/IMMM-SFA/im3agents/blob/networks/README.md). | | 
 
 ### Setup the input files
 
