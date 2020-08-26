@@ -236,13 +236,28 @@ class Janus:
 
 
     def save_outputs(self):
-        """Save outputs as a netcdf file.
+        """Save outputs as Numpy arrays (backwards compatible) and a netcdf file.
 
-        The initial conditions are prepended to the output and all grids have
-        the dimenstions Nt, Ny, Nx.
+        The dimensions of each output NumPy array are [Number of time steps, Ny, Nx]
+
+        For the netcdf file, the initial conditions are prepended to the output
+        and all grids have the dimenstions Nt, Ny, Nx.
         """
 
+        out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr.npy')
+
+        # save time series of land cover coverage
+        np.save(out_file.format('landcover', self.c.scale, self.c.Nt), self.crop_id_all)
+
+        # save time series of profits
+        np.save(out_file.format('profits', self.c.scale, self.c.Nt), self.profits_actual)
+
+        # save domain, can be used for initialization
+        np.save(out_file.format('domain', self.c.scale, self.c.Nt), self.agent_domain)
+
         out_file = self.c.output_file
+        if out_file == "":
+            return
         years = [self.c.target_year + n for n in range(self.c.Nt)]
 
         # TODO(kyle): handle appending/assumed restart
