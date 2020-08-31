@@ -9,7 +9,7 @@ except ImportError:
 
 def readme():
     with open('README.md') as f:
-        return f.read()
+        return f.read().strip()
 
 
 def get_requirements():

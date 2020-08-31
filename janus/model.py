@@ -7,7 +7,9 @@ Agent Based Model of Land Use and Land Cover Change
 """
 
 import argparse
+from datetime import datetime
 import os
+import subprocess
 
 import netCDF4 as netcdf
 import numpy as np
@@ -20,6 +22,12 @@ import janus.postprocessing.create_figures as ppf
 import janus.preprocessing.get_nass_agent_data as get_nass
 
 from janus.config_reader import ConfigReader
+
+try:
+    from setuptools import pkg_resources
+except ImportError:
+    pass
+
 
 class Janus:
 
@@ -234,6 +242,19 @@ class Janus:
 
         ppf.plot_price_signals(self.profit_signals, self.c.key_file, self.c.target_year, self.c.Nt, self.c.output_dir, self.c.profits)
 
+    def version_info(self):
+        v = 'janus-unknown'
+        try:
+            v = pkg_resources.require("janus")[0].version
+            print(v)
+        except:
+            # not installed, *probably* in a development location, try some git
+            # magic
+            try:
+                v = subprocess.check_output(['git', 'describe', '--tags']).strip()
+            except:
+                pass
+        return v
 
     def save_outputs(self):
         """Save outputs as Numpy arrays (backwards compatible) and a netcdf file.
@@ -262,6 +283,16 @@ class Janus:
 
         # TODO(kyle): handle appending/assumed restart
         nc = netcdf.Dataset(out_file, 'w', format='NETCDF4')
+
+        jmd = nc.createVariable('janus', 'i4')
+        jmd.version = self.version_info()
+
+        # TODO(kyle): determine what other metadata to write to the output, and
+        # which are required to enable a restart.  This may include data files,
+        # config files/options, etc.
+
+        now = datetime.now().strftime('%Y%m%dT%H%M%S')
+        jmd.history = 'created {}'.format(now)
 
         # Grab metadata from the original landcover file for geo referencing
         lc = gdal.Open(self.c.f_init_lc_file)
