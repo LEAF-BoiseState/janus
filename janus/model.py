@@ -24,7 +24,7 @@ import janus.preprocessing.get_nass_agent_data as get_nass
 from janus.config_reader import ConfigReader
 
 try:
-    from setuptools import pkg_resources
+    import pkg_resources
 except ImportError:
     pass
 
@@ -246,7 +246,6 @@ class Janus:
         v = 'janus-unknown'
         try:
             v = pkg_resources.require("janus")[0].version
-            print(v)
         except:
             # not installed, *probably* in a development location, try some git
             # magic
