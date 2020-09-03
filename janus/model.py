@@ -16,11 +16,11 @@ import janus.crop_functions.crop_decider as crpdec
 import janus.initialize_agents_domain as init_agent
 import janus.postprocessing.create_figures as ppf
 import janus.preprocessing.get_nass_agent_data as get_nass
+import im3agents.im3agents.im3networks.networks as nwks
 
 from janus.config_reader import ConfigReader
 
-# change this to use network
-from im3agents import FarmerOne
+
 
 
 class Janus:
@@ -59,7 +59,7 @@ class Janus:
         # initialize agents
         self.agent_domain, self.agent_array = self.initialize_agents()
 
-        # TODO: add in config file "randomwalk" "barabasi" "smallworld" "erdosrenyi" "gilbert"
+        # TODO: add in config file "randomwalk" "barabasi" "smallworld" "erdosrenyi" 
         # network will be stored as a dictionary
         self.network = self.initialize_network()
 
@@ -174,32 +174,43 @@ class Janus:
         containing the agentIDs that share a connection with the key agent.
 
         """
-
-
+        
+        # TODO: use real agents which are set up in init_agents as tuples
+        # where the agentID[0] = x location, and agentID[1] = y location
+        
+        max_x = 6
+        max_y = 7
+        test_agents = [(x,y) for x in range(max_x) for y in range(max_y)]
+        
         if self.c.net_type == 'randomwalk':
-            return
+            
+            # TODO: if this is the case there need to be more parameters than what
+            # are included here. See notes in the network library
+            # For now, a user could use the jupyter notebook to determine a max number
+            # of steps based on the metric they care about
+
+            return nwks.generate_random_walk(max_x - 1, max_y - 1, True, 10)
         
         if self.c.net_type == 'erdosrenyi':
+            
             # TODO: if this is the case, there needs to be an extra parameter
             # this parameter for erdos renyi is defined as the probability that 
             # a given agent will form a connection -- this will need to be supplied
             # by the user in config file. For now it is arbitrary
             
-            prob = 0.5
-        
-            
-            return
+            prob = 0.5    
+            return nwks.generate_erdos_renyi(test_agents, prob)
         
         if self.c.net_type == 'barabasi':
             # TODO: if this is the case, there needs to be an extra parameter
             # this parameter for erdos renyi is defined as the probability that 
             # a given agent will form a connection -- this will need to be supplied
             # by the user in config file. For now it is arbitrary
-            
-            return
+            arbitrary_edge_number = 2 * test_agents / 5
+            return nwks.generate_barabasi_alberts(test_agents, arbitrary_edge_number)
 
         if self.c.net_type == 'smallworld':
-            return
+            return nwks.generate_small_world()
 
     def decisions(self):
         """Decision process.
