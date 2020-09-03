@@ -180,17 +180,26 @@ class Janus:
             return
         
         if self.c.net_type == 'erdosrenyi':
+            # TODO: if this is the case, there needs to be an extra parameter
+            # this parameter for erdos renyi is defined as the probability that 
+            # a given agent will form a connection -- this will need to be supplied
+            # by the user in config file. For now it is arbitrary
+            
+            prob = 0.5
+        
+            
             return
         
         if self.c.net_type == 'barabasi':
+            # TODO: if this is the case, there needs to be an extra parameter
+            # this parameter for erdos renyi is defined as the probability that 
+            # a given agent will form a connection -- this will need to be supplied
+            # by the user in config file. For now it is arbitrary
+            
             return
 
         if self.c.net_type == 'smallworld':
             return
-
-        if self.c.net_type == 'gilbert':
-            return
-
 
     def decisions(self):
         """Decision process.
