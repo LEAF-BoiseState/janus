@@ -12,4 +12,4 @@ pandas>=1.0.1
 matplotlib>=2.2.2,<4.0
 scipy>=1.0.1
 numpy>=1.14.2
-im3agents==0.1.0|https://github.com/IMMM-SFA/im3agents/archive/v0.1.0.zip#egg=im3agents-0.1.0
+im3agents==0.1.0|https://github.com/IMMM-SFA/im3agents/archive/v0.1.0.zip#egg=im3agents-0.2.0
