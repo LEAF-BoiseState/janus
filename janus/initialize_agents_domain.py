@@ -103,7 +103,7 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
         for j in np.arange(Nx):
 
             if AgentArray[i][j] == farmer.Farmer.__name__:
-                # TODO check if agent ID and location ID are properly added
+                # TODO check if agent ID is properly added
                 AgentData = getNASS.farmer_data(TenureCDF, AgeCDF, switch, dist2city[i][j], p, attr)
                 NewAgent = farmer.Farmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"],
                                           LocationID = (i,j),
