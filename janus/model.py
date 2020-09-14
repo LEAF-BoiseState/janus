@@ -142,6 +142,7 @@ class Janus:
 
         return profits_actual, profit_signals
 
+#TODO change cat option to call from config
     def initialize_agents(self, cat_option='local'):
         """Initialize agents based on NASS data and initial land cover
         :param cat_option: Denotes which categorization option is used, 'GCAM', 'local', or user defined
@@ -179,7 +180,7 @@ class Janus:
         """
         
         
-        if self.c.net_type == 'randomwalk':
+        if self.network == 'randomwalk':
             
             # TODO: if this is the case there need to be more parameters than what
             # are included here. See notes in the network library
@@ -191,7 +192,7 @@ class Janus:
             arbitrary_torus_option = True
             return nwks.generate_random_walk(self.Nx -1 , self.Ny - 1, arbitrary_torus_option, arbitrary_time_steps)
         
-        if self.c.net_type == 'erdosrenyi':
+        if self.network == 'erdosrenyi':
             
             # if this is the case, there needs to be an extra parameter
             # this parameter for erdos renyi is defined as the probability that 
@@ -202,14 +203,14 @@ class Janus:
             arbitrary_prob = 0.5    
             return nwks.generate_erdos_renyi(self.agentID_list, arbitrary_prob)
         
-        if self.c.net_type == 'barabasi':
+        if self.network == 'barabasi':
             
             # TODO: change this from hard coded to a config file option
             # for more information on what the parameters could be, see README in im3agents library repo
-            arbitrary_edge_number = 2 * test_agents / 5
+            arbitrary_edge_number = 2 * len(self.agentID_list) / 5
             return nwks.generate_barabasi_alberts(self.agentID_list, arbitrary_edge_number)
 
-        if self.c.net_type == 'smallworld':
+        if self.network == 'smallworld':
             
             # TODO: change this from hard coded to a config file options
             # see README link to networkx documentation
@@ -244,7 +245,7 @@ class Janus:
 
                         # TODO add in decision_type in config file so it can be called this way
                         # three decision types -- profit, success, and conformist
-                        if self.c.decision_type == 'profit'
+                        if self.decision_type == 'profit':
 
                             # assess profit - only needs to occur for profit based learning
                             profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i-1, j, k]    # this is the crop for last time step for agent jk
@@ -270,7 +271,7 @@ class Janus:
                                                                                                         crop_choice,
                                                                                                         profit_choice,
                                                                                                         seed = False)
-                            if c.decision_type == 'success':
+                        if self.decision_type == 'success':
 
 
                                 # retrieve the cropIDs and the associated profits of their network given an individual
@@ -289,7 +290,7 @@ class Janus:
 
 
 
-                            if c.decision_type = 'conformist':
+                        if decision_type = 'conformist':
                                 # do stuff here -- collab w Vicken
 
 
