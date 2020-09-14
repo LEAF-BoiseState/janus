@@ -60,7 +60,7 @@ class Janus:
         self.profits_actual, self.profit_signals = self.initialize_profit()
 
         # initialize agents
-        self.agent_domain, self.agent_array = self.initialize_agents()
+        self.agent_domain, self.agent_array, self.agentID_list = self.initialize_agents()
 
         # TODO: add in config file "randomwalk" "barabasi" "smallworld" "erdosrenyi" 
         # network will be stored as a dictionary here
@@ -160,10 +160,10 @@ class Janus:
 
         agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, cat_option)
 
-        agent_domain = init_agent.agents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf, self.c.switch,
+        agent_domain, agentID_list = init_agent.agents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf, self.c.switch,
                                          self.Ny, self.Nx, self.lc, self.c.p)
 
-        return agent_domain, agent_array
+        return agent_domain, agent_array, agentID_list
 
 
     def initialize_network(self):
@@ -185,8 +185,11 @@ class Janus:
             # are included here. See notes in the network library
             # For now, a user could use the jupyter notebook to determine a max number
             # of steps based on the metric they care about
+            # the 'arbitrary' values are all currently hard coded but need to be placed in config file
 
-            return nwks.generate_random_walk(max_x - 1, max_y - 1, True, 10)
+            arbitrary_time_steps = 10
+            arbitrary_torus_option = True
+            return nwks.generate_random_walk(self.Nx -1 , self.Ny - 1, arbitrary_torus_option, arbitrary_time_steps)
         
         if self.c.net_type == 'erdosrenyi':
             
@@ -196,18 +199,23 @@ class Janus:
             # by the user in config file. For now it is arbitrary
             
             # TODO: change this from hard coded to a config file option
-            prob = 0.5    
-            return nwks.generate_erdos_renyi(test_agents, prob)
+            arbitrary_prob = 0.5    
+            return nwks.generate_erdos_renyi(self.agentID_list, arbitrary_prob)
         
         if self.c.net_type == 'barabasi':
             
             # TODO: change this from hard coded to a config file option
             # for more information on what the parameters could be, see README in im3agents library repo
             arbitrary_edge_number = 2 * test_agents / 5
-            return nwks.generate_barabasi_alberts(test_agents, arbitrary_edge_number)
+            return nwks.generate_barabasi_alberts(self.agentID_list, arbitrary_edge_number)
 
         if self.c.net_type == 'smallworld':
-            return nwks.generate_small_world()
+            
+            # TODO: change this from hard coded to a config file options
+            # see README link to networkx documentation
+            arbitrary_neighbors = 3
+            arbitrary_rewire_prob = 0.5
+            return nwks.generate_small_world(self.agentID_list, arbitrary_neighbors, arbitrary_rewire_prob)
 
     def decisions(self):
         """Decision process.
