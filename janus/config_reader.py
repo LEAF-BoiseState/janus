@@ -29,13 +29,8 @@ class ConfigReader:
     NASS_COUNTY_LIST = 'nass_county_list'
     NASS_API_KEY = 'nass_api_key'
     OUTPUT_DIR = 'output_directory'
-    
-    # TODO: ensure this is how to identify network type 
-    # should be one of the following: barabasi, randomwalk, 
-    NETWORK_TYPE = 'network_type'
-    
-    # TODO: ensure this is how decision type is properly identified
-    DECISIONS = 'decision_type'
+    NETWORK_TYPE = 'network'
+    DECISION_TYPE = 'decision'
 
     # county field name in the input shapefile
     COUNTY_FLD = 'county'
@@ -57,10 +52,9 @@ class ConfigReader:
 
         self.Nt = c[ConfigReader.NT]
         
-        # TODO: network type to pass through to the main model
-        self.net_type = c[ConfigReader.NETWORK_TYPE]
+        self.network = c[ConfigReader.NETWORK_TYPE]
 
-        self.decision_type = c[ConfigReader.DECISIONS]        
+        self.decision = c[ConfigReader.DECISION_TYPE]
 
         # set agent switching parameters (alpha, beta) [[switching averse], [switching tolerant]]
         self.switch = np.array(c[ConfigReader.SWITCH_PARAMS])
