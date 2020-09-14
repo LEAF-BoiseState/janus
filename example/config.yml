@@ -19,7 +19,9 @@ f_gcam_profits_file: '<Full path with file name and extension to the GCAM USA pr
 f_key_file: '<Full path with file name and extension to the crop conversion csv file>'
 
 # output directory
-output_directory:'<Full path with file name and extension to the output directory>'
+output_directory: '<Full path to the output directory>'
+
+output_file: '<Full path with file name and extension (.nc) to the output file>'
 
 # number of time steps
 nt: 30

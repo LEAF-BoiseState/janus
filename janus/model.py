@@ -7,10 +7,13 @@ Agent Based Model of Land Use and Land Cover Change
 """
 
 import argparse
+from datetime import datetime
 import os
+import subprocess
 
+import netCDF4 as netcdf
 import numpy as np
-import gdal
+import gdal, osr
 
 import janus.preprocessing.geofxns as gf
 import janus.crop_functions.crop_decider as crpdec
@@ -19,6 +22,11 @@ import janus.postprocessing.create_figures as ppf
 import janus.preprocessing.get_nass_agent_data as get_nass
 
 from janus.config_reader import ConfigReader
+
+try:
+    import pkg_resources
+except ImportError:
+    pass
 
 
 class Janus:
@@ -234,10 +242,26 @@ class Janus:
 
         ppf.plot_price_signals(self.profit_signals, self.c.key_file, self.c.target_year, self.c.Nt, self.c.output_dir, self.c.profits)
 
+    def version_info(self):
+        v = 'janus-unknown'
+        try:
+            v = pkg_resources.require("janus")[0].version
+        except:
+            # not installed, *probably* in a development location, try some git
+            # magic
+            try:
+                v = subprocess.check_output(['git', 'describe', '--tags']).strip()
+            except:
+                pass
+        return v
+
     def save_outputs(self):
-        """Save outputs as Numpy arrays.
-        
+        """Save outputs as Numpy arrays (backwards compatible) and a netcdf file.
+
         The dimensions of each output NumPy array are [Number of time steps, Ny, Nx]
+
+        For the netcdf file, the initial conditions are prepended to the output
+        and all grids have the dimenstions Nt, Ny, Nx.
         """
 
         out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr.npy')
@@ -251,8 +275,109 @@ class Janus:
         # save domain, can be used for initialization
         np.save(out_file.format('domain', self.c.scale, self.c.Nt), self.agent_domain)
 
+        out_file = self.c.output_file
+        if out_file == "":
+            return
+        years = [self.c.target_year + n for n in range(self.c.Nt)]
 
+        # TODO(kyle): handle appending/assumed restart
+        nc = netcdf.Dataset(out_file, 'w', format='NETCDF4')
 
+        jmd = nc.createVariable('janus', 'i4')
+        jmd.version = self.version_info()
+
+        # TODO(kyle): determine what other metadata to write to the output, and
+        # which are required to enable a restart.  This may include data files,
+        # config files/options, etc.
+
+        now = datetime.now().strftime('%Y%m%dT%H%M%S')
+        jmd.history = 'created {}'.format(now)
+
+        # Grab metadata from the original landcover file for geo referencing
+        lc = gdal.Open(self.c.f_init_lc_file)
+        gt = lc.GetGeoTransform()
+        # GetProjectionRef() is safe for GDAL 2.x and 3.x, use GetSpatialRef() +
+        # export as needed for GDAL 3.0+.
+        srs = lc.GetProjectionRef()
+        lc = None
+
+        # set gdal based crs
+        sr = nc.createVariable('spatial_ref', 'i4')
+        sr.spatial_ref = srs
+
+        # store number of pixel/lines in a more convenient variable
+        # TODO(kyle): check axis ordering
+        nx =  self.crop_id_all.shape[0]
+        ny =  self.crop_id_all.shape[1]
+
+        # setup the dimensions for the output file.
+        # TODO(kyle): check on axis ordering
+        # time is unlimited for appending
+        dt = nc.createDimension('time', None)
+        dx = nc.createDimension('x', nx)
+        dy = nc.createDimension('y', ny)
+
+        time = nc.createVariable('time', 'u2', ('time',))
+        time.units = 'years'
+        time.long_name = 'time'
+        time[:] = years[:]
+
+        # TODO(kyle): more axis ordering (-dy, dy, etc.), as well as half pixel
+        # offsets.
+        x = nc.createVariable('x', 'f8', ('x',))
+        x.long_name = 'x coordinate'
+        x[:] = [gt[0] + (0.5 * gt[1]) +  i * gt[1] for i in range(nx)]
+        y = nc.createVariable('y', 'f8', ('y',))
+        y.long_name = 'y coordinate'
+        y[:] = [gt[3] + (0.5 * gt[5]) + i * gt[5] for i in range(ny)]
+
+        lon = nc.createVariable('lon', 'f8', ('y', 'x'))
+        lon.long_name = 'longitude'
+        lon.units = 'degrees'
+        lat = nc.createVariable('lat', 'f8', ('y', 'x'))
+        lat.long_name = 'latitude'
+        lat.units = 'degrees'
+
+        # TODO(kyle): discuss how to handle errors.  If ImportFromWkt fails,
+        # should we write the netcdf file without the geo-referencing?  For
+        # now, just let gdal raise an exception.
+        gdal.UseExceptions()
+        s_srs = osr.SpatialReference()
+        s_srs.ImportFromWkt(srs)
+        t_srs = osr.SpatialReference()
+        t_srs.ImportFromEPSG(4326)
+        if gdal.VersionInfo() >= '3000000':
+            t_srs.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
+
+        ct = osr.CoordinateTransformation(s_srs, t_srs)
+        for i in range(ny):
+            for j in range(nx):
+                #TODO(kyle): do we need 1/2 pixel offsets?
+                y = gt[3] + (0.5 * gt[5]) + i * gt[5]
+                x = gt[0] + (0.5 * gt[1]) + j * gt[1]
+                lon[i, j], lat[i, j], z = ct.TransformPoint(x, y)
+
+        # TODO(kyle): check on range of crop values, cursory inspection showed
+        # a max of 254, but it could have been the wrong file.
+        crop = nc.createVariable('crop', 'i2', ('time', 'y', 'x'))
+        crop.units = 'gcam(?) crop classification'
+        crop.long_name = 'crop landcover'
+        # prepend the initial conditions
+        crop[:] = np.insert(self.crop_id_all, 0, self.lc, axis=0)
+        crop.grid_mapping = 'spatial_ref'
+
+        profits = nc.createVariable('profits', 'f8', ('time', 'y', 'x'))
+        profits.units = 'total dollars (per unit area?)'
+        profits.long_name = 'profit'
+        # prepend zeros for the initial crop conditions
+        profits[:] = np.insert(self.profits_actual, 0, np.zeros(self.lc.shape), axis=0)
+        profits.grid_mapping = 'spatial_ref'
+
+        # TODO(kyle): write the domain data
+
+        nc.close()
+        # This is a broader issue, discussion needed.
+        gdal.DontUseExceptions()
 
 if __name__ == '__main__':
 
