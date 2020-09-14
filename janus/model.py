@@ -9,6 +9,9 @@ Agent Based Model of Land Use and Land Cover Change
 import argparse
 import os
 
+# this is for the saving dict file output
+import pickle
+
 import numpy as np
 
 import janus.preprocessing.geofxns as gf
@@ -60,7 +63,7 @@ class Janus:
         self.agent_domain, self.agent_array = self.initialize_agents()
 
         # TODO: add in config file "randomwalk" "barabasi" "smallworld" "erdosrenyi" 
-        # network will be stored as a dictionary
+        # network will be stored as a dictionary here
         self.network = self.initialize_network()
 
         # make agent decisions
@@ -175,12 +178,6 @@ class Janus:
 
         """
         
-        # TODO: use real agents which are set up in init_agents as tuples
-        # where the agentID[0] = x location, and agentID[1] = y location
-        
-        max_x = 6
-        max_y = 7
-        test_agents = [(x,y) for x in range(max_x) for y in range(max_y)]
         
         if self.c.net_type == 'randomwalk':
             
@@ -193,19 +190,19 @@ class Janus:
         
         if self.c.net_type == 'erdosrenyi':
             
-            # TODO: if this is the case, there needs to be an extra parameter
+            # if this is the case, there needs to be an extra parameter
             # this parameter for erdos renyi is defined as the probability that 
             # a given agent will form a connection -- this will need to be supplied
             # by the user in config file. For now it is arbitrary
             
+            # TODO: change this from hard coded to a config file option
             prob = 0.5    
             return nwks.generate_erdos_renyi(test_agents, prob)
         
         if self.c.net_type == 'barabasi':
-            # TODO: if this is the case, there needs to be an extra parameter
-            # this parameter for erdos renyi is defined as the probability that 
-            # a given agent will form a connection -- this will need to be supplied
-            # by the user in config file. For now it is arbitrary
+            
+            # TODO: change this from hard coded to a config file option
+            # for more information on what the parameters could be, see README in im3agents library repo
             arbitrary_edge_number = 2 * test_agents / 5
             return nwks.generate_barabasi_alberts(test_agents, arbitrary_edge_number)
 
@@ -319,6 +316,13 @@ class Janus:
 
         # save domain, can be used for initialization
         np.save(out_file.format('domain', self.c.scale, self.c.Nt), self.agent_domain)
+        
+        # save dictionary of network
+        # TODO: currently outputting using pickle but network is not human readable
+        # it is possible here to use JSON format but that might be less straightfoward to read in 
+        nwk_out = open('network.pk1', 'wb')
+        pickle.dump(self.network, nwk_out)
+        nwk_out.close()         
 
 
 if __name__ == '__main__':
