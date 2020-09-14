@@ -95,15 +95,14 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
 
     """
 
-    # this is where I'd add in the location and the agent ID
-    # i j will be the location
-    
+
+    farmer_agent_list = []
     for i in np.arange(Ny):
 
         for j in np.arange(Nx):
 
             if AgentArray[i][j] == farmer.Farmer.__name__:
-                # TODO check if agent ID is properly added
+                
                 AgentData = getNASS.farmer_data(TenureCDF, AgeCDF, switch, dist2city[i][j], p, attr)
                 NewAgent = farmer.Farmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"],
                                           LocationID = (i,j),
@@ -112,6 +111,7 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
                                           beta=AgentData['Beta'],
                                           agentID=(i,j))  
                 domain[i][j].add_agent(NewAgent)
+                farmer_agent_list.append(agentID)
 
             if AgentArray[i][j] == urban.Urban.__name__:
 
@@ -121,7 +121,7 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
 
 
 
-    return domain
+    return domain, farmer_agent_list
 
 
 def profits(profit_signals, Nt, Ny, Nx, CropID_all, CropIDs):
