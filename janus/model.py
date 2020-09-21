@@ -240,7 +240,7 @@ class Janus:
                         if self.decision_type == 'profit':
 
                             # assess profit - only needs to occur for profit based learning
-                            profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i-1, j, k]    # this is the crop for last time step for agent jk
+                            profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i-1, j, k],    # this is the crop for last time step for agent jk
                                                                            self.profits_actual[i-1, j, k], #this is last profit for agent jk
                                                                            self.profit_signals[:, i],
                                                                            self.num_crops,
@@ -265,13 +265,12 @@ class Janus:
                                                                                                         seed = False)
                         if self.decision_type == 'success':
 
-                            self.agent_network
-                                # retrieve the cropIDs and the associated profits of their network
-                                # i think the farmerAgent.id needs to be used to call into agent network
-                                network_profits = crpdec.retrieve_network_profits(self.profits_actual[i-1, :, :], self.crop_id_all[i-1, :, :], self.agent_domain[j, k].FarmerAgents[0].agentID, self.agentID_list)
+                            # retrieve the cropIDs and the associated profits of their network
+                            # farmerAgent.id used to call into agent network
+                            network_profits = crpdec.retrieve_network_profits(self.profits_actual[i-1, :, :], self.crop_id_all[i-1, :, :], self.agent_network[self.agent_domain[j, k].FarmerAgents[0].agentID])
 
-                                # identify the most profitable crop of the network
-                                crop_choice, profit_choice = crpdec.success_bias_crop()
+                            # identify the most profitable crop of the network
+                            crop_choice, profit_choice = crpdec.success_bias_crop()
 
                                 # TODO decide whether to switch or add random variation to profit??
                                 # can I literally just call make choice in the exact same way it is above?
