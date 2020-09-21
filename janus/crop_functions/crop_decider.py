@@ -73,23 +73,21 @@ def retrieve_network_profits(profits_actual, crop_IDs, network_list):
     return network_profits
 
 
-def success_bias_decision():
+def success_bias_decision(network_profits):
     """
+    :param network_profits:    2D array of crop choices and profits from agents' network
+    :type network_profits:     numpy array
 
-
-    Returns
-    -------
-    None.
+    :return:                    new crop ID and its associated profit
 
     """
     # pick max profit and associated cropID
+    # is this the same as profit maximizer?
 
     # put that into the decide2switch function
 
     # return the cropID they are going with (either their current or the most successful)
     # and the profit associated with each
-
-
 
 
 # conformist bias
@@ -134,7 +132,8 @@ def decide(alpha, beta, fmin, fmax, n, profit, profit_p):
 
 
 def assess_profit(crop, profits_current, profit_signals, num_crops, crop_ids):
-    """A given location, get the potential profits from the next time step and set the last profit equal to the current profit
+    """A given location, get the potential profits from the next time step and set the last profit equal to the current
+    profit
 
    :param crop:             Current crop choice
    :type crop:              Int
@@ -195,7 +194,7 @@ def profit_maximizer(alpha, beta, fmin, fmax, n, profits_current, vec_crops, vec
     :param fmin: The fraction of current profit at which the CDF of the beta distribution is zero
     :param fmax: The fraction of current profit at which the CDF of the beta distribution is one
     :param n: The number of points ato generate in the CDF
-    :param current_profit: The current profit the farmer experiences
+    :param profits_current: The current profit the farmer experiences
     :param vec_crops: A vector of potential alternative crops
     :param vec_profit_p: A vector of potential profits associated with the alternatives contained in vec_crops
     :param rule: A boolean indicating whether, if multiple alternative crops are viably \
@@ -219,7 +218,7 @@ def profit_maximizer(alpha, beta, fmin, fmax, n, profits_current, vec_crops, vec
     for i in np.arange(AccRej.size):
         # Use the `Decide` function above to choose whether or not the crop is
         # viable
-        AccRej[i] = decide(alpha, beta, fmin, fmax, n, Profits_current,
+        AccRej[i] = decide(alpha, beta, fmin, fmax, n, profits_current,
                            vec_profit_p[i])  # is fmin/fmax setting bounds on range of additional profit?
 
     # Find the Crop IDs and associated profits that were returned as "viable"
@@ -245,24 +244,24 @@ def profit_maximizer(alpha, beta, fmin, fmax, n, profits_current, vec_crops, vec
         rule = False  # Switch rule to trick the algorithm into using the random option
 
     if (rule):  # Return crop with largest profit
-        CropChoice = MaxProfitCrop
-        ProfitChoice = MaxProfit
+        cropChoice = MaxProfitCrop
+        profitChoice = MaxProfit
 
     else:  # Choose randomly from among all viable crops
         indChoice = np.random.choice(np.arange(ViableCrops.size), size=1)
-        CropChoice = ViableCrops[indChoice]
-        ProfitChoice = ViableProfits[indChoice]
+        cropChoice = ViableCrops[indChoice]
+        profitChoice = ViableProfits[indChoice]
 
     # Return the crop choice and associated profit
-    return CropChoice, ProfitChoice
+    return cropChoice, profitChoice
 
 
-def assess_profit(Crop, Profits_current, Profit_signals, Num_crops, CropIDs):
+def assess_profit(crop, profits_current, profit_signals, Num_crops, CropIDs):
     """Get the potential profits from the next time step and set the last profit equal to the current profit
 
-   :param Crop: Current crop choice
-   :param Profits_current: Profit from current crop choice
-   :param Profit_signals: A vector of profits against which current profit will be assessed
+   :param crop: Current crop choice
+   :param profits_current: Profit from current crop choice
+   :param profit_signals: A vector of profits against which current profit will be assessed
    :param Num_crops: The number of crops in the vector of Profit_signals
    :param CropIDs: The associated vector of crop IDs associated with the input profit signal
 
@@ -271,27 +270,27 @@ def assess_profit(Crop, Profits_current, Profit_signals, Num_crops, CropIDs):
    """
 
     # Existing Crop ID
-    CurCropChoice_ind = Crop.astype('int')
+    CurCropChoice_ind = crop.astype('int')
     # CropIx=np.where(CropIDs == CurCropChoice_ind)# crop ID lookup
     # assess current and future profit of that given crop
     if np.isin(CurCropChoice_ind, CropIDs):  # if the current landcover is a crop
-        Profit_last = Profits_current  # last years profit in this location
-        Profit_expected = Profit_signals.reshape(Num_crops, 1)
+        profit_last = profits_current  # last years profit in this location
+        profit_expected = profit_signals.reshape(Num_crops, 1)
 
     else:
-        Profit_last = 0
-        Profit_expected = np.zeros((Num_crops, 1))
+        profit_last = 0
+        profit_expected = np.zeros((Num_crops, 1))
 
-    return Profit_last, Profit_expected
+    return profit_last, profit_expected
 
 
-def make_choice(CropID_last, Profit_last, CropChoice, ProfitChoice, seed=False):
+def make_choice(CropID_last, profit_last, CropChoice, profitChoice, seed=False):
     """ Compare the crop choice with associated profit and crop choice switches and set the new crop ID if switching
 
     :param CropID_last: The crop choice from the last time step
-    :param Profit_last: The profit from the last time step associated with that crop
+    :param profit_last: The profit from the last time step associated with that crop
     :param CropChoice: A flag indicating whether the new crop is selected
-    :param ProfitChoice: A flag indicating whether there is a profitable alternative
+    :param profitChoice: A flag indicating whether there is a profitable alternative
     :param seed: A boolean indicating whether or not to use a random seed
 
     :return: The new crop ID and its associated profit
@@ -307,12 +306,12 @@ def make_choice(CropID_last, Profit_last, CropChoice, ProfitChoice, seed=False):
         np.random.seed(seed_val)
 
     # Check if return  values indicate the farmer shouldn't switch
-    if (CropChoice == -1) and (ProfitChoice == -1):
+    if (CropChoice == -1) and (profitChoice == -1):
         CropID_next = CropID_last
-        Profit_act = Profit_last + np.random.normal(loc=0.0, scale=1000.0, size=(1, 1, 1))  # this years actual profit
+        profit_act = profit_last + np.random.normal(loc=0.0, scale=1000.0, size=(1, 1, 1))  # this years actual profit
 
     else:  # switch to the new crop
         CropID_next = CropChoice
-        Profit_act = ProfitChoice + np.random.normal(loc=0.0, scale=1000.0, size=(1, 1, 1))
+        profit_act = profitChoice + np.random.normal(loc=0.0, scale=1000.0, size=(1, 1, 1))
 
-    return CropID_next, Profit_act
+    return CropID_next, profit_act
