@@ -45,37 +45,32 @@ def switching_prob_curve(alpha, beta, fmin, fmax, n, profit):
     return x2, fx
 
 
-
-def retrieve_network_profits(profits_actual, crop_IDs, agentID, agentID_list):
+def retrieve_network_profits(profits_actual, crop_IDs, network_list):
     """
     This will be called in the main model to retrieve last years crop choices and profits
     of every agent in an individuals network
-
 
     :param profits_actual:  the profits from the previous year
     :type profits_actual:   float
     :param crop_IDs:        last years crops
     :type crop_IDs:         int
-    :param agentID:         agentID for the agent whose network to retrieve
-    :type agentID:          int
-    :param agentID_list:    list of agent IDs for those in the current agents' network
-    :type agentID_list:     list of tuples
+    :param network_list:    list of agent IDs pulled from network dictionary
+    :type network_list:     list
 
     :return: a 2D array of cropIDs and their associated profits in the agents' network
 
     """
     # find everyone in this agents network
-    # use the agents network to find the agentIDs of everyone they are considering, might not need the agent ID, or even ID list
+    # use the agents network to find the agentIDs of everyone they are considering
 
     # find last years profits and crop choice of every agent in their network
-    network_profits = np.empty([len(agentID_list), 2])
+    network_profits = np.empty([len(network_list), 2])
 
-    for i in len(agentID_list):
-        network_profits[i, 1] = crop_IDs[agentID_list[i]]
-        network_profits[i,2] = profits_actual[agentID_list[i]]
+    for i in len(network_list):
+        network_profits[i, 1] = crop_IDs[network_list[i]]
+        network_profits[i, 2] = profits_actual[network_list[i]]
 
-
-
+    return network_profits
 
 
 def success_bias_decision():
