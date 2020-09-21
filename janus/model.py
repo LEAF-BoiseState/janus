@@ -190,8 +190,8 @@ class Janus:
 
             arbitrary_time_steps = 10
             arbitrary_torus_option = True
-            return nwks.generate_random_walk(self.Nx -1 , self.Ny - 1, arbitrary_torus_option, arbitrary_time_steps)
-        
+            agent_network = nwks.generate_random_walk(self.Nx -1 , self.Ny - 1, arbitrary_torus_option, arbitrary_time_steps)
+
         if self.network == 'erdosrenyi':
             
             # if this is the case, there needs to be an extra parameter
@@ -201,14 +201,14 @@ class Janus:
             
             # TODO: change this from hard coded to a config file option
             arbitrary_prob = 0.5    
-            return nwks.generate_erdos_renyi(self.agentID_list, arbitrary_prob)
+            agent_network = nwks.generate_erdos_renyi(self.agentID_list, arbitrary_prob)
         
         if self.network == 'barabasi':
             
             # TODO: change this from hard coded to a config file option
             # for more information on what the parameters could be, see README in im3agents library repo
             arbitrary_edge_number = 2 * len(self.agentID_list) / 5
-            return nwks.generate_barabasi_alberts(self.agentID_list, arbitrary_edge_number)
+            agent_network = nwks.generate_barabasi_alberts(self.agentID_list, arbitrary_edge_number)
 
         if self.network == 'smallworld':
             
@@ -216,7 +216,9 @@ class Janus:
             # see README link to networkx documentation
             arbitrary_neighbors = 3
             arbitrary_rewire_prob = 0.5
-            return nwks.generate_small_world(self.agentID_list, arbitrary_neighbors, arbitrary_rewire_prob)
+            agent_network = nwks.generate_small_world(self.agentID_list, arbitrary_neighbors, arbitrary_rewire_prob)
+
+        return agent_network
 
     def decisions(self):
         """Decision process.
@@ -233,18 +235,8 @@ class Janus:
 
                     if self.agent_domain[j, k].FarmerAgents:
 
-                        # look at what decision making method the agent is using (conformist, profit, success bias)
-                            # if conformist or success bias, look at network
-                            # is this where the network should be created if it depends
-                            # on which decision making method is used?
+                        # make crop choice based on decision making process
 
-                            # TODO this is where the farmer will look around into network
-                            # calling network code from im3 repo
-
-                            # call crop decider function to decide based off of network
-
-                        # TODO add in decision_type in config file so it can be called this way
-                        # three decision types -- profit, success, and conformist
                         if self.decision_type == 'profit':
 
                             # assess profit - only needs to occur for profit based learning
@@ -273,7 +265,7 @@ class Janus:
                                                                                                         seed = False)
                         if self.decision_type == 'success':
 
-
+                            self.agent_network
                                 # retrieve the cropIDs and the associated profits of their network given an individual
                                 # one array -- two colums cropIDs and their profits
                                 # see Kendra's code in Slack
@@ -289,9 +281,8 @@ class Janus:
 
 
 
-
                         if decision_type = 'conformist':
-                                # do stuff here -- collab w Vicken
+                                #
 
 
 
