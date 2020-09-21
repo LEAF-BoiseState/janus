@@ -46,26 +46,35 @@ def switching_prob_curve(alpha, beta, fmin, fmax, n, profit):
 
 
 
-def retrieve_network_profits(agentID, ):
+def retrieve_network_profits(profits_actual, crop_IDs, agentID, agentID_list):
     """
-    This will be called in the main model to retrieve the array of profits
-    based upon the agent ID
+    This will be called in the main model to retrieve last years crop choices and profits
+    of every agent in an individuals network
 
-    :param agentID:        agentID for the agent whose network to retrieve
-    :type agentID:         int
 
-    :return: a 2D array of cropIDs and their associated profits in the network of agent
+    :param profits_actual:  the profits from the previous year
+    :type profits_actual:   float
+    :param crop_IDs:        last years crops
+    :type crop_IDs:         int
+    :param agentID:         agentID for the agent whose network to retrieve
+    :type agentID:          int
+    :param agentID_list:    list of agent IDs for those in the current agents' network
+    :type agentID_list:     list of tuples
+
+    :return: a 2D array of cropIDs and their associated profits in the agents' network
 
     """
+    # find everyone in this agents network
+    # use the agents network to find the agentIDs of everyone they are considering, might not need the agent ID, or even ID list
 
-    # at this point now there should be a list of agents in that network
+    # find last years profits and crop choice of every agent in their network
+    network_profits = np.empty([len(agentID_list), 2])
 
-    # for each of those agents
-        # retrieve crop ID? or retrieve profit?
-        # see Kendra's notes in Slack
-        # in the model.py it will be crop_id_all[i-1, :, :]
-        # then index into specific j,k values from agentID
-        # this will need to be passed in
+    for i in len(agentID_list):
+        network_profits[i, 1] = crop_IDs[agentID_list[i]]
+        network_profits[i,2] = profits_actual[agentID_list[i]]
+
+
 
 
 
