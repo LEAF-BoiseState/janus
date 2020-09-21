@@ -30,7 +30,7 @@ class ConfigReader:
     NASS_API_KEY = 'nass_api_key'
     OUTPUT_DIR = 'output_directory'
     NETWORK_TYPE = 'network'
-    DECISION_TYPE = 'decision'
+    DECISION_TYPE = 'decision_type'
 
     # county field name in the input shapefile
     COUNTY_FLD = 'county'
@@ -51,10 +51,10 @@ class ConfigReader:
         self.output_dir = c[ConfigReader.OUTPUT_DIR]
 
         self.Nt = c[ConfigReader.NT]
-        
+
         self.network = c[ConfigReader.NETWORK_TYPE]
 
-        self.decision = c[ConfigReader.DECISION_TYPE]
+        self.decision_type = c[ConfigReader.DECISION_TYPE]
 
         # set agent switching parameters (alpha, beta) [[switching averse], [switching tolerant]]
         self.switch = np.array(c[ConfigReader.SWITCH_PARAMS])
