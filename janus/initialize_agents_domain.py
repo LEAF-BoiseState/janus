@@ -105,21 +105,20 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
                 
                 AgentData = getNASS.farmer_data(TenureCDF, AgeCDF, switch, dist2city[i][j], p, attr)
                 NewAgent = farmer.Farmer(Age=AgentData["AgeInit"], LandStatus=AgentData["LandStatus"],
-                                          LocationID = (i,j),
+                                          LocationID =(i, j),
                                           Dist2city=AgentData["Dist2city"], nFields=AgentData['nFields'],
                                           alpha=AgentData['Alpha'],
                                           beta=AgentData['Beta'],
-                                          agentID=(i,j))  
+                                          agentID=(i, j))
                 domain[i][j].add_agent(NewAgent)
-                farmer_agent_list.append(agentID)
+                # TODO this might not be referencing agentID properly
+                farmer_agent_list.append(farmer.Farmer.agentID)
 
             if AgentArray[i][j] == urban.Urban.__name__:
 
                 AgentData = getNASS.urban_data(lc[0][i][j])
                 NewAgent = urban.Urban(density=AgentData["Density"])
                 domain[i][j].add_agent(NewAgent)
-
-
 
     return domain, farmer_agent_list
 
@@ -128,7 +127,7 @@ def profits(profit_signals, Nt, Ny, Nx, CropID_all, CropIDs):
     """Initialize np array of profits
 
     :param profit_signals: data frame of profit signals created from generate synthetic prices, or user supplied
-    :param Nt: Number of timesteps
+    :param Nt: Number of time steps
     :param Ny: Number of columns in domain
     :param Nx: Number of rows in domain
     :param CropID_all: Nt x Nx x Ny np array of current land cover
