@@ -240,7 +240,7 @@ class Janus:
                         if self.decision_type == 'profit':
 
                             # assess profit - only needs to occur for profit based learning
-                            profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i-1, j, k],    # this is the crop for last time step for agent jk
+                            profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i-1, j, k], # this is the crop for last time step for agent jk
                                                                            self.profits_actual[i-1, j, k], #this is last profit for agent jk
                                                                            self.profit_signals[:, i],
                                                                            self.num_crops,
@@ -270,21 +270,29 @@ class Janus:
                             network_profits = crpdec.retrieve_network_profits(self.profits_actual[i-1, :, :], self.crop_id_all[i-1, :, :], self.agent_network[self.agent_domain[j, k].FarmerAgents[0].agentID])
 
                             # identify the most profitable crop of the network
-                            crop_choice, profit_choice = crpdec.success_bias_crop()
+                            # if the following were combined it could be: crop_choice, profit_choice = crpdec.success_bias_crop()
+                            # if all three learning strategies are using assess_profit / profit_maximizer/ make_choice,
+                            # those could be outside of if statement to reduce duplicate code
+                            profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i - 1, j, k],
+                                                                            self.profits_actual[i - 1, j, k],
+                                                                            network_profits[i, 2],
+                                                                            len(network_profits),
+                                                                            network_profits[i, 1])
+                            # identify the most profitable crop
+                            crop_choice, profit_choice = crpdec.profit_maximizer(self.agent_domain[j, k].FarmerAgents[0].alpha,
+                                                                        self.agent_domain[j, k].FarmerAgents[0].beta,
+                                                                        self.c.fmin, self.c.fmax, self.c.n, profit_last,
+                                                                        network_profits[i, 1], profit_pred, rule=True)
 
-                                # TODO decide whether to switch or add random variation to profit??
-                                # can I literally just call make choice in the exact same way it is above?
-                                # or maybe if all three learning strategies are using make_choice, it can be outside
-                                # of if statement to reduce duplicate code
+                            # decide whether to switch and add random variation to actual profit
+                            self.crop_id_all[i, j, k], self.profits_actual[i, j, k] = crpdec.make_choice(
+                                self.crop_id_all[i - 1, j, k],
+                                profit_last,
+                                crop_choice,
+                                profit_choice,
+                                seed=False)
 
-
-
-                        if decision_type = 'conformist':
-                                #
-
-
-
-
+                        # if decision_type = 'conformist':
 
                         # update agent attributes
                         self.agent_domain[j, k].FarmerAgents[0].update_age()
@@ -301,12 +309,12 @@ class Janus:
     def save_outputs(self):
         """Save outputs as NumPy arrays.
 
-        The dimensions of each output NumPy array are [Number of timesteps, Ny, Nx]
+        The dimensions of each output NumPy array are [Number of time steps, Ny, Nx]
         """
 
         out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr.npy')
 
-        # save time series of landcover coverage
+        # save time series of land cover coverage
         np.save(out_file.format('landcover', self.c.scale, self.c.Nt), self.crop_id_all)
 
         # save time series of profits
@@ -317,7 +325,7 @@ class Janus:
         
         # save dictionary of network
         # TODO: currently outputting using pickle but network is not human readable
-        # it is possible here to use JSON format but that might be less straightfoward to read in 
+        # it is possible here to use JSON format but that might be less straightforward to read in
         nwk_out = open('network.pk1', 'wb')
         pickle.dump(self.network, nwk_out)
         nwk_out.close()         
