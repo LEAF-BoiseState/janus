@@ -24,8 +24,6 @@ import im3agents.im3agents.im3networks.networks as nwks
 from janus.config_reader import ConfigReader
 
 
-
-
 class Janus:
 
     def __init__(self, config_file=None, args=None, save_result=True, plot_results=True):
@@ -80,7 +78,7 @@ class Janus:
     def initialize_landscape_domain(self):
         """Initialize landscape and domain.
 
-        :return: lc, numpy array of landcover categories within domain at scale of interest
+        :return: lc, numpy array of land cover categories within domain at scale of interest
         :return: dist2city, numpy array of distance to nearest city cell
         :return: domain, grid of dCell classes
         :return: ny, number of rows in domain
@@ -103,7 +101,7 @@ class Janus:
         """Initialize crops
 
         :return: crop_ids, numpy array of the crop IDs that are in the domain
-        :return: crop_id_all, numpy array of landcover categories through time
+        :return: crop_id_all, numpy array of land cover categories through time
         :return: ag, numpy array of where agricultural cells exist in the domain
         :return: num_crops, integer og the number of crops being assessed
 
@@ -142,10 +140,9 @@ class Janus:
 
         return profits_actual, profit_signals
 
-#TODO change cat option to call from config
-    def initialize_agents(self, cat_option='local'):
+    def initialize_agents(self):
         """Initialize agents based on NASS data and initial land cover
-        :param cat_option: Denotes which categorization option is used, 'GCAM', 'local', or user defined
+
         :return: agent_domain is the domain with agent cell classes filled with agent information
         :return: agent_array is a numpy array of strings that define which agent is in each location
 
@@ -159,10 +156,10 @@ class Janus:
 
         tenure_cdf = get_nass.make_tenure_cdf(tenure)
 
-        agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, cat_option)
+        agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, self.cat_option)
 
-        agent_domain, agentID_list = init_agent.agents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf, self.c.switch,
-                                         self.Ny, self.Nx, self.lc, self.c.p)
+        agent_domain, agentID_list = init_agent.agents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf,
+                                                       self.c.switch, self.Ny, self.Nx, self.lc, self.c.p)
 
         return agent_domain, agent_array, agentID_list
 
@@ -178,8 +175,7 @@ class Janus:
         containing the agentIDs that share a connection with the key agent.
 
         """
-        
-        
+
         if self.network == 'randomwalk':
             
             # TODO: if this is the case there need to be more parameters than what
@@ -223,7 +219,7 @@ class Janus:
     def decisions(self):
         """Decision process.
 
-        :return:    Updated domain with agent information and landcover choice
+        :return:    Updated domain with agent information and land cover choice
 
         """
 
