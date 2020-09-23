@@ -3,6 +3,7 @@
 # FileName: farmer.py
 # Purpose: Holds definition of farmer
 
+import json
 
 class Farmer:
     """ The farmer class holds all relevant information about farmer agents. All attributes are optional.
@@ -30,6 +31,14 @@ class Farmer:
         self.alpha = kwargs.get('alpha')
         self.beta = kwargs.get('beta')
 
+    def __eq__(self, other):
+        return self.Age == other.Age and \
+            self.Dist2city == other.Dist2city and \
+            self.LandStatus == other.LandStatus and \
+            self.nFields == other.nFields and \
+            self.alpha == other.alpha and \
+            self.beta == other.beta
+
     def update_age(self):
         """ Updates the age of the agent by one year """
         self.Age += 1
@@ -43,3 +52,11 @@ class Farmer:
          """
         self.alpha += 0.1
         self.beta -= 0.01
+
+    def encode(self):
+        return json.dumps(self.__dict__)
+
+def decode(s):
+    """ Override the values in self with parameters from the json representation of a Farmer"""
+    d = json.loads(s)
+    return Farmer(**d)
