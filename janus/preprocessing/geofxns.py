@@ -88,16 +88,16 @@ def get_gcam(counties_shp, county_list, gcam_file):
 def min_dist_city(gcam):
     """Calculate the minimum distance to a city cell.
 
-    :param gcam: np.array of landcover of Snake River Basin GCAM categories, other keyfiles will incorrectly identify city cells
+    :param gcam: np.array of land cover of Snake River Basin GCAM categories, other key files will incorrectly identify city cells
 
     :return: np.array of distance to a city cell within the domain
 
     """
-    # TODO:  are these values supposed to be hard-coded, no, update to follow based on key file
-    urban_bool = np.logical_or(np.logical_or(gcam[0] == 26, gcam[0] == 27), np.logical_or(gcam[0] == 17, gcam[0] == 25))
+    # TODO:  update to be based on key file (local_cat == urb)
+    urban_bool = np.logical_or(np.logical_or(gcam == 26, gcam == 27), np.logical_or(gcam == 17, gcam == 25))
     
-    rur = np.where(np.logical_and(~urban_bool, gcam[0] != 0))
-    rural = np.array((rur[0],rur[1])).transpose()
+    rur = np.where(np.logical_and(~urban_bool, gcam != 0))
+    rural = np.array((rur[0], rur[1])).transpose()
     
     urb = np.where(urban_bool)
     urban = np.array((urb[0], urb[1])).transpose()
@@ -109,7 +109,7 @@ def min_dist_city(gcam):
     urb_val = np.zeros(urban.shape[0])
     idx = np.vstack((urban, rural))
     dist = np.vstack((urb_val[:, None], mindist[:, None]))
-    out = np.zeros(gcam[0].shape)
+    out = np.zeros(gcam.shape)
     out.fill(np.nan)
 
     for i in np.arange(dist.size):
