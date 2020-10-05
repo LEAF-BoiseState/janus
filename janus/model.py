@@ -90,7 +90,8 @@ class Janus:
         lc_raster = gdal.Open(self.c.f_init_lc_file)
         lc = lc_raster.GetRasterBand(1).ReadAsArray()
 
-        ny, nx = lc.shape
+        ny = lc_raster.RasterYSize
+        nx = lc_raster.RasterXSize
 
         # initialize minimum distance to city
         dist2city = gf.min_dist_city(lc)
@@ -165,7 +166,7 @@ class Janus:
 
         tenure_cdf = get_nass.make_tenure_cdf(tenure)
 
-        agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, self.cat_option)
+        agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, self.c.cat_option)
 
         agent_domain, agentID_list = init_agent.agents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf,
                                                        self.c.switch, self.Ny, self.Nx, self.lc, self.c.p)
