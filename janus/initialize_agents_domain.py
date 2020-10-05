@@ -63,16 +63,16 @@ def place_agents(Ny, Nx, lc, key_file, cat_option):
 
     # this works, would be better without the for loops
     for i in ag:
-        AgentArray[lc[0] == i] = farmer.Farmer.__name__
+        AgentArray[lc == i] = farmer.Farmer.__name__
 
     for i in water:
-        AgentArray[lc[0] == i] = 'water'
+        AgentArray[lc == i] = 'water'
 
     for i in urb:
-        AgentArray[lc[0] == i] = urban.Urban.__name__
+        AgentArray[lc == i] = urban.Urban.__name__
 
     for i in empty:
-        AgentArray[lc[0] == i] = 'empty'
+        AgentArray[lc == i] = 'empty'
 
     return AgentArray
 
@@ -81,14 +81,14 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
     """Place agent structures onto landscape and define attributes.
 
     :param AgentArray: Numpy array of strings of location of each agent type
-    :param domain:     Inital domain
+    :param domain:     Initial domain
     :param dist2city:  Numpy array of distance to city
     :param TenureCDF:  CDF of tenure type in the domain
     :param AgeCDF:     CDF of ages in the domain
     :param switch:     List of lists of parameter sets to describe agent switching behavior
     :param Ny:         Number of columns in domain
     :param Nx:         Number of rows in domain
-    :param lc:         Initial landcover numpy array
+    :param lc:         Initial land cover numpy array
     :param p:          Percentage of switching averse farming agents
 
     :return:           Domain with agents in each dCell
@@ -123,17 +123,23 @@ def agents(AgentArray, domain, dist2city, TenureCDF, AgeCDF, switch, Ny, Nx, lc,
     return domain, farmer_agent_list
 
 
-def profits(profit_signals, Nt, Ny, Nx, CropID_all, CropIDs):
+def init_profits(profit_signals, Nt, Ny, Nx, CropID_all, CropIDs):
     """Initialize np array of profits
 
-    :param profit_signals: data frame of profit signals created from generate synthetic prices, or user supplied
-    :param Nt: Number of time steps
-    :param Ny: Number of columns in domain
-    :param Nx: Number of rows in domain
-    :param CropID_all: Nt x Nx x Ny np array of current land cover
-    :param CropIDs: Num_crop x 1 np array of crop ids
-
-    :return: np array of initial profits based on price signals
+    :param profit_signals:  Profit signals created from generate synthetic prices, or user supplied
+    :type profit_signals:   Numpy  Array
+    :param nt:              Number of time steps
+    :type nt:               Int
+    :param ny:              Number of columns in domain
+    :type ny:               Int
+    :param nx:              Number of rows in domain
+    :type  nx:              Int
+    :param crop_id_all:     nt x nx x ny np array of current land cover
+    :type crop_id_all:      Numpy Array
+    :param crop_ids:        Num_crop x 1 np array of crop ids
+    :type crop_ids:         Numpy Array
+    :return:                Initial profits based on price signals
+    :type:                  Numpy Array
 
     """
 
