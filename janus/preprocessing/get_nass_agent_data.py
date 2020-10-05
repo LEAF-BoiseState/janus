@@ -81,9 +81,9 @@ def tenure_area(state, county_list, NASS_yr, variables, nass_api_key):
     # prepare lists for data
     area_cat = ["AREA OPERATED: (1.0 TO 9.9 ACRES)","AREA OPERATED: (10.0 TO 49.9 ACRES)", "AREA OPERATED: (50.0 TO 69.9 ACRES)", "AREA OPERATED: (70.0 TO 99.9 ACRES)", "AREA OPERATED: (100 TO 139 ACRES)","AREA OPERATED: (140 TO 179 ACRES)", "AREA OPERATED: (180 TO 219 ACRES)", "AREA OPERATED: (220 TO 259 ACRES)", "AREA OPERATED: (260 TO 499 ACRES)", "AREA OPERATED: (500 TO 999 ACRES)", "AREA OPERATED: (1,000 TO 1,999 ACRES)", "AREA OPERATED: (2,000 OR MORE ACRES)"]#, "AREA OPERATED: (50 TO 179 ACRES)", "AREA OPERATED: (180 TO 499 ACRES)", "AREA OPERATED: (1,000 OR MORE ACRES)"]
     tenure_cat = ["TENURE: (FULL OWNER)", "TENURE: (PART OWNER)", "TENURE: (TENANT)" ]
-    cat=tenure_cat + area_cat
+    cat = tenure_cat + area_cat
     
-    farms=pd.DataFrame(0, index=np.arange(len(cat)), columns=('category', 'acres', 'operations'))
+    farms = pd.DataFrame(0, index=np.arange(len(cat)), columns=('category', 'acres', 'operations'))
     farms['category'] = cat
     
     for i in range(len(cat)):
@@ -152,45 +152,63 @@ def make_tenure_cdf(var_array):
     return perc
     
 
-def farmer_data(TenureCDF, AgeCDF, switch, p, d2c):
+def farmer_data(tenure_cdf, age_cdf, switch, d2c, attr, p):
     """Collect agent data from NASS distributions and place in dictionary.
 
-    :param TenureCDF:  Numpy array from make_tenure_cdf function
-    :param AgeCDF:     Numpy array from make_tage_cdf function
-    :param switch:     List of lists of alpha beta parameters describing liklihood of switching crops
-    :param p:          Percentage of farming agents that are switching averse
-    :param d2c:        Numpy array of distance to city
-
-    :return: Dictionary with farmer data based on NASS data
-
+    :param tenure_cdf:   Data from make_tenure_cdf function. Full owner, Part Owner, Tenant
+    :type tenure_cdf:    Numpy Array
+    :param age_cdf:      Data from make_age_cdf function
+    :type age_cdf:       Numpy Array
+    :param switch:      List of lists of alpha beta parameters describing likelihood of switching crops
+    :type switch:       List of lists
+    :param p:           Percentage of farming agents that are switching averse
+    :type p:            Float
+    :param d2c:         Distance to city
+    :type d2c:          Numpy Array
+    :param attr:        Indicates whether or not to use switching curves based on tenure and age attributes
+    :type attr:         Boolean
+    :return:            Farmer data based on NASS data
+    :type:              Dictionary
     """
-    ss=np.random.random_sample()
-    ts = np.random.random_sample() 
+    ts = np.random.random_sample()
     ageS = np.random.random_sample()
 
-    if ss >= p:
-        k= 0
-    else:
-        k =1
-    
-    if ageS < AgeCDF[0, 1]:
+    if ageS < age_cdf[0, 1]:
         ageI = 18
-    else: 
-        ageT = np.where(AgeCDF[:, [1]] <= ageS)
+    else:
+        ageT = np.where(age_cdf[:, [1]] <= ageS)
         ageI = max(ageT[0])
-            
-    tt = np.where(TenureCDF[:, [1]] >= ts)
-    tenStat = min(tt[0])
-    
-    AgentData = {
-            "AgeInit" : ageI,
-            "LandStatus" : tenStat,
-            "Alpha": switch[k][0],
-            "Beta": switch[k][1],
-            "nFields": 1,
-            "Dist2city": d2c
-                }
-    return AgentData
+
+    tt = np.where(tenure_cdf[:, [1]] >= ts)
+    ten_stat = min(tt[0])
+
+    if attr:
+        if ten_stat == tenure_cdf[0, [0]]:  # full owner, switching averse
+            k = 0
+        elif ten_stat == tenure_cdf[1, [0]]:  # part owner, switching neutral
+            k = 2
+        elif ten_stat == tenure_cdf[2, [0]]:  # tenant, switching tolerant
+            k = 1
+        a_alpha = switch[k][0] + (ageI - 18) * 0.005  # initiate switching as a function of age
+        a_beta = switch[k][1] - (ageI - 18) * 0.0005  # initiate switching as a function of age
+    else:
+        ss = np.random.random_sample()
+        if ss >= p:
+            k = 0  # switching averse
+        else:
+            k = 1  # switching tolerant
+        a_alpha = switch[k][0]
+        a_beta = switch[k][1]
+
+    agent_data = {
+        "AgeInit": ageI,
+        "LandStatus": ten_stat,
+        "Alpha": a_alpha,
+        "Beta": a_beta,
+        "nFields": 1,
+        "Dist2city": d2c
+    }
+    return agent_data
 
 
 def urban_data(lc):
