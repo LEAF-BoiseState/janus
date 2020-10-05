@@ -1,33 +1,36 @@
 # Configuration file for the ABM land use land cover change agent based model
 
 # full path with file name and extension to the counties shapefile
-f_counties_shp: '<Full path with file name and extension to the counties shapefile>'
+f_counties_shp: '/Users/kek25/Desktop/Janus_run/preprocessing/shp/counties_srb.shp'
 
 # full path with file name and extension to the land class category key file
-f_key_file: '<Full path with file name and extension to the land class category key file>'
+f_key_file: '/Users/kek25/Desktop/Janus_run/preprocessing/CDL2GCAM_categories.csv'
 
 # raster of the initial land cover data
-f_init_lc_file: '<Full path with file name and extension to the initial land cover data>'
+f_init_lc_file: '/Users/kek25/Desktop/Janus_run/input/init_landcover_gcam_3000_domain_2010.tiff'
 
 #profit choice flag, gcam or generated
 profits: 'gcam'
 
 # TODO have these run from within this script, taking in nt and setting nc
 # profits file
-f_profits_file: '<Full path with file name and extension to the profits csv file>'
-f_gcam_profits_file: '<Full path with file name and extension to the GCAM USA profits csv file>'
+f_profits_file: '/Users/kek25/Desktop/Janus_run/input/profits_out.csv'
+f_gcam_profits_file: '/Users/kek25/Desktop/Janus_run/input/profits_out.csv'
 
 # output directory
-output_directory: '<Full path with file name and extension to the output directory>'
+output_directory: '/Users/kek25/Desktop/Janus_run/output'
 
 # number of time steps
-nt: 20
+nt: 30
 
 # list of lists for switching averse, tolerant parameters (alpha, beta)
 switch_params: [[4.5, 1.0], [0.5, 3.0]]
 
-# proportion of each switching type, lower than p is averse, higher is tolerant
-p: 0.5
+# boolean of whether to base switching parameters on farmer attributes or not
+attr: False
+
+# proportion of each switching type, (0.95 = switching tolerant)
+p: 0.95
 
 # fraction of current profit at which the CDF is zero and one, and number of points to generate
 fmin: 1.0
@@ -38,7 +41,7 @@ n: 100
 network: 'randomwalk'
 
 # decision making method, 'profit', 'conformist', 'success'
-decision: 'profit'
+decision_type: 'success'
 
 # TODO:  Set seed for test data
 # Seed for random number generator
@@ -50,16 +53,13 @@ initialization_yr: 2010
 # scale of grid in meters
 scale: 3000
 
-# list of counties to evaluate
-county_list: ['Ada', 'Canyon']
-
 # Currently available agent attributes, tenure status and area operated
 agent_variables: ["TENURE", "AREA OPERATED"]
 
 # NASS years that are available are 2007, 2012
 nass_year: 2007
 
-# state where NASS data is pulled from, as capatalized acronym
+# state where NASS data is pulled from, as capitalized acronym
 state: 'ID'
 
 # List of counties used to gather NASS data, must be capitalized
