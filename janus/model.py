@@ -13,13 +13,14 @@ import os
 import pickle
 
 import numpy as np
+import gdal
 
 import janus.preprocessing.geofxns as gf
 import janus.crop_functions.crop_decider as crpdec
 import janus.initialize_agents_domain as init_agent
 import janus.postprocessing.create_figures as ppf
 import janus.preprocessing.get_nass_agent_data as get_nass
-import im3agents.im3agents.im3networks.networks as nwks
+import im3agents.im3networks.networks as nwks
 
 from janus.config_reader import ConfigReader
 
@@ -85,8 +86,9 @@ class Janus:
         :return: nx, number of columns in domain
         """
 
-        # select initial gcam data from initial year
-        lc = gf.get_gcam(self.c.counties_shp, self.c.county_list, self.c.gcam_file)
+        # import the initial land cover data
+        lc_raster = gdal.Open(self.f_init_lc)
+        lc = lc_raster.GetRasterBand(1)
 
         ny, nx = lc[0].shape
 
@@ -124,27 +126,34 @@ class Janus:
     def initialize_profit(self):
         """Initialize profits based on profit signals csv that is either generated or input from other model output
 
-        :return: profits_actual is the profit signal with a random variation
-        :return: profit_signals is the transposed profit signals cleaned to be used in other functions
-
+        :return:    [0] Numpy Array; profits_actual, profit signal with a random variation
+                    [1] Numpy Array; profit_signals, transposed profit signals cleaned to be used in other functions
         """
-        profit_signals = np.transpose(self.c.profits_file.values)
+        if self.c.profits == 'generated':
 
-        assert np.all([profit_signals[:, 0], self.crop_ids[:, 0]]), 'Crop IDs in profit signals do not match Crop IDs from landcover'
+            profit_signals = np.transpose(self.c.profits_file.values)
 
-        profit_signals = profit_signals[:, 1:]
+            assert np.all([profit_signals[:, 0], self.crop_ids[:, 0]]), 'Crop IDs in profit signals do not match ' \
+                                                                        'Crop IDs from land cover'
+            profit_signals = profit_signals[:, 1:]
 
-        assert profit_signals.shape[1] == self.c.Nt, 'The number of timesteps in the profit signals do not match the number of model timesteps'
+        elif self.c.profits == 'gcam':
+            profit_signals = np.transpose(self.c.gcam_profits_file.values)
+        else:
+            print("Profit type not supported")
 
-        profits_actual = init_agent.profits(profit_signals, self.c.Nt, self.Ny, self.Nx, self.crop_id_all, self.crop_ids)
+        assert profit_signals.shape[1] == self.c.Nt, 'The number of time steps in the profit signals do not ' \
+                                                     'match the number of model time steps'
+
+        profits_actual = init_agent.init_profits(profit_signals, self.c.Nt, self.Ny, self.Nx, self.crop_id_all, self.crop_ids)
 
         return profits_actual, profit_signals
 
     def initialize_agents(self):
         """Initialize agents based on NASS data and initial land cover
 
-        :return: agent_domain is the domain with agent cell classes filled with agent information
-        :return: agent_array is a numpy array of strings that define which agent is in each location
+        :return agent domain:   [0] Numpy array; agent_domain, domain with agent cell classes filled with agent info
+                                [1] Numpy array; agent_array, strings that define which agent is in each location
 
         """
 
@@ -162,7 +171,6 @@ class Janus:
                                                        self.c.switch, self.Ny, self.Nx, self.lc, self.c.p)
 
         return agent_domain, agent_array, agentID_list
-
 
     def initialize_network(self):
         """ This will create and return a network based upon which type of network
@@ -334,7 +342,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--config_file', type=str, help='Full path with file name and extension to YAML configuration file.')
     parser.add_argument('-shp', '--f_counties_shp', type=str, help='Full path with file name and extension to the input counties shapefile.')
     parser.add_argument('-key', '--f_key_file', type=str, help='Full path with file name and extension to the input land class category key file.')
-    parser.add_argument('-gcam', '--f_gcam_file', type=str, help='Full path with file name and extension to the input GCAM raster file.')
+    parser.add_argument('-gcam', '--f_gcam_profits_file', type=str, help='Full path with file name and extension to the input GCAM raster file.')
     parser.add_argument('-s', '--switch_params', type=list, help='List of lists for switching averse, tolerant parameters (alpha, beta)')
     parser.add_argument('-nt', '--nt', type=int, help='Number of timesteps')
     

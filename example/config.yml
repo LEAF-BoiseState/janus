@@ -9,6 +9,9 @@ f_key_file: '/Users/kek25/Desktop/Janus_run/preprocessing/CDL2GCAM_categories.cs
 # raster of the initial land cover data
 f_init_lc_file: '/Users/kek25/Desktop/Janus_run/input/init_landcover_gcam_3000_domain_2010.tiff'
 
+# GCAM categorization, 'GCAM', 'local', or user defined
+cat_option: 'local'
+
 #profit choice flag, gcam or generated
 profits: 'gcam'
 
