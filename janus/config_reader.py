@@ -23,7 +23,6 @@ class ConfigReader:
     CROP_SEED_SIZE = 'crop_seed_size'
     TARGET_YR = 'initialization_yr'
     SCALE = 'scale'
-    COUNTY_LIST = 'county_list'
     AGENT_VARS = 'agent_variables'
     NASS_YR = 'nass_year'
     STATE = 'state'
@@ -77,9 +76,6 @@ class ConfigReader:
 
         # scale of grid in meters
         self.scale = c[ConfigReader.SCALE]
-
-        # list of counties to evaluate
-        self.county_list = c[ConfigReader.COUNTY_LIST]
 
         # agent variables
         self.agent_variables = c[ConfigReader.AGENT_VARS]
