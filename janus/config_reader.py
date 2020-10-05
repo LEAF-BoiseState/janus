@@ -39,7 +39,7 @@ class ConfigReader:
 
         c = self.read_yaml(config_file)
 
-        self.f_init_lc = c[ConfigReader.F_INIT_LC_FILE]
+        self.f_init_lc_file = c[ConfigReader.F_INIT_LC_FILE]
 
         self.profits = c[ConfigReader.PROFITS]
 
