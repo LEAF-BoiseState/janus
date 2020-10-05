@@ -169,7 +169,7 @@ class Janus:
         agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, self.c.cat_option)
 
         agent_domain, agentID_list = init_agent.agents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf,
-                                                       self.c.switch, self.Ny, self.Nx, self.lc, self.c.p)
+                                                       self.c.switch, self.Ny, self.Nx, self.lc, self.c.p, self.c.attr)
 
         return agent_domain, agent_array, agentID_list
 
