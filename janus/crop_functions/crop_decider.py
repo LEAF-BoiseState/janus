@@ -66,7 +66,7 @@ def retrieve_network_profits(profits_actual, crop_IDs, network_list):
     # find last years profits and crop choice of every agent in their network
     network_profits = np.empty([len(network_list), 2])
 
-    for i in len(network_list):
+    for i in np.arange(len(network_list)):
         network_profits[i, 1] = crop_IDs[network_list[i]]
         network_profits[i, 2] = profits_actual[network_list[i]]
 
