@@ -132,8 +132,7 @@ def agents(agent_array, domain, dist2city, tenure_cdf, age_cdf, switch, ny, nx, 
                                           beta=AgentData['Beta'],
                                           agentID=(i, j))
                 domain[i][j].add_agent(NewAgent)
-                # TODO this might not be referencing agentID properly
-                farmer_agent_list.append(farmer.Farmer.agentID)
+                farmer_agent_list.append(NewAgent.agentID)
 
             if agent_array[i][j] == urban.Urban.__name__:
 
