@@ -271,7 +271,6 @@ class Janus:
                         if self.decision_type == 'success':
 
                             # retrieve the cropIDs and the associated profits of their network
-                            # farmerAgent.id used to call into agent network
                             network_profits = crpdec.retrieve_network_profits(self.profits_actual[i-1, :, :], self.crop_id_all[i-1, :, :], self.agent_network[self.agent_domain[j, k].FarmerAgents[0].agentID])
 
                             # identify the most profitable crop of the network
