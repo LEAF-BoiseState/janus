@@ -130,7 +130,7 @@ def agents(agent_array, domain, dist2city, tenure_cdf, age_cdf, switch, ny, nx, 
                                           Dist2city=AgentData["Dist2city"], nFields=AgentData['nFields'],
                                           alpha=AgentData['Alpha'],
                                           beta=AgentData['Beta'],
-                                          agentID=(i, j))
+                                          agentID=i*ny+j)
                 domain[i][j].add_agent(NewAgent)
                 farmer_agent_list.append(NewAgent.agentID)
 
