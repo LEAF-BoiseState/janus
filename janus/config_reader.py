@@ -17,6 +17,7 @@ class ConfigReader:
     CAT_OPTION = 'cat_option'
     NT = 'nt'
     SWITCH_PARAMS = 'switch_params'
+    ATTR = 'attr'
     P = 'p'
     FMIN = 'fmin'
     FMAX = 'fmax'
@@ -62,6 +63,8 @@ class ConfigReader:
 
         # set agent switching parameters (alpha, beta) [[switching averse], [switching tolerant]]
         self.switch = np.array(c[ConfigReader.SWITCH_PARAMS])
+
+        self.attr = c[ConfigReader.ATTR]
 
         # proportion of each switching type, lower than p is averse, higher is tolerant
         self.p = c[ConfigReader.P]
