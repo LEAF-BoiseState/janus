@@ -61,7 +61,6 @@ class Janus:
         # initialize agents
         self.agent_domain, self.agent_array, self.agentID_list = self.initialize_agents()
 
-        # TODO: add in config file "randomwalk" "barabasi" "smallworld" "erdosrenyi" 
         # network will be stored as a dictionary here
         self.network = self.initialize_network()
 
@@ -146,7 +145,8 @@ class Janus:
         assert profit_signals.shape[1] == self.c.Nt, 'The number of time steps in the profit signals do not ' \
                                                      'match the number of model time steps'
 
-        profits_actual = init_agent.init_profits(profit_signals, self.c.Nt, self.Ny, self.Nx, self.crop_id_all, self.crop_ids)
+        profits_actual = init_agent.init_profits(profit_signals, self.c.Nt, self.Ny, self.Nx, self.crop_id_all,
+                                                 self.crop_ids)
 
         return profits_actual, profit_signals
 
@@ -158,7 +158,8 @@ class Janus:
 
         """
 
-        tenure = get_nass.tenure_area(self.c.state, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables, self.c.nass_api_key)
+        tenure = get_nass.tenure_area(self.c.state, self.c.nass_county_list, self.c.nass_year, self.c.agent_variables,
+                                      self.c.nass_api_key)
 
         ages = get_nass.ages(self.c.nass_year, self.c.state, self.c.nass_api_key)
 
@@ -185,8 +186,7 @@ class Janus:
 
         """
 
-        if self.network == 'randomwalk':
-            
+        if self.c.network == 'randomwalk':
             # TODO: if this is the case there need to be more parameters than what
             # are included here. See notes in the network library
             # For now, a user could use the jupyter notebook to determine a max number
@@ -195,28 +195,26 @@ class Janus:
 
             arbitrary_time_steps = 10
             arbitrary_torus_option = True
-            agent_network = nwks.generate_random_walk(self.Nx -1 , self.Ny - 1, arbitrary_torus_option, arbitrary_time_steps)
+            agent_network = nwks.generate_random_walk(self.Nx - 1, self.Ny - 1, self.agentID_list,
+                                                      arbitrary_torus_option, arbitrary_time_steps)
 
-        if self.network == 'erdosrenyi':
-            
+        if self.c.network == 'erdosrenyi':
             # if this is the case, there needs to be an extra parameter
             # this parameter for erdos renyi is defined as the probability that 
             # a given agent will form a connection -- this will need to be supplied
             # by the user in config file. For now it is arbitrary
-            
+
             # TODO: change this from hard coded to a config file option
-            arbitrary_prob = 0.5    
+            arbitrary_prob = 0.5
             agent_network = nwks.generate_erdos_renyi(self.agentID_list, arbitrary_prob)
-        
-        if self.network == 'barabasi':
-            
+
+        if self.c.network == 'barabasi':
             # TODO: change this from hard coded to a config file option
             # for more information on what the parameters could be, see README in im3agents library repo
             arbitrary_edge_number = 2 * len(self.agentID_list) / 5
             agent_network = nwks.generate_barabasi_alberts(self.agentID_list, arbitrary_edge_number)
 
-        if self.network == 'smallworld':
-            
+        if self.c.network == 'smallworld':
             # TODO: change this from hard coded to a config file options
             # see README link to networkx documentation
             arbitrary_neighbors = 3
@@ -242,36 +240,42 @@ class Janus:
 
                         # make crop choice based on decision making process
 
-                        if self.decision_type == 'profit':
-
+                        if self.c.decision_type == 'profit':
                             # assess profit - only needs to occur for profit based learning
-                            profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i-1, j, k], # this is the crop for last time step for agent jk
-                                                                           self.profits_actual[i-1, j, k], #this is last profit for agent jk
-                                                                           self.profit_signals[:, i],
-                                                                           self.num_crops,
-                                                                           self.crop_ids)
+                            profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i - 1, j, k],
+                                                                            # this is the crop for last time step for agent jk
+                                                                            self.profits_actual[i - 1, j, k],
+                                                                            # this is last profit for agent jk
+                                                                            self.profit_signals[:, i],
+                                                                            self.num_crops,
+                                                                            self.crop_ids)
 
                             # identify the most profitable crop
-                            crop_choice, profit_choice = crpdec.profit_maximizer(self.agent_domain[j, k].FarmerAgents[0].alpha,
-                                                                        self.agent_domain[j, k].FarmerAgents[0].beta,
-                                                                        self.c.fmin,
-                                                                        self.c.fmax,
-                                                                        self.c.n,
-                                                                        profit_last,
-                                                                        self.crop_ids,
-                                                                        profit_pred,
-                                                                        rule=True)
+                            crop_choice, profit_choice = crpdec.profit_maximizer(
+                                self.agent_domain[j, k].FarmerAgents[0].alpha,
+                                self.agent_domain[j, k].FarmerAgents[0].beta,
+                                self.c.fmin,
+                                self.c.fmax,
+                                self.c.n,
+                                profit_last,
+                                self.crop_ids,
+                                profit_pred,
+                                rule=True)
 
                             # decide whether to switch and add random variation to actual profit
-                            self.crop_id_all[i, j, k], self.profits_actual[i, j, k] = crpdec.make_choice(self.crop_id_all[i-1, j, k],
-                                                                                                        profit_last,
-                                                                                                        crop_choice,
-                                                                                                        profit_choice,
-                                                                                                        seed = False)
-                        if self.decision_type == 'success':
-
+                            self.crop_id_all[i, j, k], self.profits_actual[i, j, k] = crpdec.make_choice(
+                                self.crop_id_all[i - 1, j, k],
+                                profit_last,
+                                crop_choice,
+                                profit_choice,
+                                seed=False)
+                        if self.c.decision_type == 'success':
                             # retrieve the cropIDs and the associated profits of their network
-                            network_profits = crpdec.retrieve_network_profits(self.profits_actual[i-1, :, :], self.crop_id_all[i-1, :, :], self.agent_network[self.agent_domain[j, k].FarmerAgents[0].agentID])
+                            network_profits = crpdec.retrieve_network_profits(self.profits_actual[i - 1, :, :],
+                                                                              self.crop_id_all[i - 1, :, :],
+                                                                              self.network[
+                                                                                  self.agent_domain[j, k].FarmerAgents[
+                                                                                      0].agentID])
 
                             # identify the most profitable crop of the network
                             # if the following were combined it could be: crop_choice, profit_choice = crpdec.success_bias_crop()
@@ -283,10 +287,11 @@ class Janus:
                                                                             len(network_profits),
                                                                             network_profits[i, 1])
                             # identify the most profitable crop
-                            crop_choice, profit_choice = crpdec.profit_maximizer(self.agent_domain[j, k].FarmerAgents[0].alpha,
-                                                                        self.agent_domain[j, k].FarmerAgents[0].beta,
-                                                                        self.c.fmin, self.c.fmax, self.c.n, profit_last,
-                                                                        network_profits[i, 1], profit_pred, rule=True)
+                            crop_choice, profit_choice = crpdec.profit_maximizer(
+                                self.agent_domain[j, k].FarmerAgents[0].alpha,
+                                self.agent_domain[j, k].FarmerAgents[0].beta,
+                                self.c.fmin, self.c.fmax, self.c.n, profit_last,
+                                network_profits[i, 1], profit_pred, rule=True)
 
                             # decide whether to switch and add random variation to actual profit
                             self.crop_id_all[i, j, k], self.profits_actual[i, j, k] = crpdec.make_choice(
@@ -326,41 +331,54 @@ class Janus:
 
         # save domain, can be used for initialization
         np.save(out_file.format('domain', self.c.scale, self.c.Nt), self.agent_domain)
-        
+
         # save dictionary of network
         # TODO: currently outputting using pickle but network is not human readable
         # it is possible here to use JSON format but that might be less straightforward to read in
         nwk_out = open('network.pk1', 'wb')
         pickle.dump(self.network, nwk_out)
-        nwk_out.close()         
+        nwk_out.close()
 
 
 if __name__ == '__main__':
-
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-c', '--config_file', type=str, help='Full path with file name and extension to YAML configuration file.')
-    parser.add_argument('-shp', '--f_counties_shp', type=str, help='Full path with file name and extension to the input counties shapefile.')
-    parser.add_argument('-key', '--f_key_file', type=str, help='Full path with file name and extension to the input land class category key file.')
-    parser.add_argument('-gcam', '--f_gcam_profits_file', type=str, help='Full path with file name and extension to the input GCAM raster file.')
-    parser.add_argument('-s', '--switch_params', type=list, help='List of lists for switching averse, tolerant parameters (alpha, beta)')
+    parser.add_argument('-c', '--config_file', type=str,
+                        help='Full path with file name and extension to YAML configuration file.')
+    parser.add_argument('-shp', '--f_counties_shp', type=str,
+                        help='Full path with file name and extension to the input counties shapefile.')
+    parser.add_argument('-key', '--f_key_file', type=str,
+                        help='Full path with file name and extension to the input land class category key file.')
+    parser.add_argument('-gcam', '--f_gcam_profits_file', type=str,
+                        help='Full path with file name and extension to the input GCAM raster file.')
+    parser.add_argument('-s', '--switch_params', type=list,
+                        help='List of lists for switching averse, tolerant parameters (alpha, beta)')
     parser.add_argument('-nt', '--nt', type=int, help='Number of timesteps')
-    
+
     # TODO: add in arguments for network creations and decision type
 
     # TODO: number of crops is calculated after doing the GIS pre-processing, if nc is needed for price generation, we might need to adjust this
     parser.add_argument('-nc', '--nc', type=int, help='Number of crops')
-    parser.add_argument('-fmin', '--fmin', type=float, help='The fraction of current profit at which the CDF of the beta distribution is zero')
-    parser.add_argument('-fmax', '--fmax', type=float, help='The fraction of current profit at which the CDF of the beta distribution is one')
+    parser.add_argument('-fmin', '--fmin', type=float,
+                        help='The fraction of current profit at which the CDF of the beta distribution is zero')
+    parser.add_argument('-fmax', '--fmax', type=float,
+                        help='The fraction of current profit at which the CDF of the beta distribution is one')
     parser.add_argument('-n', '--n', type=int, help='The number of points to generate in the CDF')
-    parser.add_argument('-seed', '--crop_seed_size', type=int, help='Seed to set for random number generators for unit testing')
-    parser.add_argument('-yr', '--initalization_yr', type=int, help='Initialization year assocciated with landcover input')
+    parser.add_argument('-seed', '--crop_seed_size', type=int,
+                        help='Seed to set for random number generators for unit testing')
+    parser.add_argument('-yr', '--initalization_yr', type=int,
+                        help='Initialization year assocciated with landcover input')
     parser.add_argument('-state', '--state', type=str, help='State where NASS data is pulled from, capitalized acronym')
-    parser.add_argument('-sc', '--scale', type=int, help='Scale of landcover grid in meters. Current options are 1000 and 3000 m')
-    parser.add_argument('-av', '--agent_variables', type=list, help='NASS variables to characterize agents with. Currently set to use "TENURE" and "AREA OPERATED"')
-    parser.add_argument('-nyr', '--nass_year', type=int, help='Year that NASS data are pulled from. This data is collected every 5 years, with the inital year here being 2007')
-    parser.add_argument('-ncy', '--nass_county_list', type=list, help='List of counties in the domain that NASS data is collected from, these have to be entirely capatalized')
-    parser.add_argument('-api', '--nass_api_key', type=int, help='A NASS API is needed to access the NASS data, get yours here https://quickstats.nass.usda.gov/api')
+    parser.add_argument('-sc', '--scale', type=int,
+                        help='Scale of landcover grid in meters. Current options are 1000 and 3000 m')
+    parser.add_argument('-av', '--agent_variables', type=list,
+                        help='NASS variables to characterize agents with. Currently set to use "TENURE" and "AREA OPERATED"')
+    parser.add_argument('-nyr', '--nass_year', type=int,
+                        help='Year that NASS data are pulled from. This data is collected every 5 years, with the inital year here being 2007')
+    parser.add_argument('-ncy', '--nass_county_list', type=list,
+                        help='List of counties in the domain that NASS data is collected from, these have to be entirely capatalized')
+    parser.add_argument('-api', '--nass_api_key', type=int,
+                        help='A NASS API is needed to access the NASS data, get yours here https://quickstats.nass.usda.gov/api')
 
     args = parser.parse_args()
 
