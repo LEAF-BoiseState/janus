@@ -136,7 +136,7 @@ def agents(agent_array, domain, dist2city, tenure_cdf, age_cdf, switch, ny, nx, 
 
             if agent_array[i][j] == urban.Urban.__name__:
 
-                AgentData = getNASS.urban_data(lc[0][i][j])
+                AgentData = getNASS.urban_data(lc[i][j])
                 NewAgent = urban.Urban(density=AgentData["Density"])
                 domain[i][j].add_agent(NewAgent)
 
