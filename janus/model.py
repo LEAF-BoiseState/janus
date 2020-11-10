@@ -208,7 +208,7 @@ class Janus:
             # by the user in config file. For now it is arbitrary
 
             # TODO: change this from hard coded to a config file option
-            arbitrary_prob = 0.5
+            arbitrary_prob = 0.1
             agent_network = nwks.generate_erdos_renyi(self.agentID_list, arbitrary_prob)
 
         if self.c.network == 'barabasi':
@@ -285,17 +285,19 @@ class Janus:
                             # if the following were combined it could be: crop_choice, profit_choice = crpdec.success_bias_crop()
                             # if all three learning strategies are using assess_profit / profit_maximizer/ make_choice,
                             # those could be outside of if statement to reduce duplicate code
+                            len_prof = len(network_profits)
                             profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i - 1, j, k],
                                                                             self.profits_actual[i - 1, j, k],
                                                                             network_profits[:, 1],
-                                                                            len(network_profits),
+                                                                            len_prof,
                                                                             network_profits[:, 0])
+
                             # identify the most profitable crop
                             crop_choice, profit_choice = crpdec.profit_maximizer(
                                 self.agent_domain[j, k].FarmerAgents[0].alpha,
                                 self.agent_domain[j, k].FarmerAgents[0].beta,
                                 self.c.fmin, self.c.fmax, self.c.n, profit_last,
-                                network_profits[i, 1], profit_pred, rule=True)
+                                network_profits[:, 1].reshape((len_prof, 1)), profit_pred, rule=True)
 
                             # decide whether to switch and add random variation to actual profit
                             self.crop_id_all[i, j, k], self.profits_actual[i, j, k] = crpdec.make_choice(
