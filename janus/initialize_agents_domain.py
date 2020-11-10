@@ -118,6 +118,7 @@ def agents(agent_array, domain, dist2city, tenure_cdf, age_cdf, switch, ny, nx, 
     
     """
     farmer_agent_list = []
+    agentIX =[]
     for i in np.arange(ny):
 
         for j in np.arange(nx):
@@ -131,8 +132,10 @@ def agents(agent_array, domain, dist2city, tenure_cdf, age_cdf, switch, ny, nx, 
                                           alpha=AgentData['Alpha'],
                                           beta=AgentData['Beta'],
                                           agentID=i*ny+j)
+
                 domain[i][j].add_agent(NewAgent)
                 farmer_agent_list.append(NewAgent.agentID)
+                agentIX.append(np.array([NewAgent.agentID, i, j]))
 
             if agent_array[i][j] == urban.Urban.__name__:
 
@@ -140,7 +143,7 @@ def agents(agent_array, domain, dist2city, tenure_cdf, age_cdf, switch, ny, nx, 
                 NewAgent = urban.Urban(density=AgentData["Density"])
                 domain[i][j].add_agent(NewAgent)
 
-    return domain, farmer_agent_list
+    return domain, farmer_agent_list, agentIX
 
 
 def init_profits(profit_signals, nt, ny, nx, CropID_all, CropIDs):
