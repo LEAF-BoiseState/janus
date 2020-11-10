@@ -20,7 +20,7 @@ import janus.crop_functions.crop_decider as crpdec
 import janus.initialize_agents_domain as init_agent
 import janus.postprocessing.create_figures as ppf
 import janus.preprocessing.get_nass_agent_data as get_nass
-import im3agents.im3networks.networks as nwks
+import janus.crop_functions.networks as nwks
 
 from janus.config_reader import ConfigReader
 
