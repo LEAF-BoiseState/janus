@@ -45,17 +45,19 @@ def switching_prob_curve(alpha, beta, fmin, fmax, n, profit):
     return x2, fx
 
 
-def retrieve_network_profits(profits_actual, crop_IDs, network_list):
+def retrieve_network_profits(profits_actual, crop_IDs, network_list, agentIX ):
     """
     This will be called in the main model to retrieve last years crop choices and profits
     of every agent in an individuals network
 
     :param profits_actual:  the profits from the previous year
-    :type profits_actual:   float
+    :type profits_actual:   np array
     :param crop_IDs:        last years crops
-    :type crop_IDs:         int
-    :param network_list:    list of agent IDs pulled from network dictionary
+    :type crop_IDs:         np array
+    :param network_list:    list of agent IDs in this agents' network pulled from network dictionary
     :type network_list:     list
+    :param agentIX:         list of lists that contain agent ID and corresponding coordinates
+    :type agentIX:          list
 
     :return: a 2D array of cropIDs and their associated profits in the agents' network
 
@@ -65,14 +67,19 @@ def retrieve_network_profits(profits_actual, crop_IDs, network_list):
 
     # find last years profits and crop choice of every agent in their network
     network_profits = np.empty([len(network_list), 2])
-    print(list(network_list.keys()))
-    ids=list(network_list.keys())
 
-    #TODO : if no one in their network kick them to profits mode
+    #TODO: in the random walk the agent IDs are a mixture of integers and tuples something wrong in the coordinates...
+    #TODO : if no one in their network kick them to profits mode?
+
     for i in np.arange(len(network_list)):
-        network_profits[i, 0] = crop_IDs[network_list[i]]
-        network_profits[i, 1] = profits_actual[network_list[i]]
+        for agent in agentIX:
+            if agent[0] == network_list[i]:
+                coords = agent[1:3]
+        network_profits[i, 0] = crop_IDs[coords[0], coords[1]]
+        network_profits[i, 1] = profits_actual[coords[0], coords[1]]
 
+    print(network_profits[:, 0].astype(int))
+    print(network_profits[:, 1].astype(int))
     return network_profits
 
 
