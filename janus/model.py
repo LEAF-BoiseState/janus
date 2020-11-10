@@ -155,6 +155,7 @@ class Janus:
 
         :return agent domain:   [0] Numpy array; agent_domain, domain with agent cell classes filled with agent info
                                 [1] Numpy array; agent_array, strings that define which agent is in each location
+                                [2] Numpy array; agentID_list, array of all agent IDs (i*ny+j)
 
         """
 
@@ -197,7 +198,7 @@ class Janus:
             arbitrary_torus_option = True
             agent_network = nwks.generate_random_walk(self.Nx - 1, self.Ny - 1, self.agentID_list,
                                                       arbitrary_torus_option, arbitrary_time_steps)
-
+            print(list(agent_network[122].keys()))
         if self.c.network == 'erdosrenyi':
             # if this is the case, there needs to be an extra parameter
             # this parameter for erdos renyi is defined as the probability that 
@@ -269,13 +270,14 @@ class Janus:
                                 crop_choice,
                                 profit_choice,
                                 seed=False)
+
                         if self.c.decision_type == 'success':
                             # retrieve the cropIDs and the associated profits of their network
                             network_profits = crpdec.retrieve_network_profits(self.profits_actual[i - 1, :, :],
                                                                               self.crop_id_all[i - 1, :, :],
                                                                               self.network[
                                                                                   self.agent_domain[j, k].FarmerAgents[
-                                                                                      0].agentID])
+                                                                                      0].agentID], j, k)
 
                             # identify the most profitable crop of the network
                             # if the following were combined it could be: crop_choice, profit_choice = crpdec.success_bias_crop()
