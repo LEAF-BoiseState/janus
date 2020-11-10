@@ -59,7 +59,7 @@ class Janus:
         self.profits_actual, self.profit_signals = self.initialize_profit()
 
         # initialize agents
-        self.agent_domain, self.agent_array, self.agentID_list = self.initialize_agents()
+        self.agent_domain, self.agent_array, self.agentID_list, self.agentIX = self.initialize_agents()
 
         # network will be stored as a dictionary here
         self.network = self.initialize_network()
@@ -170,10 +170,12 @@ class Janus:
 
         agent_array = init_agent.place_agents(self.Ny, self.Nx, self.lc, self.c.key_file, self.c.cat_option)
 
-        agent_domain, agentID_list = init_agent.agents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf,
+        agent_domain, agentID_list, agentIX = init_agent.agents(agent_array, self.domain, self.dist2city, tenure_cdf, age_cdf,
                                                        self.c.switch, self.Ny, self.Nx, self.lc, self.c.p, self.c.attr)
 
-        return agent_domain, agent_array, agentID_list
+        return agent_domain, agent_array, agentID_list, agentIX
+
+
 
     def initialize_network(self):
         """ This will create and return a network based upon which type of network
@@ -277,7 +279,7 @@ class Janus:
                                                                               self.crop_id_all[i - 1, :, :],
                                                                               self.network[
                                                                                   self.agent_domain[j, k].FarmerAgents[
-                                                                                      0].agentID], j, k)
+                                                                                      0].agentID], self.agentIX)
 
                             # identify the most profitable crop of the network
                             # if the following were combined it could be: crop_choice, profit_choice = crpdec.success_bias_crop()
@@ -285,9 +287,9 @@ class Janus:
                             # those could be outside of if statement to reduce duplicate code
                             profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i - 1, j, k],
                                                                             self.profits_actual[i - 1, j, k],
-                                                                            network_profits[i, 2],
+                                                                            network_profits[:, 1],
                                                                             len(network_profits),
-                                                                            network_profits[i, 1])
+                                                                            network_profits[:, 0])
                             # identify the most profitable crop
                             crop_choice, profit_choice = crpdec.profit_maximizer(
                                 self.agent_domain[j, k].FarmerAgents[0].alpha,
