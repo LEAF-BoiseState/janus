@@ -341,7 +341,7 @@ class Janus:
         # save dictionary of network
         # TODO: currently outputting using pickle but network is not human readable
         # it is possible here to use JSON format but that might be less straightforward to read in
-        nwk_out = open('network.pk1', 'wb')
+        nwk_out = open(os.path.join(self.c.output_dir,'network.pk1'), 'wb')
         pickle.dump(self.network, nwk_out)
         nwk_out.close()
 
