@@ -62,43 +62,18 @@ def retrieve_network_profits(profits_actual, crop_IDs, network_list, agentIX ):
     :return: a 2D array of cropIDs and their associated profits in the agents' network
 
     """
-    # find everyone in this agents network
-    # use the agents network to find the agentIDs of everyone they are considering
-
-    # find last years profits and crop choice of every agent in their network
     network_profits = np.empty([len(network_list), 2])
-
     #TODO: in the random walk the agent IDs are a mixture of integers and tuples something wrong in the coordinates...
     #TODO : if no one in their network kick them to profits mode?
-
     for i in np.arange(len(network_list)):
         for agent in agentIX:
-            if agent[0] == network_list[i]:
+            if agent[0] == network_list[i]:  # agentIDs of everyone in this agent(i) network
                 coords = agent[1:3]
+        # last years profits and crop choice of every agent in their network
         network_profits[i, 0] = crop_IDs[coords[0], coords[1]]
         network_profits[i, 1] = profits_actual[coords[0], coords[1]]
 
-    print(network_profits[:, 0].astype(int))
-    print(network_profits[:, 1].astype(int))
     return network_profits
-
-
-def success_bias_decision(network_profits):
-    """
-    :param network_profits:    2D array of crop choices and profits from agents' network
-    :type network_profits:     numpy array
-
-    :return:                    new crop ID and its associated profit
-
-    """
-    # pick max profit and associated cropID
-    # is this the same as profit maximizer?
-
-    # put that into the decide2switch function
-
-    # return the cropID they are going with (either their current or the most successful)
-    # and the profit associated with each
-
 
 # conformist bias
 # inputs: d = the strength of conformity bias (0-1)
