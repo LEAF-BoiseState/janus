@@ -53,7 +53,7 @@ class Janus:
         self.lc, self.dist2city, self.domain, self.Ny, self.Nx = self.initialize_landscape_domain()
 
         # initialize crops
-        self.crop_ids, self.crop_id_all, self.ag, self.num_crops = self.initialize_crops()
+        self.crop_ids, self.crop_id_all, self.ag, self.num_crops, self.lc_stats = self.initialize_crops()
 
         # initialize profits
         self.profits_actual, self.profit_signals = self.initialize_profit()
@@ -231,7 +231,6 @@ class Janus:
 
         return agent_network
 
-
     def decisions(self):
         """Decision process.
 
@@ -318,19 +317,20 @@ class Janus:
                         # update agent attributes
                         self.agent_domain[j, k].FarmerAgents[0].update_age()
 
-        # Save count of each land cover to 2D array for export
-        unique_crops, crop_counts = np.unique(self.crop_id_all[i, :, :], return_counts=True)
-        ix = self.lc_stats[:, 0].astype(int).searchsorted(unique_crops) 
-        self.lc_stats[ix, i] = crop_counts
+            # Save count of each land cover to 2D array for export
+            unique_crops, crop_counts = np.unique(self.crop_id_all[i, :, :].astype(int), return_counts=True)
+            print(i, unique_crops)
+            ix = self.lc_stats[:, 0].astype(int).searchsorted(unique_crops)
+            self.lc_stats[ix, i] = crop_counts
 
-    #def plot_results(self):
+    def plot_results(self):
         """Create result plots and save them."""
 
-        #ppf.plot_crop_percent(self.crop_id_all, self.crop_ids, self.c.Nt, self.num_crops, self.c.scale,
-        #                      self.c.output_dir, self.c.key_file, self.ag)
+        ppf.plot_crop_percent(self.crop_id_all, self.crop_ids, self.c.Nt, self.num_crops, self.c.scale,
+                              self.c.output_dir, self.c.key_file, self.ag)
 
-        #ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx, self.c.Nt,
-        #                    self.c.scale, self.c.output_dir)
+        ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx, self.c.Nt,
+                            self.c.scale, self.c.output_dir)
 
     def save_outputs(self):
         """Save outputs as NumPy arrays.
@@ -338,12 +338,12 @@ class Janus:
         The dimensions of each output NumPy array are [Number of time steps, Ny, Nx]
         """
 
-        out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr.csv')
+        out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr.npy')
         #  save time series of land cover coverage
         np.save(out_file.format('lc_percent', self.c.scale, self.c.Nt), self.lc_stats)
 
         # save time series of land cover coverage
-        np.save(out_file.format('landcover', self.c.scale, self.c.Nt), self.crop_id_all)
+        #np.save(out_file.format('landcover', self.c.scale, self.c.Nt), self.crop_id_all)
 
         # save time series of profits
         #np.save(out_file.format('profits', self.c.scale, self.c.Nt), self.profits_actual)
