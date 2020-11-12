@@ -20,7 +20,7 @@ def myscript(config_file, iteration_number):
 
 
 def main(unused_command_line_args):
-    for i in range(1000):
+    for i in range(3):
         myscript('/Users/kek25/Desktop/Janus_run/profitmax/highswitch/config.yml', i)
     return 0
 
