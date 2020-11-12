@@ -1,5 +1,4 @@
 import sys
-
 import janus
 
 
@@ -16,14 +15,12 @@ def run_example(f):
 
 def myscript(config_file, iteration_number):
     xfile_name = "x%d.txt" % iteration_number
-    yfile_name = "y%d.txt" % iteration_number
     with open(xfile_name, "w") as xf:
-        with open(yfile_name, "w") as yf:
-            run_example(config_file)
+        run_example(config_file)
 
 
 def main(unused_command_line_args):
-    for i in xrange(1000):
+    for i in range(1000):
         myscript('/Users/kek25/Desktop/Janus_run/profitmax/highswitch/config.yml', i)
     return 0
 
