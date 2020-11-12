@@ -27,7 +27,7 @@ from janus.config_reader import ConfigReader
 
 class Janus:
 
-    def __init__(self, config_file=None, args=None, save_result=True, plot_results=True):
+    def __init__(self, config_file=None, args=None, save_result=True, plot_results=False):
 
         if (args is not None) and (config_file is None):
 
@@ -318,8 +318,8 @@ class Janus:
                         self.agent_domain[j, k].FarmerAgents[0].update_age()
 
             # Save count of each land cover to 2D array for export
-            unique_crops, crop_counts = np.unique(self.crop_id_all[i, :, :].astype(int), return_counts=True)
-            print(i, unique_crops)
+            unique_crops, crop_counts = np.unique(self.crop_id_all[i, :, :].astype(int)[self.crop_id_all[i, :, :] < 30], return_counts=True)
+            #print(i, unique_crops)
             ix = self.lc_stats[:, 0].astype(int).searchsorted(unique_crops)
             self.lc_stats[ix, i] = crop_counts
 
