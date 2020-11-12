@@ -67,6 +67,7 @@ class Janus:
         # make agent decisions
         self.decisions()
 
+
         # plot results
         if plot_results:
             self.plot_results()
@@ -121,7 +122,11 @@ class Janus:
 
         crop_id_all[0, :, :] = self.lc
 
-        return crop_ids, crop_id_all, ag, num_crops
+        # save output stats
+        lc_stats = np.zeros((num_crops, self.Ny+1))
+        lc_stats[:, 0] = crop_ids_load
+
+        return crop_ids, crop_id_all, ag, num_crops, lc_stats
 
     def initialize_profit(self):
         """Initialize profits based on profit signals csv that is either generated or input from other model output
@@ -226,6 +231,7 @@ class Janus:
 
         return agent_network
 
+
     def decisions(self):
         """Decision process.
 
@@ -312,14 +318,19 @@ class Janus:
                         # update agent attributes
                         self.agent_domain[j, k].FarmerAgents[0].update_age()
 
-    def plot_results(self):
+        # Save count of each land cover to 2D array for export
+        unique_crops, crop_counts = np.unique(self.crop_id_all[i, :, :], return_counts=True)
+        ix = self.lc_stats[:, 0].astype(int).searchsorted(unique_crops) 
+        self.lc_stats[ix, i] = crop_counts
+
+    #def plot_results(self):
         """Create result plots and save them."""
 
-        ppf.plot_crop_percent(self.crop_id_all, self.crop_ids, self.c.Nt, self.num_crops, self.c.scale,
-                              self.c.output_dir, self.c.key_file, self.ag)
+        #ppf.plot_crop_percent(self.crop_id_all, self.crop_ids, self.c.Nt, self.num_crops, self.c.scale,
+        #                      self.c.output_dir, self.c.key_file, self.ag)
 
-        ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx, self.c.Nt,
-                            self.c.scale, self.c.output_dir)
+        #ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx, self.c.Nt,
+        #                    self.c.scale, self.c.output_dir)
 
     def save_outputs(self):
         """Save outputs as NumPy arrays.
@@ -327,23 +338,25 @@ class Janus:
         The dimensions of each output NumPy array are [Number of time steps, Ny, Nx]
         """
 
-        out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr.npy')
+        out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr.csv')
+        #  save time series of land cover coverage
+        np.save(out_file.format('lc_percent', self.c.scale, self.c.Nt), self.lc_stats)
 
         # save time series of land cover coverage
         np.save(out_file.format('landcover', self.c.scale, self.c.Nt), self.crop_id_all)
 
         # save time series of profits
-        np.save(out_file.format('profits', self.c.scale, self.c.Nt), self.profits_actual)
+        #np.save(out_file.format('profits', self.c.scale, self.c.Nt), self.profits_actual)
 
         # save domain, can be used for initialization
-        np.save(out_file.format('domain', self.c.scale, self.c.Nt), self.agent_domain)
+        #np.save(out_file.format('domain', self.c.scale, self.c.Nt), self.agent_domain)
 
         # save dictionary of network
         # TODO: currently outputting using pickle but network is not human readable
         # it is possible here to use JSON format but that might be less straightforward to read in
-        nwk_out = open(os.path.join(self.c.output_dir,'network.pk1'), 'wb')
-        pickle.dump(self.network, nwk_out)
-        nwk_out.close()
+        #nwk_out = open(os.path.join(self.c.output_dir,'network.pk1'), 'wb')
+        #pickle.dump(self.network, nwk_out)
+        #nwk_out.close()
 
 
 if __name__ == '__main__':
