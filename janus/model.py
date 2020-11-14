@@ -14,6 +14,7 @@ import pickle
 
 import numpy as np
 import gdal
+import glob
 
 import janus.preprocessing.geofxns as gf
 import janus.crop_functions.crop_decider as crpdec
@@ -205,7 +206,7 @@ class Janus:
             arbitrary_torus_option = True
             agent_network = nwks.generate_random_walk(self.Nx - 1, self.Ny - 1, self.agentID_list,
                                                       arbitrary_torus_option, arbitrary_time_steps)
-            print(list(agent_network[122].keys()))
+           # print(list(agent_network[122].keys()))
         if self.c.network == 'erdosrenyi':
             # if this is the case, there needs to be an extra parameter
             # this parameter for erdos renyi is defined as the probability that 
@@ -338,9 +339,19 @@ class Janus:
         The dimensions of each output NumPy array are [Number of time steps, Ny, Nx]
         """
 
-        out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr.npy')
+        out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr_r0.npy')
+        file_name = out_file.format('lc_percent', self.c.scale, self.c.Nt)
         #  save time series of land cover coverage
-        np.save(out_file.format('lc_percent', self.c.scale, self.c.Nt), self.lc_stats)
+
+        gen = os.path.join(self.c.output_dir, '{}_{}m_{}yr_r*.npy')
+        gen_file = gen.format('lc_percent', self.c.scale, self.c.Nt)
+        while os.path.exists(file_name):
+            exists = glob.glob(gen_file)
+            for fname in exists:
+                val = int(fname[-5])+1
+            file_name = gen_file[:-5]+"%d.npy" % val
+
+        np.save(file_name, self.lc_stats)
 
         # save time series of land cover coverage
         #np.save(out_file.format('landcover', self.c.scale, self.c.Nt), self.crop_id_all)
