@@ -354,7 +354,7 @@ class Janus:
         np.save(file_name, self.lc_stats)
 
         # save time series of land cover coverage
-        #np.save(out_file.format('landcover', self.c.scale, self.c.Nt), self.crop_id_all)
+        np.save(out_file.format('landcover', self.c.scale, self.c.Nt), self.crop_id_all)
 
         # save time series of profits
         #np.save(out_file.format('profits', self.c.scale, self.c.Nt), self.profits_actual)
