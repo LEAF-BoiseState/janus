@@ -13,7 +13,7 @@ import os
 import pickle
 
 import numpy as np
-import gdal
+import rasterio
 import glob
 
 import janus.preprocessing.geofxns as gf
@@ -88,11 +88,11 @@ class Janus:
         """
 
         # import the initial land cover data
-        lc_raster = gdal.Open(self.c.f_init_lc_file)
-        lc = lc_raster.GetRasterBand(1).ReadAsArray()
+        lc_raster = rasterio.open(self.c.f_init_lc_file)
+        lc = lc_raster.read(1)
 
-        ny = lc_raster.RasterYSize
-        nx = lc_raster.RasterXSize
+        ny = lc.shape[0]
+        nx = lc.shape[1]
 
         # initialize minimum distance to city
         dist2city = gf.min_dist_city(lc)
@@ -324,6 +324,7 @@ class Janus:
             ix = self.lc_stats[:, 0].astype(int).searchsorted(unique_crops)
             self.lc_stats[ix, i] = crop_counts
 
+
     def plot_results(self):
         """Create result plots and save them."""
 
@@ -338,18 +339,20 @@ class Janus:
 
         The dimensions of each output NumPy array are [Number of time steps, Ny, Nx]
         """
-
+        print(self.lc_stats)
         out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr_r0.npy')
         file_name = out_file.format('lc_percent', self.c.scale, self.c.Nt)
         #  save time series of land cover coverage
 
         gen = os.path.join(self.c.output_dir, '{}_{}m_{}yr_r*.npy')
         gen_file = gen.format('lc_percent', self.c.scale, self.c.Nt)
-        while os.path.exists(file_name):
-            exists = glob.glob(gen_file)
-            for fname in exists:
-                val = int(fname[-5])+1
-            file_name = gen_file[:-5]+"%d.npy" % val
+        exists = glob.glob(self.c.output_dir + '/*')
+        val = np.empty(1)
+        for fname in exists:
+            #if fname[-5]
+            val_i = int(fname[-5])+1
+            val = np.append(val, val_i)
+        file_name = gen_file[:-5]+"%d.npy" % int(max(val)+1)
 
         np.save(file_name, self.lc_stats)
 
