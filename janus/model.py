@@ -8,7 +8,7 @@ Agent Based Model of Land Use and Land Cover Change
 
 import argparse
 import os
-
+import re
 # this is for the saving dict file output
 import pickle
 
@@ -339,7 +339,7 @@ class Janus:
 
         The dimensions of each output NumPy array are [Number of time steps, Ny, Nx]
         """
-        print(self.lc_stats)
+
         out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr_r0.npy')
         file_name = out_file.format('lc_percent', self.c.scale, self.c.Nt)
         #  save time series of land cover coverage
@@ -350,14 +350,16 @@ class Janus:
         val = np.empty(1)
         for fname in exists:
             #if fname[-5]
-            val_i = int(fname[-5])+1
-            val = np.append(val, val_i)
+            val_i = re.findall(r'\d+', fname)
+            #val_i = int(fname[-5])+1
+            val = np.append(val, int(val_i[-1]))
+        print(max(val))
         file_name = gen_file[:-5]+"%d.npy" % int(max(val)+1)
 
         np.save(file_name, self.lc_stats)
 
         # save time series of land cover coverage
-        np.save(out_file.format('landcover', self.c.scale, self.c.Nt), self.crop_id_all)
+        #np.save(out_file.format('landcover', self.c.scale, self.c.Nt), self.crop_id_all)
 
         # save time series of profits
         #np.save(out_file.format('profits', self.c.scale, self.c.Nt), self.profits_actual)
