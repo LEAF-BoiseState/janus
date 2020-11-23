@@ -6,7 +6,8 @@ Created on Tue Jul  9 12:12:43 2019
 
 import numpy as np
 import scipy.special as sp
-from im3agents import FarmerOne
+#from im3agents import FarmerOne
+#import janus.crop_functions.networks
 
 def define_seed(seed):
     """ Creates seed for random selection for testing
