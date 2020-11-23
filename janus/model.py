@@ -15,7 +15,7 @@ import pickle
 import numpy as np
 import rasterio
 import glob
-
+import pandas as pd
 import janus.preprocessing.geofxns as gf
 import janus.crop_functions.crop_decider as crpdec
 import janus.initialize_agents_domain as init_agent
@@ -124,8 +124,9 @@ class Janus:
         crop_id_all[0, :, :] = self.lc
 
         # save output stats
-        lc_stats = np.zeros((num_crops, self.Ny+1))
-        lc_stats[:, 0] = crop_ids_load
+        lc_stats = pd.DataFrame(np.zeros((num_crops, self.Ny+1)))
+        lc_stats = lc_stats.set_index(crop_ids_load.astype(int))
+        lc_stats.loc[:, 0] = crop_ids_load
 
         return crop_ids, crop_id_all, ag, num_crops, lc_stats
 
@@ -319,11 +320,9 @@ class Janus:
                         self.agent_domain[j, k].FarmerAgents[0].update_age()
 
             # Save count of each land cover to 2D array for export
-            unique_crops, crop_counts = np.unique(self.crop_id_all[i, :, :].astype(int)[self.crop_id_all[i, :, :] < 30], return_counts=True)
-            #print(i, unique_crops)
-            ix = self.lc_stats[:, 0].astype(int).searchsorted(unique_crops)
-            self.lc_stats[ix, i] = crop_counts
 
+            unique_crops, crop_counts = np.unique(self.crop_id_all[i, :, :].astype(int)[np.isin(self.crop_id_all[i, :, :], self.crop_ids)], return_counts=True)
+            self.lc_stats.loc[unique_crops, i] = crop_counts
 
     def plot_results(self):
         """Create result plots and save them."""
@@ -340,23 +339,19 @@ class Janus:
         The dimensions of each output NumPy array are [Number of time steps, Ny, Nx]
         """
 
-        out_file = os.path.join(self.c.output_dir, '{}_{}m_{}yr_r0.npy')
-        file_name = out_file.format('lc_percent', self.c.scale, self.c.Nt)
         #  save time series of land cover coverage
-
-        gen = os.path.join(self.c.output_dir, '{}_{}m_{}yr_r*.npy')
+        gen = os.path.join(self.c.output_dir, '{}_{}m_{}yr_r*.csv')
         gen_file = gen.format('lc_percent', self.c.scale, self.c.Nt)
         exists = glob.glob(self.c.output_dir + '/*')
         val = np.empty(1)
         for fname in exists:
             #if fname[-5]
             val_i = re.findall(r'\d+', fname)
-            #val_i = int(fname[-5])+1
             val = np.append(val, int(val_i[-1]))
-        print(max(val))
-        file_name = gen_file[:-5]+"%d.npy" % int(max(val)+1)
 
-        np.save(file_name, self.lc_stats)
+        file_name = gen_file[:-5]+"%d.csv" % int(max(val)+1)
+
+        self.lc_stats.to_csv(file_name)
 
         # save time series of land cover coverage
         #np.save(out_file.format('landcover', self.c.scale, self.c.Nt), self.crop_id_all)
