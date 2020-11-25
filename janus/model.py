@@ -124,9 +124,8 @@ class Janus:
         crop_id_all[0, :, :] = self.lc
 
         # save output stats
-        lc_stats = pd.DataFrame(np.zeros((num_crops, self.Ny+1)))
+        lc_stats = pd.DataFrame(np.zeros((num_crops, self.Ny)))
         lc_stats = lc_stats.set_index(crop_ids_load.astype(int))
-        lc_stats.loc[:, 0] = crop_ids_load
 
         return crop_ids, crop_id_all, ag, num_crops, lc_stats
 
@@ -222,7 +221,7 @@ class Janus:
             # TODO: change this from hard coded to a config file option
             # for more information on what the parameters could be, see README in im3agents library repo
             arbitrary_edge_number = 2 * len(self.agentID_list) / 5
-            agent_network = nwks.generate_barabasi_alberts(self.agentID_list, arbitrary_edge_number)
+            agent_network = nwks.generate_barabasi_albert(self.agentID_list, arbitrary_edge_number)
 
         if self.c.network == 'smallworld':
             # TODO: change this from hard coded to a config file options
@@ -239,6 +238,10 @@ class Janus:
         :return:    Updated domain with agent information and land cover choice
 
         """
+        unique_crops, crop_counts = np.unique(
+            self.crop_id_all[0, :, :].astype(int)[np.isin(self.crop_id_all[0, :, :], self.crop_ids)],
+            return_counts=True)
+        self.lc_stats.loc[unique_crops, 0] = crop_counts
 
         for i in np.arange(1, self.c.Nt):
 
@@ -270,6 +273,7 @@ class Janus:
                                 profit_last,
                                 self.crop_ids,
                                 profit_pred,
+                                self.crop_id_all[i - 1, j, k],
                                 rule=True)
 
                             # decide whether to switch and add random variation to actual profit
@@ -286,8 +290,10 @@ class Janus:
                                                                               self.crop_id_all[i - 1, :, :],
                                                                               self.network[
                                                                                   self.agent_domain[j, k].FarmerAgents[
-                                                                                      0].agentID], self.agentIX)
-
+                                                                                      0].agentID],
+                                                                              self.agentIX,
+                                                                              self.agent_domain)
+                            #print(network_profits)
                             # identify the most profitable crop of the network
                             # if the following were combined it could be: crop_choice, profit_choice = crpdec.success_bias_crop()
                             # if all three learning strategies are using assess_profit / profit_maximizer/ make_choice,
@@ -295,21 +301,27 @@ class Janus:
                             len_prof = len(network_profits)
                             profit_last, profit_pred = crpdec.assess_profit(self.crop_id_all[i - 1, j, k],
                                                                             self.profits_actual[i - 1, j, k],
-                                                                            network_profits[:, 1],
+                                                                            network_profits[:, 1], #  profits (last years)
                                                                             len_prof,
-                                                                            network_profits[:, 0])
+                                                                            network_profits[:, 0]) #  cropIds
 
                             # identify the most profitable crop
-                            crop_choice, profit_choice = crpdec.profit_maximizer(
+                            crop_choice, profit_choice, switch_out = crpdec.profit_maximizer(
                                 self.agent_domain[j, k].FarmerAgents[0].alpha,
                                 self.agent_domain[j, k].FarmerAgents[0].beta,
-                                self.c.fmin, self.c.fmax, self.c.n, profit_last,
-                                network_profits[:, 1].reshape((len_prof, 1)), profit_pred, rule=True)
+                                self.c.fmin,
+                                self.c.fmax,
+                                self.c.n,
+                                profit_last,
+                                network_profits[:, 0].reshape((len_prof, 1)), # vec crops
+                                profit_pred,    #  vec profits
+                                self.crop_id_all[i - 1, j, k], rule=True)
 
                             # decide whether to switch and add random variation to actual profit
                             self.crop_id_all[i, j, k], self.profits_actual[i, j, k] = crpdec.make_choice(
                                 self.crop_id_all[i - 1, j, k],
                                 profit_last,
+                                switch_out,
                                 crop_choice,
                                 profit_choice,
                                 seed=False)
@@ -320,7 +332,7 @@ class Janus:
                         self.agent_domain[j, k].FarmerAgents[0].update_age()
 
             # Save count of each land cover to 2D array for export
-
+            #print(np.unique(self.crop_id_all[2, :, :], return_counts=True))
             unique_crops, crop_counts = np.unique(self.crop_id_all[i, :, :].astype(int)[np.isin(self.crop_id_all[i, :, :], self.crop_ids)], return_counts=True)
             self.lc_stats.loc[unique_crops, i] = crop_counts
 
@@ -338,12 +350,14 @@ class Janus:
 
         The dimensions of each output NumPy array are [Number of time steps, Ny, Nx]
         """
-
         #  save time series of land cover coverage
+        out = os.path.join(self.c.output_dir, '{}_{}m_{}yr_r0.csv')
+        file_name = out.format('lc_percent', self.c.scale, self.c.Nt)
+
         gen = os.path.join(self.c.output_dir, '{}_{}m_{}yr_r*.csv')
         gen_file = gen.format('lc_percent', self.c.scale, self.c.Nt)
         exists = glob.glob(self.c.output_dir + '/*')
-        val = np.empty(1)
+        val = np.zeros(1)
         for fname in exists:
             #if fname[-5]
             val_i = re.findall(r'\d+', fname)
