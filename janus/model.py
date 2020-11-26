@@ -28,7 +28,7 @@ from janus.config_reader import ConfigReader
 
 class Janus:
 
-    def __init__(self, config_file=None, args=None, save_result=True, plot_results=False):
+    def __init__(self, config_file=None, args=None, save_result=True, plot_results=True):
 
         if (args is not None) and (config_file is None):
 
@@ -124,7 +124,7 @@ class Janus:
         crop_id_all[0, :, :] = self.lc
 
         # save output stats
-        lc_stats = pd.DataFrame(np.zeros((num_crops, self.Ny)))
+        lc_stats = pd.DataFrame(np.zeros((num_crops, self.Ny+1)))
         lc_stats = lc_stats.set_index(crop_ids_load.astype(int))
 
         return crop_ids, crop_id_all, ag, num_crops, lc_stats
@@ -264,7 +264,7 @@ class Janus:
                                                                             self.crop_ids)
 
                             # identify the most profitable crop
-                            crop_choice, profit_choice = crpdec.profit_maximizer(
+                            crop_choice, profit_choice, switch_out = crpdec.profit_maximizer(
                                 self.agent_domain[j, k].FarmerAgents[0].alpha,
                                 self.agent_domain[j, k].FarmerAgents[0].beta,
                                 self.c.fmin,
@@ -280,6 +280,7 @@ class Janus:
                             self.crop_id_all[i, j, k], self.profits_actual[i, j, k] = crpdec.make_choice(
                                 self.crop_id_all[i - 1, j, k],
                                 profit_last,
+                                switch_out,
                                 crop_choice,
                                 profit_choice,
                                 seed=False)
@@ -342,8 +343,8 @@ class Janus:
         ppf.plot_crop_percent(self.crop_id_all, self.crop_ids, self.c.Nt, self.num_crops, self.c.scale,
                               self.c.output_dir, self.c.key_file, self.ag)
 
-        ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx, self.c.Nt,
-                            self.c.scale, self.c.output_dir)
+        #ppf.plot_agent_ages(self.agent_domain, self.agent_array, self.Ny, self.Nx, self.c.Nt,
+         #                   self.c.scale, self.c.output_dir)
 
     def save_outputs(self):
         """Save outputs as NumPy arrays.
