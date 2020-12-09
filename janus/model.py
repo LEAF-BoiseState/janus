@@ -214,7 +214,7 @@ class Janus:
             # by the user in config file. For now it is arbitrary
 
             # TODO: change this from hard coded to a config file option
-            arbitrary_prob = 0.1
+            arbitrary_prob = 0.03
             agent_network = nwks.generate_erdos_renyi(self.agentID_list, arbitrary_prob)
 
         if self.c.network == 'barabasi':
