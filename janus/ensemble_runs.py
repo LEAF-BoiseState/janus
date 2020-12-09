@@ -1,4 +1,3 @@
-import sys
 import janus
 
 
@@ -13,11 +12,6 @@ def run_example(f):
     return janus.Janus(config_file=f)
 
 
-def main(unused_command_line_args):
-    for i in range(3):
-        run_example('/Users/kek25/Desktop/Janus_run/profitmax/highswitch/config.yml')
-    return 0
-
-
-if __name__ == '__main__':
-    sys.exit(main(sys.argv))
+for i in range(1):
+    janus_run = run_example('/Users/kendrakaiser/Desktop/Janus_run/erdosrenyi/config.yml')
+    print("run", i)
