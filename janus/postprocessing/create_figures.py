@@ -90,7 +90,7 @@ def plot_crop_percent(crop_id_all, CropIDs, nt, nc, scale, results_path, key_fil
     ax.set_ylabel('Percent Crop Choice')
     ax.set_xlabel('Time [yr]')
 
-    output_figure = os.path.join(results_path, 'CropPercentages_{}m_{}yr.png'.format(scale, nt))
+    output_figure = os.path.join(results_path, 'CropPercentages_{}m_{}yr.eps'.format(scale, nt))
 
     plt.savefig(output_figure, dpi=300, facecolor='w', edgecolor='w', bbox_inches='tight')
     plt.close()
